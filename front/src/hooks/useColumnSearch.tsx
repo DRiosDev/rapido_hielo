@@ -154,20 +154,18 @@ const useColumnSearch = <T extends object>(isLocalSearch?: boolean) => {
         ),
       ...(typeInput !== "rangepicker" &&
         isLocalSearch && {
-          onFilter: (value: string, record: T) => {
-            const recordValue = record[dataIndex] as unknown as string;
+          onFilter: (value: React.Key | boolean, record: T) => {
+            const record_value = record[dataIndex] as unknown as string;
+            const string_value = String(value);
 
             if (isExact) {
-              return recordValue
-                ? recordValue.toString().toLowerCase() === value.toLowerCase()
+              return record_value
+                ? record_value.toLowerCase() === string_value.toLowerCase()
                 : false;
             }
 
-            return recordValue
-              ? recordValue
-                  .toString()
-                  .toLowerCase()
-                  .includes(value.toLowerCase())
+            return record_value
+              ? record_value.toLowerCase().includes(string_value.toLowerCase())
               : false;
           },
         }),

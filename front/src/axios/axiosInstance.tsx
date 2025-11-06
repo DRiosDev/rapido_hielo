@@ -11,7 +11,7 @@ interface ShowModal {
 }
 
 //LOCAL
-export const baseURL = "http://127.0.0.1:8000";
+export const baseURL = "http://localhost:8000";
 
 //DEV
 /* export const baseURL = "https://apidevpos.vortexpos.com";  */
@@ -37,12 +37,17 @@ export const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   async (req) => {
     const access_token = await getAccessToken();
+    const user_logged = useAuthUser.getState().userLogged?.role;
 
     if (access_token) {
       req.headers["Authorization"] = "Bearer " + access_token;
     }
 
     req.params = req.params || {};
+
+    if (user_logged) {
+      req.params.role_user_request = user_logged; // agrega el rol como parámetro
+    }
 
     return req;
   },
