@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { MenuHamburgerIcon } from "../ui/icons/MenuHamburgerIcon";
 import { AppLogoVersion } from "./components/AppLogoVersion";
 import { SideBarDrawer } from "./SideBarDrawer";
+import { MenuHamburgerIcon } from "../ui/icons/MenuHamburgerIcon";
 
 export const NavBarDashboard = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,7 +18,9 @@ export const NavBarDashboard = () => {
             className="gap-1 flex items-center"
             onClick={() => setIsOpen(true)}
           >
-            <MenuHamburgerIcon />
+            <MenuHamburgerIcon
+              className={"color_icon_menu_item tamaño_icon_menu_item"}
+            />
             <span className="text-base font-normal ">Menú</span>
           </button>
         </div>

@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('order', function (Blueprint $table) {
-            $table->id();
+        Schema::create('orders', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->uuid('fk_client_id');
+
+            $table->foreign('fk_client_id')->references('id')->on('clients');
             $table->timestamps();
         });
     }

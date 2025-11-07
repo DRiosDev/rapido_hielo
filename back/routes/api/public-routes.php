@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\Auth\AuthClientController;
 use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\Controller;
 use App\Http\Controllers\PasswordResetController;
 use Illuminate\Support\Facades\Route;
 
@@ -25,7 +24,7 @@ Route::prefix('auth')->controller(AuthController::class)->group(function () {
     Route::post('/refresh', 'refresh');
 });
 
-Route::prefix('auth/client')->controller(AuthClientController::class)->group(function () {
+Route::prefix('auth/clients')->controller(AuthClientController::class)->group(function () {
     Route::post('/register', 'register');
     Route::post('/login', 'login');
     Route::post('/refresh', 'refresh');

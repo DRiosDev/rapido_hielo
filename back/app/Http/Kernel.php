@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use App\Http\Middleware\CheckUserStatus;
+use App\Http\Middleware\ClientActiveMiddleware;
 use App\Http\Middleware\JwtMiddleware;
 use App\Http\Middleware\UserActiveMiddleware;
 use App\Http\Middleware\UserAdminMiddleware;
@@ -69,6 +70,8 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         //jwt
         'jwt.verify' => JwtMiddleware::class,
+        'jwt.verify.client' => JwtMiddleware::class,
+        'client.active' => ClientActiveMiddleware::class,
         'user.active' => CheckUserStatus::class,
         'user.admin' => UserAdminMiddleware::class,
     ];

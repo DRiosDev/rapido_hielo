@@ -2,12 +2,16 @@ import { ReactNode } from "react";
 import {
   CLIENTSPRIVATE,
   LOGOUT,
+  ORDERSPRIVATE,
   PRODUCTSPRIVATE,
   USERSPRIVATE,
 } from "../../../routes/Paths";
 import { LogoutIcon } from "../../ui/icons/LogoutIcon";
 import { UserIcon } from "../../ui/icons/UserIcon";
 import { MenuItem } from "../types/menu";
+import { IceIcon } from "../../ui/icons/IceIcon";
+import { ClientIcon } from "../../ui/icons/ClientIcon";
+import { MenuHamburgerIcon } from "../../ui/icons/MenuHamburgerIcon";
 
 function getItem(
   label: ReactNode,
@@ -33,6 +37,16 @@ function getItem(
 /* RUTAS ADMIN */
 export const linksRoleAdmin = [
   getItem(
+    <p className="title_menu_item">Ordenes</p>,
+    ORDERSPRIVATE,
+    //Icons
+    <div className="contenedor_icon_menu_item">
+      <MenuHamburgerIcon
+        className={"color_icon_menu_item tamaño_icon_menu_item"}
+      />
+    </div>
+  ),
+  getItem(
     <p className="title_menu_item">Usuarios</p>,
     USERSPRIVATE,
     //Icons
@@ -45,7 +59,7 @@ export const linksRoleAdmin = [
     CLIENTSPRIVATE,
     //Icons
     <div className="contenedor_icon_menu_item">
-      <UserIcon styles={"color_icon_menu_item tamaño_icon_menu_item"} />
+      <ClientIcon className={"color_icon_menu_item tamaño_icon_menu_item"} />
     </div>
   ),
   getItem(
@@ -53,7 +67,7 @@ export const linksRoleAdmin = [
     PRODUCTSPRIVATE,
     //Icons
     <div className="contenedor_icon_menu_item">
-      <UserIcon styles={"color_icon_menu_item tamaño_icon_menu_item"} />
+      <IceIcon className={"color_icon_menu_item tamaño_icon_menu_item"} />
     </div>
   ),
 ];

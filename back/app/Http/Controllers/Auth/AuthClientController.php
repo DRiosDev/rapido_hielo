@@ -39,7 +39,7 @@ class AuthClientController extends Controller
         $client = Client::where('email', $credentials['email'])->first();
 
         if (!$client) {
-            return response()->json(['message' => 'Credenciales inválidas'], 401);
+            return response()->json(['message' => 'Credenciales inválidas', 'client' => $client], 401);
         }
 
         // 🔹 Verificar si está activo

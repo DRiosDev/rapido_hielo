@@ -4,7 +4,7 @@ import { Alert, Linking } from "react-native";
 import { useAuthUser } from "../store/useAuthUser";
 
 //LOCAL
-export const baseURL = "https://cea805f9d522.ngrok-free.app";
+export const baseURL = "https://d0055d9a4c0f.ngrok-free.app";
 
 //DEV
 /* export const baseURL = "https://apidevpos.vortexpos.com";  */
@@ -56,7 +56,7 @@ axiosInstance.interceptors.response.use(
 
       try {
         // Llamamos al endpoint de refresh
-        const { data } = await axiosInstance.post("/api/auth/refresh");
+        const { data } = await axiosInstance.post("/api/auth/clients/refresh");
 
         await SecureStore.setItemAsync("token", data.access_token); // Guardamos el nuevo token
 

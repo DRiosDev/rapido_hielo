@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "template-expo-app",
-    "slug": "template-expo-app",
+    "name": "rapido-hielo-app",
+    "slug": "rapido-hielo-app",
     "scheme": "acme",
     "userInterfaceStyle": "automatic",
     "orientation": "default",

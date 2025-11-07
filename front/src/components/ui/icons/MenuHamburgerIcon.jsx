@@ -1,14 +1,12 @@
 import React from "react";
 
-export const MenuHamburgerIcon = () => {
+export const MenuHamburgerIcon = ({ className }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
-      width={24}
-      height={24}
-      color={"#1F1F1F"}
-      fill={"none"}
+      className={className}
+      fill="none"
     >
       <path
         d="M4 5L20 5"

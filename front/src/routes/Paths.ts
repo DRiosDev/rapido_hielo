@@ -11,6 +11,7 @@ export const RESETPASSWORD = "/cambiar-clave/:token";
 //privadas
 export const PRIVATEUSERS = "/priv";
 
+export const ORDERSPRIVATE = "/priv/ordenes";
 export const USERSPRIVATE = "/priv/usuarios";
 export const CLIENTSPRIVATE = "/priv/clientes";
 export const PRODUCTSPRIVATE = "/priv/productos";

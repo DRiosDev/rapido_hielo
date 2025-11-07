@@ -5,6 +5,7 @@ import {
   CLIENTSPRIVATE,
   LOGOUT,
   MYACCOUNTPRIVATE,
+  ORDERSPRIVATE,
   PRIVATEUSERS,
   PRODUCTSPRIVATE,
   USERSPRIVATE,
@@ -18,6 +19,7 @@ const MyAccountPrivate = lazy(
 );
 import Logout from "../views/private/Logout";
 import PrivateUsers from "../views/private/PrivateUsers";
+import OrdersPrivate from "../views/private/OrdersPrivate";
 
 export const PrivateRoutes = () => {
   return (
@@ -25,6 +27,7 @@ export const PrivateRoutes = () => {
       <Route path={PRIVATEUSERS} element={<ProtectedRouteUsers />}>
         <Route index element={<PrivateUsers />} />
         <Route path={MYACCOUNTPRIVATE} element={<MyAccountPrivate />} />
+        <Route path={ORDERSPRIVATE} element={<OrdersPrivate />} />
         <Route path={USERSPRIVATE} element={<UsersPrivate />} />
         <Route path={CLIENTSPRIVATE} element={<ClientsPrivate />} />
         <Route path={PRODUCTSPRIVATE} element={<ProductsPrivate />} />

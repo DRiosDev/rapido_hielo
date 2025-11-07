@@ -3,6 +3,7 @@ import {
   CLIENTSPRIVATE,
   LOGOUT,
   MYACCOUNTPRIVATE,
+  ORDERSPRIVATE,
   PRIVATEUSERS,
   PRODUCTSPRIVATE,
   USERSPRIVATE,
@@ -11,7 +12,7 @@ import {
 //funcion que nos sirve para usarla en private routes
 //cuando el usuario inicia sesion, de acuerdo a su rol, se le asigna una ruta por defecto
 export const defaultRoutesByRole: Record<Role, string> = {
-  [Role.ADMIN]: USERSPRIVATE,
+  [Role.ADMIN]: ORDERSPRIVATE,
   [Role.NORMAL]: MYACCOUNTPRIVATE,
 };
 
@@ -19,6 +20,7 @@ export const defaultRoutesByRole: Record<Role, string> = {
 export const routePermissions: Record<Role, string[]> = {
   //rutas admin
   [Role.ADMIN]: [
+    ORDERSPRIVATE,
     USERSPRIVATE,
     CLIENTSPRIVATE,
     PRODUCTSPRIVATE,

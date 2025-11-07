@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\AccountClientController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\Auth\AuthClientController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +22,11 @@ require __DIR__ . '/api/public-routes.php';
 Route::middleware(['jwt.verify', 'user.active'])->group(function () {
     Route::get('/me', [AccountController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
+});
+
+Route::middleware(['jwt.verify', 'client.active'])->group(function () {
+    Route::get('clients/me', [AccountClientController::class, 'me']);
+    Route::post('clients/logout', [AuthClientController::class, 'logout']);
 });
 
 Route::group(['middleware' => ['jwt.verify', 'user.active']], function () {

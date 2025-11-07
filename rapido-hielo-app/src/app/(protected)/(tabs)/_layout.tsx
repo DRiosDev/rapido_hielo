@@ -35,7 +35,7 @@ export default function _layout() {
           headerTitleAlign: "left",
           headerShadowVisible: false,
           headerTitle: (props) => (
-            <Text className="text-3xl font-bold">{props.children}</Text>
+            <Text className="text-3xl font-bold">Producto</Text>
           ),
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home-outline" color={color} size={size} />

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Client;
 use App\Models\User;
 use Closure;
 use Exception;
@@ -22,10 +23,15 @@ class JwtMiddleware
     {
         try {
             $payload = JWTAuth::parseToken()->getPayload();  // Obtener el payload sin cargar el usuario completo
-            $user_id = $payload->get('sub'); // 'sub' contiene el ID del usuario
+            $id = $payload->get('id') ?? $payload->get('sub');
 
-            // Crear un usuario mínimo con solo el ID
-            $user = User::select('id', 'status')->where('id', $user_id)->firstOrFail();
+            // intentar encontrar primero en users
+            $user = User::select('id', 'status')->find($id);
+
+            // si no existe en users, buscar en clients
+            if (!$user) {
+                $user = Client::select('id', 'status')->find($id);
+            }
 
             // Autenticar al usuario sin cargar todos los datos
             Auth::setUser($user);
