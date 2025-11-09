@@ -1,0 +1,5 @@
+pasos para ejecutar proyecto
+
+npm install -g expo-cli
+npm install
+npx expo start -c
