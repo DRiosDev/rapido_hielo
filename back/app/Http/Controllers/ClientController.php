@@ -110,6 +110,17 @@ class ClientController extends Controller
         return response()->json($response, 200);
     }
 
+    public function show(Request $request, $id)
+    {
+
+        $client = Client::select('rut', 'name', 'lastname', 'email', 'address')
+            ->where('id', $id)
+            ->where('status', 'active')
+            ->firstOrFail();
+
+        return response()->json($client, 200);
+    }
+
     public function changeStatusClient($id)
     {
         $client = Client::select('id', 'status')->where('id', $id)->first();

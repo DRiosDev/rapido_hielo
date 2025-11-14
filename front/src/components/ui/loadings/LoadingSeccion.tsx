@@ -1,5 +1,5 @@
 import { Spin } from "antd";
-import { LOGO } from "../../../constants/Logo";
+import { LOGO } from "../../../constants/LOGO";
 
 interface LoadingScreenProps {
   textLoading?: string;

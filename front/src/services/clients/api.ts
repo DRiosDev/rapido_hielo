@@ -13,6 +13,18 @@ export const getClients = async (
   return data;
 };
 
+//show
+export const getClient = async (
+  id: Client["id"],
+  params?: QueryParamsBase
+): Promise<Client> => {
+  const { data } = await axiosInstance.get(`/api/clients/${id}`, {
+    params,
+  });
+
+  return data;
+};
+
 //store
 export async function createClient(values: Client) {
   const { data } = await axiosInstance.post(`/api/clients`, values);

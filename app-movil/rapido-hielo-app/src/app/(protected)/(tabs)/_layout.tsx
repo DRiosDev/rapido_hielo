@@ -17,6 +17,7 @@ export default function _layout() {
 
   return (
     <Tabs>
+      <Tabs.Screen name="test-text" />
       <Tabs.Screen
         name="index"
         options={{
