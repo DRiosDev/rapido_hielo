@@ -9,7 +9,6 @@ import { router } from "expo-router";
 import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Avatar, List } from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Settings() {
   const { userLogged, logout } = useAuthUser();
@@ -52,7 +51,6 @@ export default function Settings() {
   return (
     <>
       {isLoading && <LoadingOverlay />}
-
 
       <View className="flex-1 p-6 bg-white">
         <View className="items-center gap-5">

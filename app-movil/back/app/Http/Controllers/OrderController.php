@@ -7,10 +7,11 @@ use App\Models\Order\Order;
 use App\Models\Order\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
 {
-    public function store(Request $request, $cart_id)
+    public function store($cart_id)
     {
         // Se obtiene el carrito con sus items
         $cart = Cart::with('items')->find($cart_id);
@@ -63,7 +64,7 @@ class OrderController extends Controller
             DB::commit();
 
             return response()->json([
-                'message' => 'Order created successfully',
+                'message' => 'Orden creada con éxito',
                 'order' => $order,
                 'total_items' => $total_quantity,
             ], 201);
@@ -74,5 +75,23 @@ class OrderController extends Controller
                 'details' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function update(Request $request, $order_id)
+    {
+        $order = Order::find($order_id);
+        if (!$order) {
+            return response()->json(['error' => 'Orden no encontrada'], 404);
+        }
+
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('vauchers', 'private');
+
+            $order->url = $path;
+        }
+
+        $order->save();
+
+        return response()->json(['message' => 'Comprobante guardado'], 200);
     }
 }

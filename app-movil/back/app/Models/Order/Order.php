@@ -15,6 +15,7 @@ class Order extends Model
         'number_order',
         'total',
         'total_quantity',
+        'url',
         'status'
     ];
 

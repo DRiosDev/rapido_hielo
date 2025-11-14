@@ -1,12 +1,14 @@
+import { axiosInstance } from "@/axios/axiosInstance";
 import { BackButtonNavegation } from "@/components/navegation/BackButtonNavegation";
 import CustomButton from "@/components/ui/design/CustomButton";
 import CustomTextInput from "@/components/ui/design/CustomTextInput";
+import LoadingOverlay from "@/components/ui/LoadingOverlay";
 import { Colors } from "@/constants/Colors";
 import { useAuthUser } from "@/store/useAuthUser";
 import { useCartStore } from "@/store/useCarts";
 import { Ionicons } from "@expo/vector-icons";
-import { Stack } from "expo-router";
-import React, { useEffect } from "react";
+import { router, Stack } from "expo-router";
+import React, { useEffect, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { Button, Card, IconButton } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -23,6 +25,8 @@ export default function ModalCart() {
     removeAllItems,
   } = useCartStore();
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   useEffect(() => {
     if (userLogged?.id) fetchCartItemCount(userLogged.id);
   }, [userLogged, fetchCartItemCount]);
@@ -38,6 +42,21 @@ export default function ModalCart() {
 
   const totalPrice = useCartStore((state) => state.getTotalPrice());
 
+  const handleOrder = async () => {
+    setIsLoading(true);
+
+    try {
+      /* const response = await axiosInstance.post(`/api/orders/${cartUsed}`); */
+      const orderId = "d27958ab-4a4a-4b8a-88b0-70be38227b7d";
+
+      router.push(`/modal-confirm-payment?order_id=${orderId}`);
+    } catch (error) {
+      console.error("Error al crear orden", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <>
       <Stack.Screen
@@ -48,6 +67,8 @@ export default function ModalCart() {
         }}
       />
 
+      {isLoading && <LoadingOverlay />}
+
       <SafeAreaView
         style={{ flex: 1, padding: 16 }}
         edges={["left", "right", "bottom"]}
@@ -55,10 +76,10 @@ export default function ModalCart() {
         <View style={{ flex: 1 }}>
           <View className="flex-row gap-3 bg-white p-5 rounded-lg shadow shadow-black justify-center mb-5">
             <Ionicons name="location-outline" size={28} color="black" />
-            <Text className="text-2xl font-semibold">{userLogged.address}</Text>
+            <Text className="text-xl font-semibold">{userLogged.address}</Text>
           </View>
 
-          <ScrollView>
+          <ScrollView showsVerticalScrollIndicator={false}>
             {items.length === 0 ? (
               <Text
                 style={{
@@ -133,7 +154,7 @@ export default function ModalCart() {
             )}
           </ScrollView>
 
-          <View className="bg-white p-5 rounded-lg shadow shadow-black">
+          <View className="bg-white p-5 rounded-lg shadow shadow-black mt-5">
             <Text className="text-2xl font-semibold text-center mb-2">
               $ {totalPrice}
             </Text>
@@ -142,7 +163,9 @@ export default function ModalCart() {
               Total ítems en carrito: {itemCount}
             </Text>
 
-            <CustomButton mode="contained">Comprar</CustomButton>
+            <CustomButton onPress={handleOrder} mode="contained">
+              Realizar pedido
+            </CustomButton>
             <CustomButton
               onPress={() => removeAllItems(cartUsed)}
               style={{ backgroundColor: Colors.redError, marginTop: 10 }}
