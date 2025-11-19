@@ -10,7 +10,7 @@ import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Avatar, List } from "react-native-paper";
 
-export default function Settings() {
+export default function Profile() {
   const { userLogged, logout } = useAuthUser();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -31,14 +31,14 @@ export default function Settings() {
   // Configuración de acciones
   const actions = [
     {
-      title: "Mi cuenta",
-      icon: <Ionicons name="person-outline" size={19} color="black" />,
-      onPress: () => router.push("../(modals)/(account)/modal-u-account"),
+      title: "Mis compras",
+      icon: <Ionicons name="bag-handle-outline" size={19} color="black" />,
+      onPress: () => router.push(""),
     },
     {
-      title: "Cambiar contraseña",
-      icon: <Ionicons name="lock-closed-outline" size={19} color="black" />,
-      onPress: () => router.push("../(modals)/(account)/modal-u-password"),
+      title: "Configuración",
+      icon: <Ionicons name="bag-handle-outline" size={19} color="black" />,
+      onPress: () => router.push(""),
     },
     {
       title: "Cerrar sesión",
@@ -71,7 +71,7 @@ export default function Settings() {
             style={{ marginBottom: 20 }}
             onPress={() => router.push("../(modals)/(account)/modal-u-account")}
           >
-            Editar cuenta
+            Editar perfil
           </CustomButton>
         </View>
 

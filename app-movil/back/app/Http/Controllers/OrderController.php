@@ -7,7 +7,6 @@ use App\Models\Order\Order;
 use App\Models\Order\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
 {
@@ -85,7 +84,7 @@ class OrderController extends Controller
         }
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('vauchers', 'private');
+            $path = $request->file('image')->store('vauchers', 'public');
 
             $order->url = $path;
         }

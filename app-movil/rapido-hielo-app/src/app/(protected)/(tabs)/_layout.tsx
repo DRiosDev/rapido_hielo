@@ -66,16 +66,16 @@ export default function _layout() {
         }}
       />
       <Tabs.Screen
-        name="(settings)"
+        name="(profile)"
         options={{
-          title: "Configuración",
+          title: "Perfil",
           headerTitleAlign: "left",
           headerShadowVisible: false,
           headerTitle: (props) => (
             <Text className="text-3xl font-bold">{props.children}</Text>
           ),
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="settings-outline" color={color} size={size} />
+            <Ionicons name="person-outline" color={color} size={size} />
           ),
         }}
       />
