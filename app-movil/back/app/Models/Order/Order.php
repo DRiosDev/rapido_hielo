@@ -15,11 +15,13 @@ class Order extends Model
         'number_order',
         'total',
         'total_quantity',
-        'url',
-        'date_delivery',
-        'hour_delivery',
+        'vaucher',
+        'status',
+
+        'date_dispatch',
+        'time_disdispatch',
+        'address_dispatch',
         'method_payment',
-        'status'
     ];
 
     /**

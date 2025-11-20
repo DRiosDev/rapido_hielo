@@ -4,6 +4,6 @@ export interface Order {
   number_order: number;
   total: number;
   total_quantity: number;
-  status: "pending_payment" | "paid" | "canceled" | "pending_confirmation";
+  status: "pending_payment" | "paid" | "canceled" | "payment_under_review";
   created_at_show?: string;
 }

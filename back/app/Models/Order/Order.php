@@ -11,12 +11,20 @@ class Order extends Model
     use HasFactory;
 
     protected $fillable = [
+        /* datos orden */
         'fk_client_id',
         'number_order',
         'total',
         'total_quantity',
-        'url',
-        'status'
+        'vaucher',
+        'status',
+
+        /* datos para despacho */
+        'date_dispatch',
+        'time_dispatch',
+        'address_dispatch',
+        'method_payment',
+        'status_dispatch'
     ];
 
     /**

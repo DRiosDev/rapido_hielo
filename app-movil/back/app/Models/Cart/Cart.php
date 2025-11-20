@@ -2,6 +2,7 @@
 
 namespace App\Models\Cart;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Ramsey\Uuid\Uuid as RamseyUuid;
@@ -28,8 +29,14 @@ class Cart extends Model
 
     public function items()
     {
-        return $this->hasMany(\App\Models\Cart\CartItem::class, 'fk_cart_id', 'id');
+        return $this->hasMany(CartItem::class, 'fk_cart_id', 'id');
     }
+
+    public function client()
+    {
+        return $this->hasMany(User::class, 'fk_client_id');
+    }
+
 
     public static function boot()
     {

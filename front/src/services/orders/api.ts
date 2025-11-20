@@ -2,10 +2,12 @@ import { axiosInstance } from "../../axios/axiosInstance";
 import { Client } from "../../types/Client";
 import { Order } from "../../types/Order";
 import { PaginatedResponse } from "../../types/pagination";
+import { Product } from "../../types/Product";
 import { QueryParamsBase } from "../../types/query";
 
 export interface OrderWithClient extends Order {
   client?: Partial<Client>; // solo los datos que te interesa del cliente
+  items?: Product[];
 }
 
 //index

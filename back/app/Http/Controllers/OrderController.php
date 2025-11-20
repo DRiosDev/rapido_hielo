@@ -38,6 +38,7 @@ class OrderController extends Controller
         $filters = $request->get('filters', []);
 
         $query = Order::with('client:id,rut,name,lastname,email')
+            ->with('items')
             ->select([
                 'id',
                 'id as key',
@@ -124,9 +125,9 @@ class OrderController extends Controller
         return response()->json($response, 200);
     }
 
-    public function showUrl($order_id)
+    public function showVaucher($order_id)
     {
-        $order = Order::select('id', 'url')->where('id', $order_id)->first();
+        $order = Order::select('id', 'vaucher')->where('id', $order_id)->first();
 
         return response()->json([
             'order' => $order

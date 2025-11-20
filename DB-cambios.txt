@@ -1,1 +1,8 @@
 ALTER TABLE products MODIFY COLUMN price int;
+
+ALTER TABLE orders
+ADD COLUMN status_dispatch VARCHAR(50) NOT NULL DEFAULT 'pending_dispatch'
+AFTER status;
+
+ALTER TABLE orders
+CHANGE COLUMN url vaucher varchar(250);

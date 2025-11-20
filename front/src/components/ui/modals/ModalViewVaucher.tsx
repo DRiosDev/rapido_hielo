@@ -33,14 +33,14 @@ export const ModalViewVaucher = forwardRef<
     setImageUrl(null);
 
     try {
-      const { data } = await axiosInstance.get(`/api/orders/url/${id}`);
+      const { data } = await axiosInstance.get(`/api/orders/vaucher/${id}`);
 
-      if (!data?.order?.url) {
+      if (!data?.order?.vaucher) {
         setAlert({ visible: true, description: "No hay imagen disponible." });
         return;
       }
 
-      const fullUrl = BASE_URL_FILES + data.order.url;
+      const fullUrl = BASE_URL_FILES + data.order.vaucher;
 
       setImageUrl(fullUrl);
     } catch (e: any) {

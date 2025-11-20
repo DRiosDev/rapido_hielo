@@ -9,6 +9,10 @@ import {
   ModalVClient,
   ModalVClientRef,
 } from "../../components/ui/modals/ModalVClient";
+import {
+  ModalViewVaucher,
+  ModalViewVaucherRef,
+} from "../../components/ui/modals/ModalViewVaucher";
 import { SectionPrivateHeader } from "../../components/ui/SectionPrivateHeader";
 import { formatPrice } from "../../helpers/formatPrice";
 import useTableFilters from "../../hooks/table/useTableFiltersV2";
@@ -17,13 +21,14 @@ import { OrderWithClient } from "../../services/orders/api";
 import { useOrders } from "../../services/orders/queries";
 import { Order } from "../../types/Order";
 import {
-  ModalViewVaucher,
-  ModalViewVaucherRef,
-} from "../../components/ui/modals/ModalViewVaucher";
+  ModalShowOrderItems,
+  ModalShowOrderItemsRef,
+} from "../../components/ui/modals/ModalShowOrderItems";
 
 export default function OrdersPrivate() {
   const modalVClientRef = useRef<ModalVClientRef>(null);
   const modalVVaucher = useRef<ModalViewVaucherRef>(null);
+  const ModalSOrderItems = useRef<ModalShowOrderItemsRef>(null);
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -34,6 +39,8 @@ export default function OrdersPrivate() {
     useOrders(tableParams);
 
   const { getColumnSearchProps } = useColumnSearch();
+
+  console.log(data);
 
   const columns: ColumnsType<OrderWithClient> = [
     {
@@ -85,6 +92,15 @@ export default function OrdersPrivate() {
               Pagada
             </span>
           );
+        } else if (text === "payment_under_review") {
+          return (
+            <span
+              className="inline-flex items-center gap-x-1.5 py-1.5
+               px-3 rounded-full text-xs font-medium bg-red-100 text-yellow-500"
+            >
+              Pago en revisión
+            </span>
+          );
         } else if (text === "pending_payment") {
           return (
             <span
@@ -92,15 +108,6 @@ export default function OrdersPrivate() {
                px-3 rounded-full text-xs font-medium bg-red-100 text-orange-500"
             >
               Pago pendiente
-            </span>
-          );
-        } else if (text === "pending_confirmation") {
-          return (
-            <span
-              className="inline-flex items-center gap-x-1.5 py-1.5
-               px-3 rounded-full text-xs font-medium bg-red-100 text-yellow-500"
-            >
-              Pago por confirmar
             </span>
           );
         }
@@ -111,8 +118,12 @@ export default function OrdersPrivate() {
           value: "paid",
         },
         {
-          text: "Pagp pendiente",
+          text: "Pago pendiente",
           value: "pending_payment",
+        },
+        {
+          text: "Pago en revisión",
+          value: "payment_under_review",
         },
         {
           text: "Cancelada",
@@ -170,7 +181,11 @@ export default function OrdersPrivate() {
                 label: (
                   <button
                     className="flex items-center w-full gap-2 py-1"
-                    onClick={() => "modalInfo.current?.childFunction(id)"}
+                    onClick={() => {
+                      if (record.items) {
+                        ModalSOrderItems.current?.childFunction(record.items);
+                      }
+                    }}
                   >
                     <EyeIcon className="size-5 text-text-primary" />
                     <span>Productos</span>
@@ -220,6 +235,7 @@ export default function OrdersPrivate() {
 
       <ModalVClient ref={modalVClientRef} />
       <ModalViewVaucher ref={modalVVaucher} />
+      <ModalShowOrderItems ref={ModalSOrderItems} />
     </>
   );
 }

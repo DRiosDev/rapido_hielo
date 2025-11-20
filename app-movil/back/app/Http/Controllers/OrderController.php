@@ -13,27 +13,39 @@ class OrderController extends Controller
     public function store(Request $request, $cart_id)
     {
         $date_delivery = $request->input('date_delivery');
-        // Se obtiene el carrito con sus items
-        $cart = Cart::with('items')->find($cart_id);
+
+        /** @var \App\Models\Cart\Cart|null $cart */
+        $cart = Cart::with('items', 'client:id,address')->find($cart_id);
 
         if (!$cart) {
             return response()->json(['error' => 'Carro no encontrado'], 404);
         }
 
+        // Asegurar que items sea una Collection para que Intelephense no marque métodos como isEmpty(), sum(), reduce()
+        if (! $cart->items instanceof \Illuminate\Support\Collection) {
+            $cart->setRelation('items', collect($cart->items));
+        }
+
+        $items = $cart->items;
+
         // Verificar si el carrito tiene items
-        if ($cart->items->isEmpty()) {
+        if ($items->isEmpty()) {
             return response()->json(['error' => 'El carro no tiene items'], 400);
         }
 
         // Calcular total y cantidad total
-        $total_quantity = $cart->items->sum('quantity_item');
-        $total = $cart->items->reduce(function ($carry, $item) {
+        $total_quantity = $items->sum('quantity_item');
+        $total = $items->reduce(function ($carry, $item) {
             return $carry + ($item->price_product * $item->quantity_item);
         }, 0);
 
         // Generar número de orden autoincremental
         $last_order = Order::orderBy('number_order', 'desc')->first();
         $next_number = $last_order ? $last_order->number_order + 1 : 1;
+
+        $address_dispatch = $request->input('address_dispatch')
+            ? $request->input('address_dispatch')
+            : $cart->client->address;
 
         DB::beginTransaction();
 
@@ -44,9 +56,10 @@ class OrderController extends Controller
                 'number_order' => $next_number,
                 'total' => $total,
                 'total_quantity' => $total_quantity,
-                'date_delivery' => $date_delivery ? date('Y-m-d', strtotime($date_delivery)) : null,
-                'hour_delivery' => $request->input('hour_delivery'),
+                'date_dispatch' => $date_delivery ? date('d-m-Y', strtotime($date_delivery)) : null,
+                'time_disdispatch' => $request->input('hour_delivery'),
                 'method_payment' => $request->input('method_payment'),
+                'address_dispatch' => $address_dispatch,
                 'status' => 'pending_payment',
             ]);
 
