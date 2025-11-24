@@ -10,7 +10,9 @@ export interface ModalViewVaucherRef {
   childFunction: ChildFunction;
 }
 
-export interface ModalViewVaucherProps {}
+export interface ModalViewVaucherProps {
+  refetchData?: () => void;
+}
 
 export const ModalViewVaucher = forwardRef<
   ModalViewVaucherRef,
@@ -20,6 +22,8 @@ export const ModalViewVaucher = forwardRef<
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
 
+  const [idOrder, setIdOrder] = useState<string>("");
+
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   const [alert, setAlert] = useState({
@@ -27,10 +31,13 @@ export const ModalViewVaucher = forwardRef<
     description: "",
   });
 
+  const { refetchData } = props;
+
   const childFunction: ChildFunction = async (id) => {
     setOpen(true);
     setIsLoadingData(true);
     setImageUrl(null);
+    setIdOrder(id);
 
     try {
       const { data } = await axiosInstance.get(`/api/orders/vaucher/${id}`);
@@ -54,6 +61,21 @@ export const ModalViewVaucher = forwardRef<
     childFunction,
   }));
 
+  const confirmPayment = async (id: string) => {
+    setIsLoadingData(true);
+
+    try {
+      await axiosInstance.put(`/api/orders/confirm-payment/${id}`);
+      messageApi.success("Pago confirmado correctamente");
+      refetchData?.();
+      setOpen(false);
+    } catch (error: any) {
+      messageApi.error(
+        error?.response?.data?.message || "Error al confirmar el pago"
+      );
+    }
+  };
+
   return (
     <Modal
       title="Vaucher depósito"
@@ -73,11 +95,14 @@ export const ModalViewVaucher = forwardRef<
       {!isLoadingData && imageUrl && (
         <>
           <img
+            loading="lazy"
             src={imageUrl}
             alt="voucher"
             style={{ width: "100%", borderRadius: 8, marginTop: 10 }}
           />
-          <Button onClick={() => console.log("pagado")}>Confirmar pago</Button>
+          <Button onClick={() => confirmPayment(idOrder)}>
+            Confirmar pago
+          </Button>
         </>
       )}
 

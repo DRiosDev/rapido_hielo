@@ -4,8 +4,10 @@ import { LoadingSection } from "../loadings/LoadingSeccion";
 import { Product } from "../../../types/Product";
 import { formatPrice } from "../../../helpers/formatPrice";
 import { ColumnsType } from "antd/es/table";
+import { Order } from "../../../types/Order";
+import { getOrderItems } from "../../../services/orders/api";
 
-type ChildFunction = (items: Product[]) => void;
+type ChildFunction = (id: Order["id"]) => void;
 
 export interface ModalShowOrderItemsRef {
   childFunction: ChildFunction;
@@ -19,12 +21,24 @@ export const ModalShowOrderItems = forwardRef<
 >((props, ref) => {
   const [open, setOpen] = useState<boolean>(false);
   const [isLoadingData, setIsLoadingData] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const [data, setData] = useState<Product[]>([]);
 
-  const childFunction: ChildFunction = async (items) => {
+  const childFunction: ChildFunction = async (id) => {
     setOpen(true);
-    setData(items);
+    setIsLoadingData(true);
+
+    try {
+      const data = await getOrderItems(id);
+      setData(data.data);
+    } catch (error: any) {
+      console.log(error);
+      messageApi.error("Ups, algo salió mal. Intenta nuevamente.");
+      setOpen(false);
+    } finally {
+      setIsLoadingData(false);
+    }
   };
 
   useImperativeHandle(ref, () => ({
@@ -59,6 +73,8 @@ export const ModalShowOrderItems = forwardRef<
       onCancel={() => setOpen(false)}
       footer={null}
     >
+      {contextHolder}
+
       {/* loading */}
       <div className={`${isLoadingData ? "pt-5 flex" : "hidden"}`}>
         <LoadingSection />

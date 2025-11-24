@@ -1,65 +1,39 @@
-import { Dropdown, message, Table } from "antd";
-import { ColumnsType } from "antd/es/table";
-import { useRef } from "react";
-import { ClearFiltersIcon } from "../../components/ui/icons/ClearFiltersIcon";
-import { ClientMoreIcon } from "../../components/ui/icons/ClientMoreIcon";
-import { EyeIcon } from "../../components/ui/icons/EyeIcon";
-import { MoreHorizontalIcon } from "../../components/ui/icons/MoreHorizontalIcon";
-import {
-  ModalShowOrderItems,
-  ModalShowOrderItemsRef,
-} from "../../components/ui/modals/ModalShowOrderItems";
-import {
-  ModalVClient,
-  ModalVClientRef,
-} from "../../components/ui/modals/ModalVClient";
-import {
-  ModalViewVaucher,
-  ModalViewVaucherRef,
-} from "../../components/ui/modals/ModalViewVaucher";
+import React from "react";
 import { SectionPrivateHeader } from "../../components/ui/SectionPrivateHeader";
-import { formatPrice } from "../../helpers/formatPrice";
+import { message, Table } from "antd";
+import { ClearFiltersIcon } from "../../components/ui/icons/ClearFiltersIcon";
 import useTableFilters from "../../hooks/table/useTableFiltersV2";
+import { useDispatches } from "../../services/dispatches/queries";
 import useColumnSearch from "../../hooks/useColumnSearch";
-import { OrderWithClient } from "../../services/orders/api";
-import { useOrders } from "../../services/orders/queries";
+import { ColumnsType } from "antd/es/table";
+import { Dispatch } from "../../types/Dispatch";
 import { Order } from "../../types/Order";
+import { axiosInstance } from "../../axios/axiosInstance";
 
-export default function OrdersPrivate() {
-  const modalVClientRef = useRef<ModalVClientRef>(null);
-  const modalVVaucher = useRef<ModalViewVaucherRef>(null);
-  const ModalSOrderItems = useRef<ModalShowOrderItemsRef>(null);
-
+export default function DispatchPrivate() {
   const [messageApi, contextHolder] = message.useMessage();
 
   const { tableParams, tableKey, resetFilters, handleTableChange } =
     useTableFilters();
 
   const { data, isLoading, isError, error, isFetching, refetch, isBaseQuery } =
-    useOrders(tableParams);
+    useDispatches(tableParams);
 
   const { getColumnSearchProps } = useColumnSearch();
 
-  const columns: ColumnsType<OrderWithClient> = [
+  const rowSelection = {
+    onChange: (selectedRowKeys: React.Key[], selectedRows: Dispatch[]) => {
+      console.log("Seleccionadas:", selectedRowKeys, selectedRows);
+    },
+  };
+
+  const columns: ColumnsType<Dispatch> = [
     {
       title: "Número orden",
       dataIndex: "number_order",
       key: "number_order",
       width: 170,
       ...getColumnSearchProps("number_order"),
-      sorter: true,
-    },
-    {
-      title: "Total",
-      dataIndex: "total",
-      key: "total",
-      render: (text: number) => <p>{formatPrice(text)}</p>,
-      sorter: true,
-    },
-    {
-      title: "Total productos",
-      dataIndex: "total_quantity",
-      key: "total_quantity",
       sorter: true,
     },
     {
@@ -70,9 +44,10 @@ export default function OrdersPrivate() {
       ),
     },
     {
-      title: "RUT cliente",
-      key: "client_rut",
-      render: (_, record) => <span>{record.client?.rut}</span>,
+      title: "Total productos",
+      dataIndex: "total_quantity",
+      key: "total_quantity",
+      sorter: true,
     },
     {
       title: "Estado",
@@ -130,6 +105,97 @@ export default function OrdersPrivate() {
       ],
     },
     {
+      title: "Dia de despacho",
+      dataIndex: "date_dispatch",
+      key: "date_dispatch",
+      sorter: true,
+    },
+    {
+      title: "Hora de despacho",
+      dataIndex: "time_dispatch",
+      key: "time_dispatch",
+      sorter: true,
+    },
+    {
+      title: "Despacho",
+      dataIndex: "status_dispatch",
+      key: "status_dispatch",
+      sorter: true,
+      render: (text: Dispatch["status_dispatch"]) => {
+        if (text === "delivered") {
+          return (
+            <span
+              className="inline-flex items-center gap-x-1.5
+               py-1.5 px-3 rounded-full text-xs font-medium
+               bg-green-100 text-green-500"
+            >
+              Entregada
+            </span>
+          );
+        } else if (text === "in_route") {
+          return (
+            <span
+              className="inline-flex items-center gap-x-1.5 py-1.5
+               px-3 rounded-full text-xs font-medium bg-red-100 text-yellow-500"
+            >
+              En ruta
+            </span>
+          );
+        } else if (text === "pending_dispatch") {
+          return (
+            <span
+              className="inline-flex items-center gap-x-1.5 py-1.5
+               px-3 rounded-full text-xs font-medium bg-red-100 text-orange-500"
+            >
+              Despacho pendiente
+            </span>
+          );
+        }
+      },
+      filters: [
+        {
+          text: "Entegado",
+          value: "delivered",
+        },
+        {
+          text: "En ruta",
+          value: "in_route",
+        },
+        {
+          text: "pendiente de despacho",
+          value: "pending_dispatch",
+        },
+      ],
+    },
+    {
+      title: "Metodo de pago",
+      dataIndex: "method_payment",
+      key: "method_payment",
+      sorter: true,
+      render: (text: Dispatch["method_payment"]) => {
+        if (text === 1) {
+          return (
+            <span
+              className="inline-flex items-center gap-x-1.5
+               py-1.5 px-3 rounded-full text-xs font-medium
+               bg-gray-100 text-gray-500"
+            >
+              Pago efectivo
+            </span>
+          );
+        } else if (text === 2) {
+          return (
+            <span
+              className="inline-flex items-center gap-x-1.5 py-1.5
+               px-3 rounded-full text-xs font-medium bg-gray-100 text-gray-500"
+            >
+              Pago transferencia
+            </span>
+          );
+        }
+      },
+    },
+    /* {
       title: "Acciones",
       dataIndex: "id",
       key: "id",
@@ -140,7 +206,7 @@ export default function OrdersPrivate() {
           trigger={["click"]}
           menu={{
             items: [
-              /* Usuarios */
+              //Usuarios 
               {
                 key: "1",
                 label: (
@@ -158,7 +224,7 @@ export default function OrdersPrivate() {
                   </button>
                 ),
               },
-              /* Vaucher */
+              //Vaucher 
               {
                 key: "2",
                 label: (
@@ -173,7 +239,7 @@ export default function OrdersPrivate() {
                   </button>
                 ),
               },
-              /* mas info */
+              // mas info 
               {
                 key: "3",
                 label: (
@@ -198,13 +264,12 @@ export default function OrdersPrivate() {
           </a>
         </Dropdown>
       ),
-    },
+    }, */
   ];
 
   return (
     <>
-      {contextHolder}
-      <SectionPrivateHeader title="Ordenes" existsButton={false} />
+      <SectionPrivateHeader title="Despachos" existsButton={false} />
 
       <div className="flex flex-col items-end gap-2 mb-3">
         <button
@@ -216,7 +281,8 @@ export default function OrdersPrivate() {
         </button>
       </div>
 
-      <Table<OrderWithClient>
+      <Table<Dispatch>
+        rowSelection={rowSelection}
         columns={columns}
         dataSource={data?.data}
         key={tableKey}
@@ -230,10 +296,6 @@ export default function OrdersPrivate() {
         loading={isLoading}
         scroll={{ x: 1000 }}
       />
-
-      <ModalVClient ref={modalVClientRef} />
-      <ModalViewVaucher ref={modalVVaucher} refetchData={refetch} />
-      <ModalShowOrderItems ref={ModalSOrderItems} />
     </>
   );
 }

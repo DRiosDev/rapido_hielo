@@ -34,7 +34,7 @@ class Cart extends Model
 
     public function client()
     {
-        return $this->hasMany(User::class, 'fk_client_id');
+        return $this->belongsTo(User::class, 'fk_client_id', 'id');
     }
 
 

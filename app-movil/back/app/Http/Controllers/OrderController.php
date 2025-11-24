@@ -56,8 +56,8 @@ class OrderController extends Controller
                 'number_order' => $next_number,
                 'total' => $total,
                 'total_quantity' => $total_quantity,
-                'date_dispatch' => $date_delivery ? date('d-m-Y', strtotime($date_delivery)) : null,
-                'time_disdispatch' => $request->input('hour_delivery'),
+                'date_dispatch' => $date_delivery ? date('Y-m-d', strtotime($date_delivery)) : null,
+                'time_dispatch' => $request->input('hour_delivery'),
                 'method_payment' => $request->input('method_payment'),
                 'address_dispatch' => $address_dispatch,
                 'status' => 'pending_payment',
@@ -104,7 +104,7 @@ class OrderController extends Controller
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('vauchers', 'public');
 
-            $order->url = $path;
+            $order->vaucher = $path;
             $order->status = 'payment_under_review';
         }
 

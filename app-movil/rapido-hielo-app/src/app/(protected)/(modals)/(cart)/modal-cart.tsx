@@ -74,7 +74,7 @@ export default function ModalCart() {
         router.push("/"); // home
       }
     } catch (error) {
-      console.error("Error al crear orden", error);
+      console.error("Error al crear orden", error.response.data);
     } finally {
       setIsLoading(false);
     }

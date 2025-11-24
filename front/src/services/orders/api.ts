@@ -23,7 +23,7 @@ export const getOrders = async (
 export const getOrderItems = async (
   id: Order["id"],
   params?: QueryParamsBase
-): Promise<PaginatedResponse<OrderWithClient>> => {
+): Promise<PaginatedResponse<Product>> => {
   const { data } = await axiosInstance.get(`/api/orders/items/${id}`, {
     params,
   });

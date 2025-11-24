@@ -1,6 +1,7 @@
 import { Role } from "../types/roles";
 import {
   CLIENTSPRIVATE,
+  DISPATCHPRIVATE,
   LOGOUT,
   MYACCOUNTPRIVATE,
   ORDERSPRIVATE,
@@ -21,6 +22,7 @@ export const routePermissions: Record<Role, string[]> = {
   //rutas admin
   [Role.ADMIN]: [
     ORDERSPRIVATE,
+    DISPATCHPRIVATE,
     USERSPRIVATE,
     CLIENTSPRIVATE,
     PRODUCTSPRIVATE,

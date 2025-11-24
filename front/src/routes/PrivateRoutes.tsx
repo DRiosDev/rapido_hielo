@@ -3,6 +3,7 @@ import { Route } from "react-router-dom";
 
 import {
   CLIENTSPRIVATE,
+  DISPATCHPRIVATE,
   LOGOUT,
   MYACCOUNTPRIVATE,
   ORDERSPRIVATE,
@@ -20,6 +21,7 @@ const MyAccountPrivate = lazy(
 import Logout from "../views/private/Logout";
 import PrivateUsers from "../views/private/PrivateUsers";
 import OrdersPrivate from "../views/private/OrdersPrivate";
+import DispatchPrivate from "../views/private/DispatchPrivate";
 
 export const PrivateRoutes = () => {
   return (
@@ -28,6 +30,7 @@ export const PrivateRoutes = () => {
         <Route index element={<PrivateUsers />} />
         <Route path={MYACCOUNTPRIVATE} element={<MyAccountPrivate />} />
         <Route path={ORDERSPRIVATE} element={<OrdersPrivate />} />
+        <Route path={DISPATCHPRIVATE} element={<DispatchPrivate />} />
         <Route path={USERSPRIVATE} element={<UsersPrivate />} />
         <Route path={CLIENTSPRIVATE} element={<ClientsPrivate />} />
         <Route path={PRODUCTSPRIVATE} element={<ProductsPrivate />} />

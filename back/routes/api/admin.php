@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\DispatchController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
@@ -34,4 +35,9 @@ Route::prefix('orders')->controller(OrderController::class)->group(function () {
     Route::get('/', 'index');
     Route::get('/items/{order_id}', 'showOrderItems');
     Route::get('/vaucher/{order_id}', 'showVaucher');
+    Route::put('/confirm-payment/{order_id}', 'confirmPayment');
+});
+
+Route::prefix('dispatches')->controller(DispatchController::class)->group(function () {
+    Route::get('/', 'index');
 });

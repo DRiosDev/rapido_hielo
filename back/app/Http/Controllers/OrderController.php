@@ -6,6 +6,7 @@ use App\Models\Order\Order;
 use App\Models\Order\OrderItem;
 use App\Traits\Filterable;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class OrderController extends Controller
 {
@@ -37,8 +38,7 @@ class OrderController extends Controller
         $order = $request->get('order', 'desc');
         $filters = $request->get('filters', []);
 
-        $query = Order::with('client:id,rut,name,lastname,email')
-            ->with('items')
+        $query = Order::with('client:id,rut,name,lastname')
             ->select([
                 'id',
                 'id as key',
@@ -46,7 +46,6 @@ class OrderController extends Controller
                 'number_order',
                 'total',
                 'total_quantity',
-                'url',
                 'status',
                 'created_at as created_at_show'
             ]);
@@ -132,5 +131,30 @@ class OrderController extends Controller
         return response()->json([
             'order' => $order
         ], 200);
+    }
+
+    public function confirmPayment($order_id)
+    {
+        $order = Order::find($order_id);
+
+        if (!$order) {
+            return response()->json(['error' => 'Orden no encontrada'], 404);
+        }
+
+        // 1. llamar al backend de archivos para borrar el voucher
+        if ($order->vaucher) {
+            $file_server_url = "https://c83230a5b724.ngrok-free.app/api/delete-file";
+
+            Http::delete($file_server_url, [
+                "path" => $order->vaucher
+            ]);
+        }
+
+        // 2. actualizar estado de pago
+        $order->status = 'paid';
+        $order->vaucher = null;
+        $order->save();
+
+        return response()->json(['message' => 'Pago confirmado']);
     }
 }

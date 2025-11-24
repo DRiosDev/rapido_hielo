@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import {
   CLIENTSPRIVATE,
+  DISPATCHPRIVATE,
   LOGOUT,
   ORDERSPRIVATE,
   PRODUCTSPRIVATE,
@@ -39,6 +40,16 @@ export const linksRoleAdmin = [
   getItem(
     <p className="title_menu_item">Ordenes</p>,
     ORDERSPRIVATE,
+    //Icons
+    <div className="contenedor_icon_menu_item">
+      <MenuHamburgerIcon
+        className={"color_icon_menu_item tamaño_icon_menu_item"}
+      />
+    </div>
+  ),
+  getItem(
+    <p className="title_menu_item">Despachos</p>,
+    DISPATCHPRIVATE,
     //Icons
     <div className="contenedor_icon_menu_item">
       <MenuHamburgerIcon
