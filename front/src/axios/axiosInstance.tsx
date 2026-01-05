@@ -11,7 +11,7 @@ interface ShowModal {
 }
 
 //LOCAL
-export const baseURL = "http://127.0.0.1:8001";
+export const baseURL = "http://127.0.0.1:8000";
 
 //DEV
 /* export const baseURL = "https://apidevpos.vortexpos.com";  */

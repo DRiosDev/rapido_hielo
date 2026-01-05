@@ -26,7 +26,7 @@ export const MenuSidebar = ({ closeDrawer }: MenuSidebarProps) => {
 
   useEffect(() => {
     if (isAuthenticated && userLogged != null) {
-      if (userLogged.role === "admin") {
+      if (userLogged.role === "admin" || userLogged.role === "owner") {
         setMenuItems(linksRoleAdmin);
       } else {
         setMenuItems(linksRoleNormal);

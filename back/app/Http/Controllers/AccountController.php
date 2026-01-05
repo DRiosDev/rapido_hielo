@@ -7,9 +7,7 @@ use App\Http\Requests\Account\UpdateAccountRequest;
 use App\Mail\Password\ResetPasswordMail;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class AccountController extends Controller
 {
@@ -30,11 +28,23 @@ class AccountController extends Controller
     {
         $user = Auth::user();
 
-        $user = User::select('id', 'name', 'lastname', 'email', 'role', 'status')
+        $user = User::with(['client:user_id,name,lastname', 'staff:user_id,name,lastname'])
+            ->select('id', 'email', 'role', 'status')
             ->where('id', $user->id)
             ->firstOrFail();
 
-        return response()->json($user);
+        return response()->json([
+            'id' => $user->id,
+            'email' => $user->email,
+            'role' => $user->role,
+            'status' => $user->status,
+            'name' => $user->role === 'client'
+                ? $user->client?->name
+                : $user->staff?->name,
+            'lastname' => $user->role === 'client'
+                ? $user->client?->lastname
+                : $user->staff?->lastname,
+        ]);
     }
 
     public function updatePassword(ChangePasswordRequest $request)
