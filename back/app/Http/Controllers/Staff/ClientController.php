@@ -91,9 +91,9 @@ class ClientController extends Controller
                 'rut',
                 'name',
                 'lastname',
-                'users.email',
-                'users.phone',
-                'users.role',
+                'email',
+                'phone',
+                'role',
                 'address',
                 'clients.created_at as created_at_show'
             ]);
