@@ -1,17 +1,10 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Client\CartController;
 use App\Http\Controllers\Client\CartItemController;
 use App\Http\Controllers\Client\OrderController;
 use App\Http\Controllers\Client\ProductController;
-
-Route::prefix('account')->controller(AccountController::class)->group(function () {
-    Route::get('/', 'show');
-    Route::put('/', 'update');
-    Route::patch('/password', 'updatePassword');
-});
+use Illuminate\Support\Facades\Route;
 
 Route::prefix('products')->controller(ProductController::class)->group(function () {
     Route::get('/', 'show');

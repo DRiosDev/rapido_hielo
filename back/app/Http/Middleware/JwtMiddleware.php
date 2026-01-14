@@ -26,12 +26,7 @@ class JwtMiddleware
             $id = $payload->get('id') ?? $payload->get('sub');
 
             // intentar encontrar primero en users
-            $user = User::select('id', 'status')->find($id);
-
-            // si no existe en users, buscar en clients
-            if (!$user) {
-                $user = Client::select('id', 'status')->find($id);
-            }
+            $user = User::select('id', 'status', 'role')->find($id);
 
             // Autenticar al usuario sin cargar todos los datos
             Auth::setUser($user);

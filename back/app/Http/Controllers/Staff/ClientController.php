@@ -86,21 +86,23 @@ class ClientController extends Controller
 
         $query = Client::query()
             ->select([
-                'id',
-                'id as key',
+                'user_id as id',
+                'user_id as key',
                 'rut',
                 'name',
-                'email',
                 'lastname',
+                'users.email',
+                'users.phone',
+                'users.role',
                 'address',
-                'status',
-                'created_at as created_at_show'
+                'clients.created_at as created_at_show'
             ]);
 
         $this->applyInFilters($query, $filters, ['rut', 'status']); // Aplicar filtros whereIn de forma dinámica
         $this->applyLikeFilters($query, $filters, ['name', 'lastname', 'email']); // Aplicar filtros LIKE de forma dinámica
 
         $paginated_data = $query->orderBy($field, $order)
+            ->leftjoin('users', 'clients.user_id', '=', 'users.id')
             ->paginate($page_size, ['*'], 'page', $current);
 
         $response = [

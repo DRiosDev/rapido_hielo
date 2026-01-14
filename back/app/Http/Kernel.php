@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\CheckUserRole;
 use App\Http\Middleware\CheckUserStatus;
 use App\Http\Middleware\ClientActiveMiddleware;
 use App\Http\Middleware\JwtMiddleware;
@@ -74,5 +75,6 @@ class Kernel extends HttpKernel
         'client.active' => ClientActiveMiddleware::class,
         'user.active' => CheckUserStatus::class,
         'user.admin' => UserAdminMiddleware::class,
+        'user.role' => CheckUserRole::class
     ];
 }
