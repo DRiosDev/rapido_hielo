@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Staff;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\CreateUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
+use App\Models\Staff;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -82,22 +83,23 @@ class UserController extends Controller
         $order = $request->get('order', 'desc');
         $filters = $request->get('filters', []);
 
-        $query = User::query()
+        $query = Staff::query()
             ->select([
-                'id',
-                'id as key',
+                'user_id as id',
+                'user_id as key',
                 'name',
                 'email',
                 'lastname',
                 'role',
                 'status',
-                'created_at as created_at_show'
+                'staff.created_at as created_at_show'
             ]);
 
         $this->applyInFilters($query, $filters, ['role', 'status']); // Aplicar filtros whereIn de forma dinámica
         $this->applyLikeFilters($query, $filters, ['name', 'lastname', 'email']); // Aplicar filtros LIKE de forma dinámica
 
         $paginated_data = $query->orderBy($field, $order)
+            ->leftjoin('users', 'users.id', '=', 'staff.user_id')
             ->paginate($page_size, ['*'], 'page', $current);
 
         $response = [
