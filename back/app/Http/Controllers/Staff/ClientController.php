@@ -6,10 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Client\CreateClientRequest;
 use App\Http\Requests\Client\UpdateClientRequest;
 use App\Models\Client;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Traits\Filterable;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class ClientController extends Controller
 {
@@ -17,24 +20,39 @@ class ClientController extends Controller
 
     public function createClient(CreateClientRequest $request)
     {
+        DB::beginTransaction();
+
         $password = Str::random(8);
 
-        $client = Client::create([
-            'rut' => $request->get('rut'),
-            'name' =>  $request->get('name'),
-            'lastname' =>  $request->get('lastname'),
-            'email' => $request->get('email'),
-            'password' => Hash::make($password),
-            'address' => $request->get('address'),
-        ]);
+        try {
+            $user = User::create([
+                'email' => $request->get('email'),
+                'password' => Hash::make($password),
+                'role' => 'client'
+            ]);
 
-        $client->key = $client->id;
-        $client->status = "active";
+            $client = Client::create([
+                'user_id' => $user->id,
+                'rut' => $request->get('rut'),
+                'name' => $request->get('name'),
+                'lastname' => $request->get('lastname'),
+                'address' => $request->get('address'),
+            ]);
 
-        return response()->json([
-            'message' => "Cliente creado con éxito",
-            'register' => $client,
-        ], 201);
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Cliente creado con éxito',
+                'register' => $client,
+            ], 201);
+        } catch (Throwable $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'Error al crear el cliente',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function updateClient(UpdateClientRequest $request, $id)
@@ -49,7 +67,6 @@ class ClientController extends Controller
             'rut' => $request->input('rut'),
             'name' => $request->input('name'),
             'lastname' => $request->input('lastname'),
-            'email' => $request->input('email'),
             'address' => $request->input('address'),
         ]);
 
@@ -113,11 +130,12 @@ class ClientController extends Controller
         return response()->json($response, 200);
     }
 
-    public function show(Request $request, $id)
+    public function show($id)
     {
 
         $client = Client::select('rut', 'name', 'lastname', 'email', 'address')
-            ->where('id', $id)
+            ->leftjoin('users', 'clients.user_id', '=', 'users.id')
+            ->where('user_id', $id)
             ->where('status', 'active')
             ->firstOrFail();
 
@@ -126,7 +144,7 @@ class ClientController extends Controller
 
     public function changeStatusClient($id)
     {
-        $client = Client::select('id', 'status')->where('id', $id)->first();
+        $client = User::select('id', 'status')->where('id', $id)->first();
 
         if (!$client) {
             return response()->json(['message' => 'Usuario no encontrado.'], 404);

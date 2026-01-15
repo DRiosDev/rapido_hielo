@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Traits\Filterable;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -18,6 +19,8 @@ class UserController extends Controller
 
     public function createUser(CreateUserRequest $request)
     {
+        DB::beginTransaction();
+
         $password = Str::random(8);
 
         $user = User::create([
