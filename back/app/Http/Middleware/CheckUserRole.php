@@ -19,6 +19,10 @@ class CheckUserRole
         try {
             $user = Auth::user();
 
+            error_log(json_encode($user->role));
+
+            error_log(json_encode($roles));
+
             // Permitir si el rol del usuario está en la lista de roles permitidos
             if (! in_array($user->role, $roles)) {
                 return response()->json(['msg_middleware' => 'No tienes acceso a estos modulos'], 401);

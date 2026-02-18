@@ -27,7 +27,8 @@ class CreateClientRequest extends FormRequest
             'rut' => 'required|string|min:12|max:13|unique:clients,rut',
             'name' => 'required|string|min:2|max:25',
             'lastname' => 'required|string|min:2|max:25',
-            'email' => 'required|string|max:' . config('limits.email_max_length') . '|unique:clients,email',
+            'email' => 'required|string|max:' . config('limits.email_max_length') . '|unique:users,email',
+            'phone' => 'required|string|min:9|max:9',
             'address' => 'required|string|min:4|max:100',
         ];
     }

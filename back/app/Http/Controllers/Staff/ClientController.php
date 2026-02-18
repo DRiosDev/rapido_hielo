@@ -18,6 +18,7 @@ class ClientController extends Controller
 {
     use Filterable;
 
+
     public function createClient(CreateClientRequest $request)
     {
         DB::beginTransaction();
@@ -27,6 +28,7 @@ class ClientController extends Controller
         try {
             $user = User::create([
                 'email' => $request->get('email'),
+                'phone' => $request->get('phone'),
                 'password' => Hash::make($password),
                 'role' => 'client'
             ]);
