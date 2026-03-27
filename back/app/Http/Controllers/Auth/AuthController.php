@@ -57,7 +57,7 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         // 🔹 Buscar manualmente el usuario
-        $user = User::where('email', $credentials['email'])->first();
+        $user = User::select('id', 'email', 'password', 'role', 'status')->where('email', $credentials['email'])->first();
 
         if (!$user) {
             return response()->json(['message' => 'Credenciales inválidas'], 401);

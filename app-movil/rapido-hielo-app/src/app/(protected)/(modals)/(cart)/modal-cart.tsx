@@ -7,7 +7,7 @@ import { useAuthUser } from "@/store/useAuthUser";
 import { useCartStore } from "@/store/useCarts";
 import { Ionicons } from "@expo/vector-icons";
 import { router, Stack } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { use, useEffect, useRef, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { Button, Card, IconButton, Menu } from "react-native-paper";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -37,6 +37,7 @@ export default function ModalCart() {
 
   useEffect(() => {
     if (userLogged?.id) fetchCartItemCount(userLogged.id);
+    console.log(userLogged);
   }, [userLogged, fetchCartItemCount]);
 
   const handleQuantityChange = (id: string, value: string | number) => {

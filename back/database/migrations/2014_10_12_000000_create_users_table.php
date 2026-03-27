@@ -20,8 +20,6 @@ return new class extends Migration
             $table->string('status')->default('active');
             $table->string('reset_password_token')->nullable();
             $table->timestamp('reset_password_token_expiration')->nullable();
-            $table->timestamp('last_request_at')->nullable();
-            $table->rememberToken();
             $table->timestamps();
         });
     }

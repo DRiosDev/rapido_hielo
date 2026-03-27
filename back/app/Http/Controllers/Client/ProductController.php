@@ -12,7 +12,7 @@ class ProductController extends Controller
 {
     use Filterable;
 
-    public function show(Request $request)
+    public function index(Request $request)
     {
         $request->validate([
             'current' => 'nullable|integer|min:1',

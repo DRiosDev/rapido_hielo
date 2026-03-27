@@ -17,6 +17,7 @@ return new class extends Migration
             $table->uuid('fk_cart_id');
             $table->string('name_product');
             $table->integer('price_product');
+            $table->unsignedInteger('quantity_item')->default(1);
 
             $table->foreign('fk_product_id')->references('id')->on('products');
             $table->foreign('fk_cart_id')->references('id')->on('carts');

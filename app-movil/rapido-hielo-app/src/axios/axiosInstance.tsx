@@ -4,7 +4,7 @@ import { Alert, Linking } from "react-native";
 import { useAuthUser } from "../store/useAuthUser";
 
 //LOCAL
-export const baseURL = "https://c83230a5b724.ngrok-free.app";
+export const baseURL = "https://uncordial-apologal-carlene.ngrok-free.dev";
 
 //DEV
 /* export const baseURL = "https://apidevpos.vortexpos.com";  */
@@ -41,7 +41,7 @@ axiosInstance.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 axiosInstance.interceptors.response.use(
@@ -61,9 +61,8 @@ axiosInstance.interceptors.response.use(
         await SecureStore.setItemAsync("token", data.access_token); // Guardamos el nuevo token
 
         // Actualizamos la petición original con el nuevo token
-        originalRequest.headers[
-          "Authorization"
-        ] = `Bearer ${data.access_token}`;
+        originalRequest.headers["Authorization"] =
+          `Bearer ${data.access_token}`;
 
         // Reintentamos la petición original
         return axiosInstance(originalRequest);
@@ -74,7 +73,7 @@ axiosInstance.interceptors.response.use(
           "Sesión expirada",
           "Por seguridad, tu sesión ha expirado. Por favor, vuelve a iniciar sesión.",
           [{ text: "Cancelar", style: "cancel" }],
-          { cancelable: true }
+          { cancelable: true },
         );
 
         useAuthUser.getState().logout();
@@ -87,7 +86,7 @@ axiosInstance.interceptors.response.use(
         "Tu cuenta está desactivada. Acceso denegado.",
         "Serás redirigido al login.",
         [{ text: "Cancelar", style: "cancel" }],
-        { cancelable: true }
+        { cancelable: true },
       );
     } else if (error?.response?.status === 500) {
       const extraMessage =
@@ -109,10 +108,10 @@ axiosInstance.interceptors.response.use(
           },
           { text: "Cancelar", style: "cancel" },
         ],
-        { cancelable: true }
+        { cancelable: true },
       );
     }
 
     return Promise.reject(error);
-  }
+  },
 );

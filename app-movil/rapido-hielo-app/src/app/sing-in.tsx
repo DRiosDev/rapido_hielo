@@ -69,7 +69,7 @@ export default function SingIn() {
 
           <Formik
             initialValues={{
-              email: "dr@yopmail.com",
+              email: "d.cliente@yopmail.com",
               password: "12345678",
             }}
             validationSchema={LoginSchema}

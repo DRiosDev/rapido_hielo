@@ -7,7 +7,7 @@ use App\Http\Controllers\Client\ProductController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('products')->controller(ProductController::class)->group(function () {
-    Route::get('/{id_product}', 'show');
+    Route::get('/', 'index');
 });
 
 Route::prefix('carts')->controller(CartController::class)->group(function () {
