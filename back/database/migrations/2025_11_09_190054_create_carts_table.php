@@ -16,7 +16,7 @@ return new class extends Migration
             $table->uuid('fk_client_id');
             $table->string('status');
 
-            $table->foreign('fk_client_id')->references('user_id')->on('clients');
+            $table->foreign('fk_client_id')->references('id')->on('clients');
             $table->timestamps();
         });
     }

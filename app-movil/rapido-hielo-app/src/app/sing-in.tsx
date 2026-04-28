@@ -59,31 +59,32 @@ export default function SingIn() {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <SafeAreaView
-        className="justify-between flex-1 px-6 bg-white"
+        className="flex-1 px-6 bg-white"
         style={{ paddingBottom: insets.bottom + 10 }}
       >
-        <View>
-          <Text className="w-full mb-10 text-3xl font-bold text-center">
-            Inicio de sesión
-          </Text>
+        <Text className="w-full mb-10 text-3xl font-bold text-center">
+          Inicio de sesión
+        </Text>
 
-          <Formik
-            initialValues={{
-              email: "d.cliente@yopmail.com",
-              password: "12345678",
-            }}
-            validationSchema={LoginSchema}
-            onSubmit={onSubmit}
-          >
-            {({
-              handleChange,
-              handleBlur,
-              handleSubmit,
-              values,
-              errors,
-              touched,
-            }) => (
-              <View className="flex justify-center w-full">
+        <Formik
+          initialValues={{
+            email: "david@yopmail.com",
+            password: "12345678",
+          }}
+          validationSchema={LoginSchema}
+          onSubmit={onSubmit}
+        >
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            values,
+            errors,
+            touched,
+          }) => (
+            <View className="flex-1 justify-between">
+              {/* PARTE SUPERIOR */}
+              <View>
                 <CustomTextInput
                   label="Correo electrónico"
                   value={values.email}
@@ -116,33 +117,27 @@ export default function SingIn() {
                     ¿Olvidaste la contraseña?
                   </Text>
                 </TouchableOpacity>
-
-                <View className="mt-10">
-                  <CustomButton
-                    loading={loadingButton}
-                    disabled={loadingButton}
-                    onPress={() => handleSubmit()}
-                  >
-                    Iniciar sesión
-                  </CustomButton>
-                </View>
               </View>
-            )}
-          </Formik>
-        </View>
 
-        <View>
-          <Text className="w-full pt-6 pb-4 text-lg text-center text-text-secondary">
-            ¿No tienes cuenta?
-          </Text>
+              {/* PARTE INFERIOR (BOTONES) */}
+              <View className="mt-10">
+                <CustomButton
+                  loading={loadingButton}
+                  disabled={loadingButton}
+                  onPress={() => handleSubmit()}
+                >
+                  Iniciar sesión
+                </CustomButton>
 
-          <CustomButton
-            mode="outlined"
-            onPress={() => router.navigate("/sing-up")}
-          >
-            Registrate
-          </CustomButton>
-        </View>
+                <TouchableOpacity onPress={() => router.replace("/sing-up")}>
+                  <Text className="mt-6 text-center text-primary">
+                    ¿No tienes cuenta? Registrate
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+        </Formik>
       </SafeAreaView>
     </TouchableWithoutFeedback>
   );

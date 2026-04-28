@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Staff\UserController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -12,6 +13,15 @@ use Illuminate\Support\Facades\Route;
  */
 
 require __DIR__ . '/api/public-routes.php';
+
+Route::prefix('users')->controller(UserController::class)->group(function () {
+    Route::post('/', 'createUser');
+    Route::put('/{id_user}', 'updateUser')->whereUuid('id_user');
+    Route::patch('/{id_user}', 'changeStatusUser')->whereUuid('id_user');
+    Route::get('/', 'getUsers');
+    Route::get('/{id_user}', 'show');
+    Route::put('/password', 'changePassword');
+});
 
 Route::middleware(['jwt.verify', 'user.active'])->group(function () {
 

@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Models\User;
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Models\Client;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -18,7 +18,7 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         // 🔹 Buscar manualmente el usuario
-        $user = User::where('email', $credentials['email'])->first();
+        $user = client::select('id', 'name', 'lastname', 'address', 'phone', 'email', 'password',  'status')->where('email', $credentials['email'])->first();
 
         if (!$user) {
             return response()->json(['message' => 'Credenciales inválidas'], 401);
@@ -41,6 +41,21 @@ class AuthController extends Controller
             'token' => $token,
             'user' => $user,
         ]);
+    }
+
+    public function register(RegisterRequest $request)
+    {
+        Client::create([
+            'name' => $request->get('name'),
+            'lastname' => $request->get('lastname'),
+            'address' => $request->get('address'),
+            'phone' => $request->get('phone'),
+            'email' => $request->get('email'),
+            'phone' => "+56" . $request->get('phone'),
+            'password' => Hash::make($request->get('password')),
+        ]);
+
+        return response()->json(['message' => 'Usuario creado'], 201);
     }
 
     public function logout()

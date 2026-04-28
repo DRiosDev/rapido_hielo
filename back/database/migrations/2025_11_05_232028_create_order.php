@@ -25,7 +25,7 @@ return new class extends Migration
             $table->longText('url_vaucher');
 
             $table->timestamps();
-            $table->foreign('fk_client_id')->references('user_id')->on('clients');
+            $table->foreign('fk_client_id')->references('id')->on('clients');
         });
     }
 
