@@ -28,6 +28,7 @@ class UpdateUserRequest extends FormRequest
         return [
             'name' => 'required|string|min:2|max:25',
             'lastname' => 'required|string|min:2|max:25',
+            'phone' => 'required|string|max:9|min:9',
             'email' => 'required|email|max:' . config('limits.email_max_length') . '|unique:users,email,' . $id, // Asegura que el email actual no genere un conflicto
             'role' => 'required|string|in:admin,normal',
         ];

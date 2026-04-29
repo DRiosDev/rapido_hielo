@@ -71,8 +71,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         //jwt
         'jwt.verify' => JwtMiddleware::class,
-        'jwt.verify.client' => JwtMiddleware::class,
-        'client.active' => ClientActiveMiddleware::class,
         'user.active' => CheckUserStatus::class,
         'user.admin' => UserAdminMiddleware::class,
         'user.role' => CheckUserRole::class

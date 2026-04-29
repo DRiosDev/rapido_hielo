@@ -9,15 +9,17 @@ class Client extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'user_id';
+    protected $primaryKey = 'id';
     protected $keyType = 'string';
 
     protected $fillable = [
-        'user_id',
+        'id',
         'rut',
         'name',
         'lastname',
-        'address'
+        'address',
+        'phone',
+        'email'
     ];
 
     protected $casts = [

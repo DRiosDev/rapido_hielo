@@ -45,16 +45,6 @@ class User extends Authenticatable implements JWTSubject
         'id' => 'string',
     ];
 
-    public function client()
-    {
-        return $this->hasOne(Client::class, 'user_id');
-    }
-
-    public function staff()
-    {
-        return $this->hasOne(Staff::class, 'user_id');
-    }
-
     public function getJWTIdentifier()
     {
         return $this->getKey();

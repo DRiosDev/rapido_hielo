@@ -26,6 +26,7 @@ class UserController extends Controller
         $user = User::create([
             'name' =>  $request->get('name'),
             'lastname' =>  $request->get('lastname'),
+            'phone' => $request->get('phone'),
             'email' => $request->get('email'),
             'password' => Hash::make($password),
             'role' => $request->get('role'),
@@ -51,6 +52,7 @@ class UserController extends Controller
         User::where('id', $id)->update([
             'name' => $request->input('name'),
             'lastname' => $request->input('lastname'),
+            'phone' => $request->input('phone'),
             'email' => $request->input('email'),
             'role' => $request->input('role'),
         ]);
@@ -60,7 +62,7 @@ class UserController extends Controller
         ], 200);
     }
 
-    public function getUsers(Request $request)
+    public function getUsersV1(Request $request)
     {
         $request->validate([
             'current' => 'nullable|integer|min:1',
@@ -111,6 +113,57 @@ class UserController extends Controller
         ];
 
         return response()->json($response, 200);
+    }
+
+    public function getUsers(Request $request)
+    {
+        $request->validate([
+            'current' => 'nullable|integer|min:1',
+            'field' => 'nullable|in:created_at_show',
+            'order' => 'nullable|in:asc,desc',
+        ]);
+
+        $allowed_filters = ['name', 'lastname', 'role', 'status', 'email'];
+
+        if ($request->filled('filters')) {
+            foreach (array_keys($request->filters) as $key) {
+                if (!in_array($key, $allowed_filters)) {
+                    return response()->json([
+                        'message' => 'Solo puedes filtrar por: ' . implode(', ', $allowed_filters)
+                    ], 422);
+                }
+            }
+        }
+
+        $current = $request->get('current', 1);
+        $page_size = $request->get('pageSize', 10);
+        $field = $request->get('field', 'created_at');
+        $order = $request->get('order', 'desc');
+        $filters = $request->get('filters', []);
+
+        $query = User::query()
+            ->select([
+                'id',
+                'id as key',
+                'name',
+                'lastname',
+                'email',
+                'role',
+                'status',
+                'created_at as created_at_show'
+            ]);
+
+        $this->applyInFilters($query, $filters, ['role', 'status']);
+        $this->applyLikeFilters($query, $filters, ['name', 'lastname', 'email']);
+
+        $paginated_data = $query
+            ->orderBy($field, $order)
+            ->paginate($page_size, ['*'], 'page', $current);
+
+        return response()->json([
+            'data' => $paginated_data->items(),
+            'total' => $paginated_data->total(),
+        ], 200);
     }
 
     public function changeStatusUser($id)

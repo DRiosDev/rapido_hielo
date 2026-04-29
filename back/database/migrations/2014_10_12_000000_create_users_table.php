@@ -14,10 +14,13 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('email')->unique();
+            $table->string('rut')->unique();
+            $table->string('name');
+            $table->string('lastname');
             $table->string('phone')->unique();
-            $table->string('password');
-            $table->enum('role', ['owner', 'admin', 'normal', 'client'])->default('client');
+            $table->enum('role', ['owner', 'admin', 'normal'])->default('normal');
             $table->string('status')->default('active');
+            $table->string('password');
             $table->string('reset_password_token')->nullable();
             $table->timestamp('reset_password_token_expiration')->nullable();
             $table->timestamps();

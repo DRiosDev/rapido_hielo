@@ -42,13 +42,4 @@ Route::middleware(['jwt.verify', 'user.active'])->group(function () {
     Route::group(['middleware' => ['user.role:admin,owner']], function () {
         require __DIR__ . '/api/staff.php';
     });
-
-    /**
-     * --------------------------------------------------------
-     * Authenticated User Routes (non-admin)
-     * --------------------------------------------------------
-     */
-    Route::group(['middleware' => ['user.role:client']], function () {
-        require __DIR__ . '/api/client.php';
-    });
 });

@@ -28,8 +28,7 @@ class AccountController extends Controller
     {
         $user = Auth::user();
 
-        $user = User::with(['client:user_id,name,lastname', 'staff:user_id,name,lastname'])
-            ->select('id', 'email', 'role', 'status')
+        $user = User::select('id', 'email', 'role', 'status', 'name', 'lastname')
             ->where('id', $user->id)
             ->firstOrFail();
 
@@ -38,14 +37,11 @@ class AccountController extends Controller
             'email' => $user->email,
             'role' => $user->role,
             'status' => $user->status,
-            'name' => $user->role === 'client'
-                ? $user->client?->name
-                : $user->staff?->name,
-            'lastname' => $user->role === 'client'
-                ? $user->client?->lastname
-                : $user->staff?->lastname,
+            'name' => $user->name,
+            'lastname' => $user->lastname,
         ]);
     }
+
 
     public function updatePassword(ChangePasswordRequest $request)
     {

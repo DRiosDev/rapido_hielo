@@ -26,6 +26,7 @@ class CreateUserRequest extends FormRequest
         return [
             'name' => 'required|string|min:2|max:25',
             'lastname' => 'required|string|min:2|max:25',
+            'phone' => 'required|string|max:9|min:9',
             'email' => 'required|string|max:' . config('limits.email_max_length') . '|unique:users,email',
             'role' => 'required|string|in:admin,normal',
         ];

@@ -4,60 +4,28 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Http\Requests\Auth\RegisterRequest;
-use App\Models\Client;
-use App\Models\Staff;
 use App\Models\User;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function register(RegisterRequest $request)
-    {
-        DB::beginTransaction();
-
-        try {
-            // Crear usuario
-            $user = User::create([
-                'email' => $request->get('email'),
-                'phone' => $request->get('phone'),
-                'password' => Hash::make($request->get('password')),
-                'role' => 'client',
-            ]);
-
-            // Crear Perfil cliente
-            Client::create([
-                'user_id' => $user->id,
-                'rut' => $request->get('rut'),
-                'name' => $request->get('name'),
-                'lastname' => $request->get('lastname'),
-                'address' => $request->get('address'),
-            ]);
-
-            DB::commit();
-
-            return response()->json([
-                'message' => 'Usuario registrado correctamente',
-            ], 201);
-        } catch (\Throwable $e) {
-            DB::rollBack();
-
-            return response()->json([
-                'message' => 'Error al registrar el usuario',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
-    }
-
     public function login(LoginRequest $request)
     {
         $credentials = $request->only('email', 'password');
 
         // 🔹 Buscar manualmente el usuario
-        $user = User::select('id', 'email', 'password', 'role', 'status')->where('email', $credentials['email'])->first();
+        $user = User::select(
+            'id',
+            'name',
+            'lastname',
+            'phone',
+            'email',
+            'password',
+            'role',
+            'status'
+        )->where('email', $credentials['email'])->first();
 
         if (!$user) {
             return response()->json(['message' => 'Credenciales inválidas'], 401);
@@ -75,8 +43,6 @@ class AuthController extends Controller
 
         // 🔹 Generar el token manualmente
         $token = JWTAuth::fromUser($user);
-
-        $user->load($user->role === "client" ? 'client' : 'staff');
 
         return response()->json([
             'token' => $token,
