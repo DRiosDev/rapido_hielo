@@ -72,7 +72,17 @@ export default function UsersPrivate() {
               Administrador
             </span>
           );
-        } else if (text === "normal") {
+        } else if (text === "owner") {
+          return (
+            <span
+              className="inline-flex items-center gap-x-1.5
+             py-1.5 px-3 rounded-full text-xs font-medium
+             bg-blue-200 text-blue-700"
+            >
+              Dueño
+            </span>
+          );
+        } else if(text === "normal"){
           return (
             <span
               className="inline-flex items-center gap-x-1.5

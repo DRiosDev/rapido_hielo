@@ -4,38 +4,66 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Ramsey\Uuid\Uuid as RamseyUuid;
+
 
 class Client extends Model
 {
     use HasFactory;
 
     protected $primaryKey = 'id';
-    protected $keyType = 'string';
 
     protected $fillable = [
         'id',
-        'rut',
+        'rut',        // <-- FALTABA
         'name',
         'lastname',
         'address',
         'phone',
-        'email'
+        'email',
+        'password'    // <-- también lo estás usando
     ];
 
-    protected $casts = [
-        'user_id' => 'string',
-    ];
-
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
     protected $hidden = [
-        'created_at',
-        'updated_at',
+        'password',
+        'remember_token',
     ];
 
-    // Relación 1:1 con User
-    public function user()
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'id' => 'string',
+    ];
+
+    public function getJWTIdentifier()
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [
+            'id' => $this->id,
+        ];
     }
 
     public $incrementing = false;
+
+    protected $keyType = 'string';
+
+    public static function boot()
+    {
+        parent::boot();
+        static::creating(function ($obj) {
+            $obj->id = RamseyUuid::uuid4()->toString();
+        });
+    }
 }

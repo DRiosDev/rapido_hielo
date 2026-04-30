@@ -13,15 +13,13 @@ class Order extends Model
     protected $fillable = [
         'fk_client_id',
         'number_order',
-        'total',
-        'total_quantity',
-        'vaucher',
         'status',
 
         'date_dispatch',
         'time_disdispatch',
         'address_dispatch',
         'method_payment',
+        'url_vaucher'
     ];
 
     /**

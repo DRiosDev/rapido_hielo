@@ -41,7 +41,7 @@ class UserController extends Controller
         ], 201);
     }
 
-    public function updateUser(UpdateUserRequest $request, $id)
+    public function updateUser(UpdateUserRequest $request, string $id)
     {
         $item_exist = User::where('id', $id)->exists();
 

@@ -29,6 +29,8 @@ class AuthController extends Controller
             return response()->json(['message' => 'Tu cuenta está desactivada. Contacta al administrador.'], 403);
         }
 
+        error_log(json_encode("user: ".$user));
+
         // 🔹 Verificar la contraseña
         if (!Hash::check($credentials['password'], $user->password)) {
             return response()->json(['message' => 'Credenciales inválidas'], 401);

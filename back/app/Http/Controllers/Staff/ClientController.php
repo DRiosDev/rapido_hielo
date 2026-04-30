@@ -18,7 +18,6 @@ class ClientController extends Controller
 {
     use Filterable;
 
-
     public function createClient(CreateClientRequest $request)
     {
         DB::beginTransaction();
@@ -26,19 +25,14 @@ class ClientController extends Controller
         $password = Str::random(8);
 
         try {
-            $user = User::create([
-                'email' => $request->get('email'),
-                'phone' => $request->get('phone'),
-                'password' => Hash::make($password),
-                'role' => 'client'
-            ]);
-
             $client = Client::create([
-                'user_id' => $user->id,
                 'rut' => $request->get('rut'),
                 'name' => $request->get('name'),
                 'lastname' => $request->get('lastname'),
                 'address' => $request->get('address'),
+                'phone' => $request->get('phone'),
+                'email' => $request->get('email'), // <-- FALTABA
+                'password' => Hash::make($password),
             ]);
 
             DB::commit();
@@ -57,7 +51,7 @@ class ClientController extends Controller
         }
     }
 
-    public function updateClient(UpdateClientRequest $request, $id)
+    public function updateClient(UpdateClientRequest $request, string $id)
     {
         $item_exist = Client::where('id', $id)->exists();
 
@@ -77,7 +71,7 @@ class ClientController extends Controller
         ], 200);
     }
 
-    public function getClients(Request $request)
+    public function index(Request $request)
     {
         $request->validate([
             'current' => 'nullable|integer|min:1',
@@ -105,23 +99,22 @@ class ClientController extends Controller
 
         $query = Client::query()
             ->select([
-                'user_id as id',
-                'user_id as key',
+                'id',
+                'id as key',
                 'rut',
                 'name',
                 'lastname',
+                'status',
                 'email',
                 'phone',
-                'role',
                 'address',
-                'clients.created_at as created_at_show'
+                'created_at as created_at_show'
             ]);
 
         $this->applyInFilters($query, $filters, ['rut', 'status']); // Aplicar filtros whereIn de forma dinámica
         $this->applyLikeFilters($query, $filters, ['name', 'lastname', 'email']); // Aplicar filtros LIKE de forma dinámica
 
         $paginated_data = $query->orderBy($field, $order)
-            ->leftjoin('users', 'clients.user_id', '=', 'users.id')
             ->paginate($page_size, ['*'], 'page', $current);
 
         $response = [
@@ -132,7 +125,7 @@ class ClientController extends Controller
         return response()->json($response, 200);
     }
 
-    public function show($id)
+    public function show(string $id)
     {
 
         $client = Client::select('rut', 'name', 'lastname', 'email', 'address')
@@ -144,7 +137,7 @@ class ClientController extends Controller
         return response()->json($client, 200);
     }
 
-    public function changeStatusClient($id)
+    public function changeStatusClient(string $id)
     {
         $client = User::select('id', 'status')->where('id', $id)->first();
 

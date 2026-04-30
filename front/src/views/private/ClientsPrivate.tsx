@@ -1,22 +1,22 @@
 import { message, Popconfirm, Space, Table, Tooltip } from "antd";
-import { SectionPrivateHeader } from "../../components/ui/SectionPrivateHeader";
-import { useClients } from "../../services/clients/queries";
-import useTableFilters from "../../hooks/table/useTableFiltersV2";
-import { Client } from "../../types/Client";
 import { ColumnsType } from "antd/es/table";
-import useColumnSearch from "../../hooks/useColumnSearch";
-import { EmailWhatsappText } from "../../components/ui/EmailWhatsappText";
-import { EditIcon } from "../../components/ui/icons/EditIcon";
-import { DeleteIcon } from "../../components/ui/icons/DeleteIcon";
-import { Colors } from "../../constants/Colors";
-import { CheckIcon } from "../../components/ui/icons/CheckIcon";
 import { useRef } from "react";
+import { EmailWhatsappText } from "../../components/ui/EmailWhatsappText";
+import { CheckIcon } from "../../components/ui/icons/CheckIcon";
+import { ClearFiltersIcon } from "../../components/ui/icons/ClearFiltersIcon";
+import { DeleteIcon } from "../../components/ui/icons/DeleteIcon";
+import { EditIcon } from "../../components/ui/icons/EditIcon";
 import {
   ModalCUClient,
   ModalCUClientRef,
 } from "../../components/ui/modals/ModalCUClient";
-import { ClearFiltersIcon } from "../../components/ui/icons/ClearFiltersIcon";
+import { SectionPrivateHeader } from "../../components/ui/SectionPrivateHeader";
+import { Colors } from "../../constants/Colors";
+import useTableFilters from "../../hooks/table/useTableFiltersV2";
+import useColumnSearch from "../../hooks/useColumnSearch";
 import { useDeleteClient } from "../../services/clients/mutation";
+import { useClients } from "../../services/clients/queries";
+import { Client } from "../../types/Client";
 
 export default function ClientsPrivate() {
   const modalCURef = useRef<ModalCUClientRef>(null);
@@ -36,7 +36,7 @@ export default function ClientsPrivate() {
       dataIndex: "rut",
       key: "rut",
       width: 150,
-      ...getColumnSearchProps("name"),
+      ...getColumnSearchProps("rut"),
     },
     {
       title: "Nombre",

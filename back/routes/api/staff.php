@@ -20,7 +20,7 @@ Route::prefix('clients')->controller(ClientController::class)->group(function ()
     Route::post('/', 'createClient');
     Route::put('/{id_client}', 'updateClient')->whereUuid('id_client');
     Route::patch('/{id_client}', 'changeStatusClient')->whereUuid('id_client');
-    Route::get('/', 'getClients');
+    Route::get('/', 'index');
     Route::get('/{client_id}', 'show');
     Route::put('/password', 'changePassword');
 });

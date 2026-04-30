@@ -2,8 +2,6 @@ export interface Cart {
   id: string;
   key?: string | number;
   fk_client_id: string;
-  total: number;
-  items: number;
   status: "active" | "desactive";
   created_at_show?: string;
 }

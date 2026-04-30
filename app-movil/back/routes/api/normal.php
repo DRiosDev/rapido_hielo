@@ -16,7 +16,7 @@ Route::prefix('account')->controller(AccountController::class)->group(function (
 });
 
 Route::prefix('products')->controller(ProductController::class)->group(function () {
-    Route::get('/', 'show');
+    Route::get('/', 'index');
 });
 
 Route::prefix('carts')->controller(CartController::class)->group(function () {

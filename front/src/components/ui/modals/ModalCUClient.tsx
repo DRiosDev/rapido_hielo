@@ -1,28 +1,29 @@
-import React, {
+import {
+  Alert,
+  Button,
+  Form,
+  Input,
+  InputNumber,
+  InputRef,
+  message,
+  Modal,
+  Space,
+} from "antd";
+import {
   forwardRef,
   useEffect,
   useImperativeHandle,
   useRef,
   useState,
 } from "react";
-import { Client } from "../../../types/Client";
-import {
-  Alert,
-  Button,
-  Form,
-  Input,
-  InputRef,
-  message,
-  Modal,
-  Select,
-  Space,
-} from "antd";
-import EmailFormItem from "../form/items/EmailFormItem";
 import {
   useCreateClient,
   useUpdateClient,
 } from "../../../services/clients/mutation";
+import { Client } from "../../../types/Client";
+import EmailFormItem from "../form/items/EmailFormItem";
 import RutFormItem from "../form/items/RutFormItem";
+import PhoneFormItem from "../form/items/PhoneFormItem";
 
 export interface ModalCUClientRef {
   childFunction: (id?: string, data?: Client) => void; // Definimos el tipo con parámetros
@@ -202,8 +203,9 @@ export const ModalCUClient = forwardRef<ModalCUClientRef, ModalCUClientProps>(
           {/* email */}
           <EmailFormItem required={true} />
 
-          {/* direccion */}
+          <PhoneFormItem required={true} />
 
+          {/* direccion */}
           <Form.Item
             name="address"
             label="Dirección"
@@ -259,5 +261,5 @@ export const ModalCUClient = forwardRef<ModalCUClientRef, ModalCUClientProps>(
         </Form>
       </Modal>
     );
-  }
+  },
 );
