@@ -57,7 +57,7 @@ david.alberto2212@gmail.com
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
-        }
+        },
       );
     } catch (error: any) {
       console.log("error al enviar comprobante", error.response);

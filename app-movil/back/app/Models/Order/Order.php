@@ -2,6 +2,7 @@
 
 namespace App\Models\Order;
 
+use App\Models\Client;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Ramsey\Uuid\Uuid as RamseyUuid;
@@ -11,15 +12,18 @@ class Order extends Model
     use HasFactory;
 
     protected $fillable = [
+        /* datos orden */
         'fk_client_id',
         'number_order',
         'status',
 
+        /* datos para despacho */
+        'status_dispatch',
         'date_dispatch',
-        'time_disdispatch',
+        'time_dispatch',
         'address_dispatch',
         'method_payment',
-        'url_vaucher'
+        'url_vaucher',
     ];
 
     /**
@@ -32,6 +36,16 @@ class Order extends Model
     ];
 
     public $incrementing = false;
+
+    public function items()
+    {
+        return $this->hasMany(OrderItem::class, 'fk_order_id', 'id');
+    }
+
+    public function client()
+    {
+        return $this->belongsTo(Client::class, 'fk_client_id');
+    }
 
     public static function boot()
     {

@@ -110,7 +110,7 @@ export const ConfirmedCartBT = forwardRef<
         opacity={0.5} // opacidad del fondo
       />
     ),
-    []
+    [],
   );
 
   return (

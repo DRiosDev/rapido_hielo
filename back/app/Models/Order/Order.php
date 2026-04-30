@@ -14,17 +14,15 @@ class Order extends Model
         /* datos orden */
         'fk_client_id',
         'number_order',
-        'total',
-        'total_quantity',
-        'vaucher',
         'status',
 
         /* datos para despacho */
+        'status_dispatch',
         'date_dispatch',
         'time_dispatch',
         'address_dispatch',
         'method_payment',
-        'status_dispatch'
+        'url_vaucher',
     ];
 
     /**
