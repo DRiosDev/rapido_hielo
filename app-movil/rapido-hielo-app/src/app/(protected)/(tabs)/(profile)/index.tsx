@@ -27,7 +27,7 @@ export default function Profile() {
     {
       title: "Mis compras",
       icon: <Ionicons name="bag-handle-outline" size={19} color="black" />,
-      onPress: () => router.push(""),
+      onPress: () => router.push("/(protected)/(orders)"),
     },
     {
       title: "Configuración",

@@ -31,6 +31,7 @@ Route::prefix('carts/items')->controller(CartItemController::class)->group(funct
 });
 
 Route::prefix('orders')->controller(OrderController::class)->group(function () {
+    Route::get('/', 'index');
     Route::post('/{cart_id}', 'store')->whereUuid('cart_id');
     Route::post('/{order_id}/payment-proof', 'submitPaymentProof');
 });

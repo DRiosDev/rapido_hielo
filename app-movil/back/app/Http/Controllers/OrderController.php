@@ -8,9 +8,20 @@ use App\Models\Order\Order;
 use App\Models\Order\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
+
+    public function index()
+    {
+        $orders = Order::with('items')
+            ->where('fk_client_id', Auth::id())
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json($orders, 200);
+    }
 
     public function store(CreateOrderRequest $request, string $cart_id)
     {
