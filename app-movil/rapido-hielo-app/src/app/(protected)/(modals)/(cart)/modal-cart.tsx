@@ -98,9 +98,9 @@ export default function ModalCart() {
         edges={["left", "right", "bottom"]}
       >
         <View style={{ flex: 1 }}>
-          <View className="flex-row gap-3 bg-white p-5 rounded-lg shadow shadow-black justify-center mb-5">
-            <Ionicons name="location-outline" size={28} color="black" />
-            <Text className="text-xl font-semibold">{userLogged.address}</Text>
+          <View className="flex-row gap-3 bg-white dark:bg-slate-800 p-5 rounded-lg shadow shadow-black justify-center mb-5">
+            <Ionicons name="location-outline" size={28} className="text-black dark:text-white" />
+            <Text className="text-xl font-semibold text-black dark:text-white">{userLogged.address}</Text>
           </View>
 
           {/* <View className="bg-white p-5 rounded-lg shadow shadow-black mb-5">
@@ -186,7 +186,6 @@ export default function ModalCart() {
                   key={item.id}
                   style={{
                     marginBottom: 16,
-                    backgroundColor: "white",
                     borderRadius: 12,
                     elevation: 3,
                     shadowColor: "#000",
@@ -194,6 +193,7 @@ export default function ModalCart() {
                     shadowRadius: 4,
                     shadowOffset: { width: 0, height: 2 },
                   }}
+                  className="bg-white dark:bg-slate-800"
                 >
                   <Card.Title
                     title={item.name_product}
@@ -243,12 +243,12 @@ export default function ModalCart() {
             )}
           </ScrollView>
 
-          <View className="bg-white p-5 rounded-lg shadow shadow-black mt-5">
-            <Text className="text-2xl font-semibold text-center mb-2">
+          <View className="bg-white dark:bg-slate-800 p-5 rounded-lg shadow shadow-black mt-5">
+            <Text className="text-2xl font-semibold text-center mb-2 text-black dark:text-white">
               $ {totalPrice}
             </Text>
 
-            <Text className="text-lg text-center font-semibold mb-4">
+            <Text className="text-lg text-center font-semibold mb-4 text-black dark:text-white">
               Total ítems en carrito: {itemCount}
             </Text>
 

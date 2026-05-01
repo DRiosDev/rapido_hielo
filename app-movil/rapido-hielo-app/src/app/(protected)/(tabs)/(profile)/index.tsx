@@ -46,17 +46,17 @@ export default function Profile() {
     <>
       {isLoading && <LoadingOverlay />}
 
-      <View className="flex-1 p-6 bg-white">
+      <View className="flex-1 p-6 bg-white dark:bg-slate-900">
         <View className="items-center gap-5">
           <Avatar.Text
             size={110}
             label={userLogged?.name[0] + userLogged?.lastname[0]}
           />
           <View className="items-center gap-1">
-            <Text className="text-2xl font-semibold">
+            <Text className="text-2xl font-semibold dark:text-white">
               {userLogged?.name + " " + userLogged?.lastname}
             </Text>
-            <Text className="text-base font-medium text-center text-text-secondary">
+            <Text className="text-base font-medium text-center text-text-secondary dark:text-gray-400">
               {userLogged?.email}
             </Text>
           </View>
@@ -75,14 +75,14 @@ export default function Profile() {
               <List.Item
                 key={index}
                 title={
-                  <Text className={`font-semibold ${action.titleClass ?? ""}`}>
+                  <Text className={`font-semibold ${action.titleClass ?? ""} dark:text-white`}>
                     {action.title}
                   </Text>
                 }
-                style={styles.list_item}
+                style={[styles.list_item, { borderBottomColor: '#F2F4F6' }]}
                 rippleColor="transparent"
                 left={() => (
-                  <View className="p-3 rounded-full bg-badge-gray">
+                  <View className="p-3 rounded-full bg-badge-gray dark:bg-slate-800">
                     {action.icon}
                   </View>
                 )}
@@ -91,7 +91,7 @@ export default function Profile() {
                     <Ionicons
                       name="chevron-forward"
                       size={20}
-                      color={Colors.black}
+                      color="gray"
                     />
                   </View>
                 )}

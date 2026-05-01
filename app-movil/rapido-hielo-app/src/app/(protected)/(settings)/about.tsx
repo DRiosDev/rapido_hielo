@@ -17,7 +17,8 @@ export default function AboutScreen() {
       />
 
       <SafeAreaView
-        style={{ flex: 1, backgroundColor: "#F9FAFB" }}
+        style={{ flex: 1 }}
+        className="bg-gray-50 dark:bg-slate-900"
         edges={["left", "right", "bottom"]}
       >
         <ScrollView className="flex-1 px-6 pt-8">
@@ -25,24 +26,24 @@ export default function AboutScreen() {
             <View className="w-24 h-24 bg-primary rounded-2xl items-center justify-center mb-4">
               <Text className="text-white text-3xl font-bold">RH</Text>
             </View>
-            <Text className="text-2xl font-bold text-gray-800">Rápido Hielo</Text>
-            <Text className="text-gray-500 font-medium">Versión {VERSION}</Text>
+            <Text className="text-2xl font-bold text-gray-800 dark:text-white">Rápido Hielo</Text>
+            <Text className="text-gray-500 dark:text-gray-400 font-medium">Versión {VERSION}</Text>
           </View>
 
-          <View className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-            <Text className="text-lg font-semibold mb-3 text-gray-800">
+          <View className="bg-white dark:bg-slate-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-slate-700">
+            <Text className="text-lg font-semibold mb-3 text-gray-800 dark:text-white">
               ¿Quiénes Somos?
             </Text>
-            <Text className="text-gray-600 leading-6 mb-4">
+            <Text className="text-gray-600 dark:text-gray-300 leading-6 mb-4">
               Rápido Hielo es tu solución confiable y veloz para la distribución de hielo. 
               Nos aseguramos de que nunca te falte hielo para tus eventos, negocios o reuniones, 
               entregando siempre con la mejor calidad y puntualidad.
             </Text>
 
-            <Text className="text-lg font-semibold mb-3 text-gray-800 mt-4">
+            <Text className="text-lg font-semibold mb-3 text-gray-800 dark:text-white mt-4">
               Contacto
             </Text>
-            <Text className="text-gray-600 leading-6">
+            <Text className="text-gray-600 dark:text-gray-300 leading-6">
               Email: contacto@rapidohielo.com{"\n"}
               Teléfono: +56 9 1234 5678{"\n"}
               Santiago, Chile
@@ -50,7 +51,7 @@ export default function AboutScreen() {
           </View>
 
           <View className="items-center mt-10 mb-6">
-            <Text className="text-gray-400 text-sm">
+            <Text className="text-gray-400 dark:text-gray-500 text-sm">
               © {new Date().getFullYear()} Rápido Hielo. Todos los derechos reservados.
             </Text>
           </View>

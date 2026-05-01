@@ -54,37 +54,37 @@ export default function OrdersScreen() {
         onPress={() => setSelectedOrder(item)}
         style={{
           marginBottom: 16,
-          backgroundColor: "white",
           borderRadius: 12,
           elevation: 3,
         }}
+        className="bg-white dark:bg-slate-800"
       >
         <Card.Content>
           <View className="flex-row justify-between mb-2">
-            <Text className="text-lg font-bold">Orden #{item.number_order}</Text>
-            <Text className="text-sm text-gray-500">
+            <Text className="text-lg font-bold text-black dark:text-white">Orden #{item.number_order}</Text>
+            <Text className="text-sm text-gray-500 dark:text-gray-400">
               {new Date(item.created_at).toLocaleDateString("es-CL")}
             </Text>
           </View>
 
           <View className="flex-row items-center mb-2">
             <Ionicons name="pricetag-outline" size={16} color="gray" />
-            <Text className="text-base ml-2">Total: ${total}</Text>
+            <Text className="text-base ml-2 text-black dark:text-white">Total: ${total}</Text>
           </View>
 
           <View className="flex-row items-center mb-2">
             <Ionicons name="cube-outline" size={16} color="gray" />
-            <Text className="text-base ml-2">Ítems: {totalItems}</Text>
+            <Text className="text-base ml-2 text-black dark:text-white">Ítems: {totalItems}</Text>
           </View>
 
           <View className="flex-row items-center mb-2">
             <Ionicons name="card-outline" size={16} color="gray" />
-            <Text className="text-base ml-2 capitalize">
+            <Text className="text-base ml-2 capitalize text-black dark:text-white">
               Pago: {item.method_payment == "1" ? "Pago en tienda" : "Transferencia"}
             </Text>
           </View>
 
-          <View className="mt-2 pt-2 border-t border-gray-200">
+          <View className="mt-2 pt-2 border-t border-gray-200 dark:border-slate-700">
             <Text className={`text-base font-semibold ${statusInfo.color}`}>
               {statusInfo.label}
             </Text>
@@ -107,7 +107,8 @@ export default function OrdersScreen() {
       {isLoading && <LoadingOverlay />}
 
       <SafeAreaView
-        style={{ flex: 1, padding: 16, backgroundColor: "#F9FAFB" }}
+        style={{ flex: 1, padding: 16 }}
+        className="bg-gray-50 dark:bg-slate-900"
         edges={["left", "right", "bottom"]}
       >
         {orders.length === 0 && !isLoading ? (
@@ -142,52 +143,52 @@ export default function OrdersScreen() {
         >
           {selectedOrder && (
             <ScrollView showsVerticalScrollIndicator={false}>
-              <Text className="text-2xl font-bold mb-4 text-center">
+              <Text className="text-2xl font-bold mb-4 text-center text-black dark:text-white">
                 Detalle de Orden #{selectedOrder.number_order}
               </Text>
 
               <View className="mb-5">
-                <Text className="font-semibold text-lg mb-3">Productos:</Text>
+                <Text className="font-semibold text-lg mb-3 text-black dark:text-white">Productos:</Text>
                 {selectedOrder.items.map((item, index) => (
                   <View key={index} className="flex-row justify-between mb-2">
-                    <Text className="flex-1 text-base text-gray-700">
-                      {item.name_product} <Text className="font-bold text-black">(x{item.quantity})</Text>
+                    <Text className="flex-1 text-base text-gray-700 dark:text-gray-300">
+                      {item.name_product} <Text className="font-bold text-black dark:text-white">(x{item.quantity})</Text>
                     </Text>
-                    <Text className="font-semibold text-base">
+                    <Text className="font-semibold text-base text-black dark:text-white">
                       ${item.price_product * item.quantity}
                     </Text>
                   </View>
                 ))}
               </View>
 
-              <View className="border-t border-gray-200 pt-4 mb-5">
+              <View className="border-t border-gray-200 dark:border-slate-700 pt-4 mb-5">
                 <View className="flex-row justify-between mb-2">
-                  <Text className="font-medium text-base text-gray-600">
+                  <Text className="font-medium text-base text-gray-600 dark:text-gray-400">
                     Cantidad de ítems:
                   </Text>
-                  <Text className="font-semibold text-base">
+                  <Text className="font-semibold text-base text-black dark:text-white">
                     {calculateTotalItems(selectedOrder)}
                   </Text>
                 </View>
                 <View className="flex-row justify-between">
-                  <Text className="font-bold text-xl">Total:</Text>
-                  <Text className="font-bold text-xl">
+                  <Text className="font-bold text-xl text-black dark:text-white">Total:</Text>
+                  <Text className="font-bold text-xl text-black dark:text-white">
                     ${calculateTotal(selectedOrder)}
                   </Text>
                 </View>
               </View>
 
-              <View className="mb-4 bg-gray-50 p-3 rounded-lg">
+              <View className="mb-4 bg-gray-50 dark:bg-slate-700 p-3 rounded-lg">
                 <View className="flex-row justify-between mb-2">
-                  <Text className="font-medium text-gray-600">Pago:</Text>
-                  <Text className="font-semibold">
+                  <Text className="font-medium text-gray-600 dark:text-gray-300">Pago:</Text>
+                  <Text className="font-semibold text-black dark:text-white">
                     {selectedOrder.method_payment == "1"
                       ? "Pago en tienda"
                       : "Transferencia"}
                   </Text>
                 </View>
                 <View className="flex-row justify-between">
-                  <Text className="font-medium text-gray-600">Estado:</Text>
+                  <Text className="font-medium text-gray-600 dark:text-gray-300">Estado:</Text>
                   <Text
                     className={`font-semibold ${
                       getStatusLabel(selectedOrder.status).color
