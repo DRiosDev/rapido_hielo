@@ -2,12 +2,15 @@ import { useAuthUser } from "@/store/useAuthUser";
 import { useCartStore } from "@/store/useCarts";
 import { Ionicons } from "@expo/vector-icons";
 import { router, Tabs } from "expo-router";
+import { useColorScheme } from "nativewind";
 import React, { useEffect } from "react";
 import { Pressable, Text, View } from "react-native";
 
 export default function _layout() {
   const { userLogged } = useAuthUser();
   const { itemCount, fetchCartItemCount } = useCartStore();
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === 'dark';
 
   useEffect(() => {
     if (userLogged?.id) {
@@ -16,7 +19,20 @@ export default function _layout() {
   }, [userLogged]);
 
   return (
-    <Tabs>
+    <Tabs
+      screenOptions={{
+        tabBarStyle: {
+          backgroundColor: isDark ? "#0f172a" : "#ffffff", // slate-900 o blanco
+          borderTopColor: isDark ? "#1e293b" : "#e2e8f0",
+        },
+        tabBarActiveTintColor: isDark ? "#3b82f6" : "#2563eb",
+        tabBarInactiveTintColor: isDark ? "#64748b" : "#64748b",
+        headerStyle: {
+          backgroundColor: isDark ? "#0f172a" : "#ffffff",
+        },
+        headerTintColor: isDark ? "#ffffff" : "#000000",
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
@@ -24,14 +40,14 @@ export default function _layout() {
           headerTitleAlign: "left",
           headerShadowVisible: false,
           headerTitle: (props) => (
-            <Text className="text-3xl font-bold">Productos</Text>
+            <Text className="text-3xl font-bold text-black dark:text-white">Productos</Text>
           ),
           headerRight: () => (
             <Pressable
               onPress={() => router.push("../(modals)/(cart)/modal-cart")}
             >
               <View className="mr-4">
-                <Ionicons name="cart-outline" size={28} color="black" />
+                <Ionicons name="cart-outline" size={28} color={isDark ? "white" : "black"} />
                 {itemCount > 0 && (
                   <View
                     style={{
@@ -72,7 +88,7 @@ export default function _layout() {
           headerTitleAlign: "left",
           headerShadowVisible: false,
           headerTitle: (props) => (
-            <Text className="text-3xl font-bold">{props.children}</Text>
+            <Text className="text-3xl font-bold text-black dark:text-white">{props.children}</Text>
           ),
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person-outline" color={color} size={size} />

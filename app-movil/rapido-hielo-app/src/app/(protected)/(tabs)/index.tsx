@@ -23,7 +23,7 @@ export default function index() {
 
   return (
     <>
-      <SafeAreaView className="flex-1 justify-between bg-white">
+      <SafeAreaView className="flex-1 justify-between bg-gray-50 dark:bg-slate-900">
         <View className="flex-1 p-4">
           <CardProductList
             data={products}

@@ -15,6 +15,7 @@ import FlashMessage from "react-native-flash-message";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { ActivityIndicator, MD3DarkTheme, MD3LightTheme, PaperProvider } from "react-native-paper";
+import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import "../global.css";
 
@@ -60,28 +61,30 @@ export default function Layout() {
             <FlashMessage position="top" statusBarHeight={insets.top} />
             <StatusBar style={colorScheme === 'dark' ? "light" : "dark"} />
             <NetworkProvider>
-              <Stack>
-                <Stack.Protected guard={isAuthenticated}>
-                  <Stack.Screen
-                    name="(protected)"
-                    options={{ headerShown: false }}
-                  />
-                </Stack.Protected>
-                <Stack.Protected guard={!isAuthenticated}>
-                  <Stack.Screen
-                    name="sing-in"
-                    options={{ ...HeaderLogo({ showBack: false }) }}
-                  />
-                  <Stack.Screen
-                    name="sing-up"
-                    options={{ ...HeaderLogo({ showBack: true }) }}
-                  />
-                  <Stack.Screen
-                    name="recovery-password"
-                    options={{ ...HeaderLogo({ showBack: true }) }}
-                  />
-                </Stack.Protected>
-              </Stack>
+              <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+                <Stack>
+                  <Stack.Protected guard={isAuthenticated}>
+                    <Stack.Screen
+                      name="(protected)"
+                      options={{ headerShown: false }}
+                    />
+                  </Stack.Protected>
+                  <Stack.Protected guard={!isAuthenticated}>
+                    <Stack.Screen
+                      name="sing-in"
+                      options={{ ...HeaderLogo({ showBack: false }) }}
+                    />
+                    <Stack.Screen
+                      name="sing-up"
+                      options={{ ...HeaderLogo({ showBack: true }) }}
+                    />
+                    <Stack.Screen
+                      name="recovery-password"
+                      options={{ ...HeaderLogo({ showBack: true }) }}
+                    />
+                  </Stack.Protected>
+                </Stack>
+              </ThemeProvider>
 
               <OfflineNotice />
             </NetworkProvider>
