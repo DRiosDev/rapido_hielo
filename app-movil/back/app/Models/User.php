@@ -63,6 +63,7 @@ class User extends Authenticatable implements JWTSubject
     }
 
     public $incrementing = false;
+    protected $keyType = 'string';
 
     public static function boot()
     {

@@ -31,6 +31,7 @@ class Product extends Model
     ];
 
     public $incrementing = false;
+    protected $keyType = 'string';
 
     public static function boot()
     {
