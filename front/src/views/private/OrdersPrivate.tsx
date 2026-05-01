@@ -180,9 +180,7 @@ export default function OrdersPrivate() {
                   <button
                     className="flex items-center w-full gap-2 py-1"
                     onClick={() => {
-                      if (record.items) {
-                        ModalSOrderItems.current?.childFunction(record.id);
-                      }
+                      ModalSOrderItems.current?.childFunction(record.id);
                     }}
                   >
                     <EyeIcon className="size-5 text-text-primary" />

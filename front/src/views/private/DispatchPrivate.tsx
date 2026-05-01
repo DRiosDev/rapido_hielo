@@ -2,8 +2,17 @@ import React from "react";
 import { SectionPrivateHeader } from "../../components/ui/SectionPrivateHeader";
 import { message, Table } from "antd";
 import { ClearFiltersIcon } from "../../components/ui/icons/ClearFiltersIcon";
+import { ClientMoreIcon } from "../../components/ui/icons/ClientMoreIcon";
+import { EyeIcon } from "../../components/ui/icons/EyeIcon";
+import { MoreHorizontalIcon } from "../../components/ui/icons/MoreHorizontalIcon";
+import { ModalShowOrderItems, ModalShowOrderItemsRef } from "../../components/ui/modals/ModalShowOrderItems";
+import { ModalVClient, ModalVClientRef } from "../../components/ui/modals/ModalVClient";
+import { ModalViewVaucher, ModalViewVaucherRef } from "../../components/ui/modals/ModalViewVaucher";
 import useTableFilters from "../../hooks/table/useTableFiltersV2";
 import { useDispatches } from "../../services/dispatches/queries";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import { Button, DatePicker, Dropdown } from "antd";
 import useColumnSearch from "../../hooks/useColumnSearch";
 import { ColumnsType } from "antd/es/table";
 import { Dispatch } from "../../types/Dispatch";
@@ -12,6 +21,11 @@ import { axiosInstance } from "../../axios/axiosInstance";
 
 export default function DispatchPrivate() {
   const [messageApi, contextHolder] = message.useMessage();
+  const modalVClientRef = React.useRef<ModalVClientRef>(null);
+  const modalVVaucher = React.useRef<ModalViewVaucherRef>(null);
+  const ModalSOrderItems = React.useRef<ModalShowOrderItemsRef>(null);
+  const [selectedDispatches, setSelectedDispatches] = React.useState<Dispatch[]>([]);
+  const [dateFilter, setDateFilter] = React.useState<string | null>(null);
 
   const { tableParams, tableKey, resetFilters, handleTableChange } =
     useTableFilters();
@@ -23,9 +37,50 @@ export default function DispatchPrivate() {
 
   const rowSelection = {
     onChange: (selectedRowKeys: React.Key[], selectedRows: Dispatch[]) => {
-      console.log("Seleccionadas:", selectedRowKeys, selectedRows);
+      setSelectedDispatches(selectedRows);
     },
   };
+
+  const handleExportPDF = () => {
+    if (selectedDispatches.length === 0) {
+      messageApi.warning("Seleccione al menos un despacho para exportar.");
+      return;
+    }
+
+    const doc = new jsPDF();
+    doc.text("Reporte de Despachos Diarios", 14, 15);
+
+    const tableColumn = ["N Orden", "Cliente", "Direccion", "Horario", "Items"];
+    const tableRows: any[] = [];
+
+    selectedDispatches.forEach(dispatch => {
+      const clientName = `${dispatch.client?.name} ${dispatch.client?.lastname}`;
+      const address = dispatch.address_dispatch || "No especificada";
+      
+      tableRows.push([
+        dispatch.number_order,
+        clientName,
+        address,
+        dispatch.time_dispatch || "",
+        dispatch.total_quantity
+      ]);
+    });
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+    });
+
+    doc.save("despachos.pdf");
+  };
+
+  // Filtrado local básico si se usa DatePicker
+  const filteredData = React.useMemo(() => {
+    if (!data?.data) return [];
+    if (!dateFilter) return data.data;
+    return data.data.filter(d => d.date_dispatch === dateFilter);
+  }, [data?.data, dateFilter]);
 
   const columns: ColumnsType<Dispatch> = [
     {
@@ -141,7 +196,7 @@ export default function DispatchPrivate() {
               En ruta
             </span>
           );
-        } else if (text === "pending_dispatch") {
+        } else if (text === "pending_dispatch" || text === "pending") {
           return (
             <span
               className="inline-flex items-center gap-x-1.5 py-1.5
@@ -173,17 +228,17 @@ export default function DispatchPrivate() {
       key: "method_payment",
       sorter: true,
       render: (text: Dispatch["method_payment"]) => {
-        if (text === 1) {
+        if (text == 1) {
           return (
             <span
               className="inline-flex items-center gap-x-1.5
                py-1.5 px-3 rounded-full text-xs font-medium
                bg-gray-100 text-gray-500"
             >
-              Pago efectivo
+              Pago en tienda
             </span>
           );
-        } else if (text === 2) {
+        } else if (text == 2) {
           return (
             <span
               className="inline-flex items-center gap-x-1.5 py-1.5
@@ -195,18 +250,16 @@ export default function DispatchPrivate() {
         }
       },
     },
-    /* {
+    {
       title: "Acciones",
       dataIndex: "id",
       key: "id",
-
       width: 100,
       render: (id: Order["id"], record) => (
         <Dropdown
           trigger={["click"]}
           menu={{
             items: [
-              //Usuarios 
               {
                 key: "1",
                 label: (
@@ -224,7 +277,6 @@ export default function DispatchPrivate() {
                   </button>
                 ),
               },
-              //Vaucher 
               {
                 key: "2",
                 label: (
@@ -239,16 +291,13 @@ export default function DispatchPrivate() {
                   </button>
                 ),
               },
-              // mas info 
               {
                 key: "3",
                 label: (
                   <button
                     className="flex items-center w-full gap-2 py-1"
                     onClick={() => {
-                      if (record.items) {
-                        ModalSOrderItems.current?.childFunction(record.id);
-                      }
+                      ModalSOrderItems.current?.childFunction(record.id);
                     }}
                   >
                     <EyeIcon className="size-5 text-text-primary" />
@@ -264,17 +313,29 @@ export default function DispatchPrivate() {
           </a>
         </Dropdown>
       ),
-    }, */
+    },
   ];
 
   return (
     <>
       <SectionPrivateHeader title="Despachos" existsButton={false} />
 
-      <div className="flex flex-col items-end gap-2 mb-3">
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-3">
+        <div className="flex gap-2 items-center">
+          <DatePicker 
+            placeholder="Filtrar por fecha" 
+            onChange={(date, dateString) => setDateFilter(Array.isArray(dateString) ? dateString[0] : dateString)}
+          />
+          <Button type="primary" onClick={handleExportPDF}>
+            Exportar a PDF
+          </Button>
+        </div>
         <button
-          className="flex justify-center gap-2 text-text-secondary"
-          onClick={() => resetFilters()}
+          className="flex justify-center gap-2 text-text-secondary mt-3 sm:mt-0"
+          onClick={() => {
+            setDateFilter(null);
+            resetFilters();
+          }}
         >
           <ClearFiltersIcon className="flex size-5" />
           Limpiar filtros
@@ -284,18 +345,22 @@ export default function DispatchPrivate() {
       <Table<Dispatch>
         rowSelection={rowSelection}
         columns={columns}
-        dataSource={data?.data}
+        dataSource={filteredData}
         key={tableKey}
         pagination={{
           current: tableParams?.pagination.current,
           pageSize: tableParams?.pagination.pageSize,
-          total: data?.total,
+          total: dateFilter ? filteredData.length : data?.total,
           pageSizeOptions: [10],
         }}
         onChange={handleTableChange}
         loading={isLoading}
         scroll={{ x: 1000 }}
       />
+
+      <ModalVClient ref={modalVClientRef} />
+      <ModalViewVaucher ref={modalVVaucher} refetchData={refetch} />
+      <ModalShowOrderItems ref={ModalSOrderItems} />
     </>
   );
 }

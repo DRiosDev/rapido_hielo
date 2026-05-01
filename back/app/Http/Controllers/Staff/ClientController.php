@@ -128,10 +128,8 @@ class ClientController extends Controller
     public function show(string $id)
     {
 
-        $client = Client::select('rut', 'name', 'lastname', 'email', 'address')
-            ->leftjoin('users', 'clients.user_id', '=', 'users.id')
-            ->where('user_id', $id)
-            ->where('status', 'active')
+        $client = Client::select('id', 'rut', 'name', 'lastname', 'email', 'address', 'phone', 'status')
+            ->where('id', $id)
             ->firstOrFail();
 
         return response()->json($client, 200);
@@ -139,10 +137,10 @@ class ClientController extends Controller
 
     public function changeStatusClient(string $id)
     {
-        $client = User::select('id', 'status')->where('id', $id)->first();
+        $client = Client::select('id', 'status')->where('id', $id)->first();
 
         if (!$client) {
-            return response()->json(['message' => 'Usuario no encontrado.'], 404);
+            return response()->json(['message' => 'Cliente no encontrado.'], 404);
         }
 
         // Determinar el nuevo estado

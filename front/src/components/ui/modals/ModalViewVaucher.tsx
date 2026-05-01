@@ -26,9 +26,14 @@ export const ModalViewVaucher = forwardRef<
 
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
-  const [alert, setAlert] = useState({
+  const [alert, setAlert] = useState<{
+    visible: boolean;
+    description: string;
+    type: "error" | "info";
+  }>({
     visible: false,
     description: "",
+    type: "error",
   });
 
   const { refetchData } = props;
@@ -42,8 +47,21 @@ export const ModalViewVaucher = forwardRef<
     try {
       const { data } = await axiosInstance.get(`/api/orders/vaucher/${id}`);
 
+      if (data?.order?.method_payment == 1) {
+        setAlert({
+          visible: true,
+          description: "Esta orden tiene pago en tienda. No requiere comprobante de transferencia.",
+          type: "info",
+        });
+        return;
+      }
+
       if (!data?.order?.vaucher) {
-        setAlert({ visible: true, description: "No hay imagen disponible." });
+        setAlert({
+          visible: true,
+          description: "No hay imagen disponible.",
+          type: "error",
+        });
         return;
       }
 
@@ -108,9 +126,9 @@ export const ModalViewVaucher = forwardRef<
 
       {!isLoadingData && !imageUrl && alert.visible && (
         <Alert
-          message="Error"
+          message={alert.type === "info" ? "Información" : "Error"}
           description={alert.description}
-          type="error"
+          type={alert.type}
           showIcon
         />
       )}

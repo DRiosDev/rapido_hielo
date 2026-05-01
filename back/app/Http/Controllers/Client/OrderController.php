@@ -55,13 +55,12 @@ class OrderController extends Controller
             $order = Order::create([
                 'fk_client_id' => $cart->fk_client_id,
                 'number_order' => $next_number,
-                'total' => $total,
-                'total_quantity' => $total_quantity,
                 'date_dispatch' => $date_delivery ? date('Y-m-d', strtotime($date_delivery)) : null,
                 'time_dispatch' => $request->input('hour_delivery'),
                 'method_payment' => $request->input('method_payment'),
                 'address_dispatch' => $address_dispatch,
                 'status' => 'pending_payment',
+                'url_vaucher' => '',
             ]);
 
             // Copiar los items del carrito a los de la orden
@@ -105,7 +104,7 @@ class OrderController extends Controller
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('vauchers', 'public');
 
-            $order->vaucher = $path;
+            $order->url_vaucher = $path;
             $order->status = 'payment_under_review';
         }
 

@@ -31,8 +31,8 @@ export default function Profile() {
     },
     {
       title: "Configuración",
-      icon: <Ionicons name="bag-handle-outline" size={19} color="black" />,
-      onPress: () => router.push(""),
+      icon: <Ionicons name="settings-outline" size={19} color="black" />,
+      onPress: () => router.push("/(protected)/(settings)"),
     },
     {
       title: "Cerrar sesión",

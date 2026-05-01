@@ -39,14 +39,12 @@ class OrderController extends Controller
         $order = $request->get('order', 'desc');
         $filters = $request->get('filters', []);
 
-        $query = Order::with('client:id,rut,name,lastname')
+        $query = Order::with('client:id,rut,name,lastname', 'items:id,fk_order_id,price_product,quantity')
             ->select([
                 'id',
                 'id as key',
                 'fk_client_id',
                 'number_order',
-                'total',
-                'total_quantity',
                 'status',
                 'created_at as created_at_show'
             ]);
@@ -58,6 +56,11 @@ class OrderController extends Controller
 
         // eliminar fk_client_id después de cargar la relación
         $paginated_data->getCollection()->transform(function ($order) {
+            $order->total_quantity = $order->items->sum('quantity');
+            $order->total = $order->items->reduce(function ($carry, $item) {
+                return $carry + ($item->price_product * $item->quantity);
+            }, 0);
+            unset($order->items);
             unset($order->fk_client_id); // quita el id del cliente
             return $order;
         });
@@ -127,7 +130,7 @@ class OrderController extends Controller
 
     public function showVaucher($order_id)
     {
-        $order = Order::select('id', 'vaucher')->where('id', $order_id)->first();
+        $order = Order::select('id', 'url_vaucher as vaucher', 'method_payment')->where('id', $order_id)->first();
 
         return response()->json([
             'order' => $order
@@ -143,17 +146,17 @@ class OrderController extends Controller
         }
 
         // 1. llamar al backend de archivos para borrar el voucher
-        if ($order->vaucher) {
+        if ($order->url_vaucher) {
             $file_server_url = "https://c83230a5b724.ngrok-free.app/api/delete-file";
 
             Http::delete($file_server_url, [
-                "path" => $order->vaucher
+                "path" => $order->url_vaucher
             ]);
         }
 
         // 2. actualizar estado de pago
         $order->status = 'paid';
-        $order->vaucher = null;
+        $order->url_vaucher = null;
         $order->save();
 
         return response()->json(['message' => 'Pago confirmado']);

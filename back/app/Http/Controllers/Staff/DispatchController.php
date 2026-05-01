@@ -37,14 +37,12 @@ class DispatchController extends Controller
         $order = $request->get('order', 'desc');
         $filters = $request->get('filters', []);
 
-        $query = Order::with('client:id,name,lastname')
+        $query = Order::with('client:id,name,lastname', 'items:id,fk_order_id,price_product,quantity')
             ->select([
                 'id',
                 'id as key',
                 'fk_client_id',
                 'number_order',
-                'total',
-                'total_quantity',
                 'status',
                 'date_dispatch',
                 'time_dispatch',
@@ -72,6 +70,11 @@ class DispatchController extends Controller
 
         // eliminar fk_client_id después de cargar la relación
         $paginated_data->getCollection()->transform(function ($order) {
+            $order->total_quantity = $order->items->sum('quantity');
+            $order->total = $order->items->reduce(function ($carry, $item) {
+                return $carry + ($item->price_product * $item->quantity);
+            }, 0);
+            unset($order->items);
             unset($order->fk_client_id); // quita el id del cliente
             return $order;
         });
