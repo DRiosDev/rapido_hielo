@@ -47,17 +47,22 @@ class AuthController extends Controller
 
     public function register(RegisterRequest $request)
     {
-        Client::create([
-            'name' => $request->get('name'),
-            'lastname' => $request->get('lastname'),
-            'address' => $request->get('address'),
-            'phone' => $request->get('phone'),
-            'email' => $request->get('email'),
-            'phone' => "+56" . $request->get('phone'),
-            'password' => Hash::make($request->get('password')),
-        ]);
+        try {
+            Client::create([
+                'rut' => $request->get('rut'),
+                'name' => $request->get('name'),
+                'lastname' => $request->get('lastname'),
+                'address' => $request->get('address'),
+                'phone' => "+56" . $request->get('phone'),
+                'email' => $request->get('email'),
+                'password' => Hash::make($request->get('password')),
+            ]);
 
-        return response()->json(['message' => 'Usuario creado'], 201);
+            return response()->json(['message' => 'Usuario creado'], 201);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Error registrando cliente: ' . $e->getMessage());
+            return response()->json(['message' => 'Ocurrió un error al registrar el cliente: ' . $e->getMessage()], 500);
+        }
     }
 
     public function logout()

@@ -50,8 +50,14 @@ export const useAuthUser = create<AuthState>((set, get) => ({
   },
 
   logout: async () => {
-    await SecureStore.deleteItemAsync("token");
-    set({ isAuthenticated: false, userLogged: null });
+    try {
+      await axiosInstance.post("/api/logout");
+    } catch (error) {
+      console.error("Error al hacer logout:", error);
+    } finally {
+      await SecureStore.deleteItemAsync("token");
+      set({ isAuthenticated: false, userLogged: null });
+    }
   },
 
   setUserLogged: (updatedData) => {

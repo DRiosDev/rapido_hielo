@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Account\ChangePasswordRequest;
 use App\Http\Requests\Account\UpdateAccountRequest;
 use App\Mail\Password\ResetPasswordMail;
-use App\Models\User;
+use App\Models\Client;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,7 +15,7 @@ class AccountController extends Controller
     {
         $user = Auth::user();
 
-        User::where('id', $user->id)->update([
+        Client::where('id', $user->id)->update([
             'name' => $request->get('name'),
             'lastname' => $request->get('lastname'),
             'email' => $request->get('email'),
@@ -28,29 +28,29 @@ class AccountController extends Controller
     {
         $user = Auth::user();
 
-        $user = User::select('id', 'rut', 'name', 'lastname', 'email', 'status')
+        $client = Client::select('id', 'name', 'lastname', 'email', 'status', 'address', 'phone')
             ->where('id', $user->id)
             ->firstOrFail();
 
-        return response()->json($user);
+        return response()->json($client);
     }
 
     public function updatePassword(ChangePasswordRequest $request)
     {
         $user = Auth::user();
 
-        $user = User::select('id', 'password', 'email')->where('id', $user->id)->firstOrFail();
+        $client = Client::select('id', 'password', 'email')->where('id', $user->id)->firstOrFail();
 
-        if (!Hash::check($request->get('current_password'), $user->password)) {
+        if (!Hash::check($request->get('current_password'), $client->password)) {
             // Verificar si la contraseña proporcionada coincide con la contraseña almacenada en la base de datos
             return response()->json(['message' => 'La contraseña no coincide'], 400);
         }
 
-        $user->update([
+        $client->update([
             'password' => Hash::make($request->get('new_password')),
         ]);
 
-        $email = $user->email;
+        $email = $client->email;
 
         $mail = new ResetPasswordMail();
         $mail->send($email);

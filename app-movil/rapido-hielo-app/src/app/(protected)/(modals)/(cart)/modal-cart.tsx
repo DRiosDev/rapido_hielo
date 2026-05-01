@@ -58,7 +58,7 @@ export default function ModalCart() {
       const payload = {
         date_delivery: date,
         hour_delivery: time,
-        method_payment: payment,
+        method_payment: String(payment),
       };
 
       const response = await axiosInstance.post(

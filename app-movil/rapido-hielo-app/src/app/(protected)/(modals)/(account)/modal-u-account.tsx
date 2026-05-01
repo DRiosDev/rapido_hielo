@@ -43,14 +43,14 @@ export default function ModalUAccount() {
   const update = async (values) => {
     setIsLoandingButton(true);
 
-    const formData = new FormData();
-    formData.append("id_user", userLogged.id);
-    formData.append("name", values.name);
-    formData.append("lastname", values.lastname);
-    formData.append("email", values.email);
+    const payload = {
+      name: values.name,
+      lastname: values.lastname,
+      email: values.email,
+    };
 
     await axiosInstance
-      .put(`/api/account/`, formData)
+      .put(`/api/account/`, payload)
       .then(() => {
         showMessage({
           message: "Usuario editado con éxito",

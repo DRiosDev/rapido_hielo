@@ -17,14 +17,8 @@ export default function Profile() {
 
   const handleLogout = async () => {
     setIsLoading(true);
-    try {
-      // Solo si hay token válido
-      await axiosInstance.post("/api/logout");
-    } catch (error) {
-      console.error("Error al hacer logout:", error);
-    } finally {
-      logout();
-    }
+    await logout();
+    setIsLoading(false);
   };
 
   // Configuración de las acciones

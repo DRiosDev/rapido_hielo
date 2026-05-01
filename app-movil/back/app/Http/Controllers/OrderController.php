@@ -62,6 +62,7 @@ class OrderController extends Controller
                 'method_payment' => $request->input('method_payment'),
                 'address_dispatch' => $address_dispatch,
                 'status' => 'pending_payment',
+                'url_vaucher' => '',
             ]);
 
             // Copiar los items del carrito a los de la orden
@@ -147,6 +148,7 @@ class OrderController extends Controller
                 'method_payment' => $request->input('method_payment'),
                 'address_dispatch' => $address_dispatch,
                 'status' => 'pending_payment',
+                'url_vaucher' => '',
             ]);
 
             // Copiar los items del carrito a los de la orden
@@ -190,7 +192,7 @@ class OrderController extends Controller
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('vauchers', 'public');
 
-            $order->vaucher = $path;
+            $order->url_vaucher = $path;
             $order->status = 'payment_under_review';
         }
 

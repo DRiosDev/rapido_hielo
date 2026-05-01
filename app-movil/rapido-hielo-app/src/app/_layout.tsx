@@ -5,7 +5,6 @@ import { NetworkProvider } from "@/context/NetworkContext";
 import useInitialData from "@/hooks/useInitialData";
 import { useLoadFonts } from "@/hooks/useLoadFonts";
 import { useAuthUser } from "@/store/useAuthUser";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
@@ -18,14 +17,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import "../global.css";
 
 SplashScreen.preventAutoHideAsync();
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false, // 🚫 no reintentar en fallos
-    },
-  },
-});
 
 export default function Layout() {
   const { isAuthenticated, isLoadingInitialData } = useAuthUser();
@@ -53,7 +44,6 @@ export default function Layout() {
 
   return (
     <KeyboardProvider>
-      <QueryClientProvider client={queryClient}>
         <PaperProvider theme={theme}>
           <FlashMessage position="top" statusBarHeight={insets.top} />
           <StatusBar style="dark" />
@@ -84,7 +74,6 @@ export default function Layout() {
             <OfflineNotice />
           </NetworkProvider>
         </PaperProvider>
-      </QueryClientProvider>
     </KeyboardProvider>
   );
 }
