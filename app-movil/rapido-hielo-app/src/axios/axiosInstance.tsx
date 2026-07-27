@@ -4,7 +4,7 @@ import { Alert, Linking } from "react-native";
 import { useAuthUser } from "../store/useAuthUser";
 
 //LOCAL
-export const baseURL = "https://uncordial-apologal-carlene.ngrok-free.dev";x
+export const baseURL = "https://uncordial-apologal-carlene.ngrok-free.dev";
 
 //DEV
 /* export const baseURL = "https://apidevpos.vortexpos.com";  */
