@@ -35,6 +35,11 @@ export const useAuthUser = create<AuthState>((set, get) => ({
   },
 
   getMe: async () => {
+    const token = await SecureStore.getItemAsync("token");
+    if (!token) {
+      set({ isAuthenticated: false, userLogged: null, isLoadingInitialData: false });
+      return;
+    }
     set({ isLoadingInitialData: true });
     try {
       const response = await axiosInstance.get("/api/me");
@@ -44,16 +49,19 @@ export const useAuthUser = create<AuthState>((set, get) => ({
         isLoadingInitialData: false,
       });
     } catch {
-      await get().logout();
-      set({ isLoadingInitialData: false });
+      await SecureStore.deleteItemAsync("token");
+      set({ isAuthenticated: false, userLogged: null, isLoadingInitialData: false });
     }
   },
 
   logout: async () => {
     try {
-      await axiosInstance.post("/api/logout");
-    } catch (error) {
-      console.error("Error al hacer logout:", error);
+      const token = await SecureStore.getItemAsync("token");
+      if (token) {
+        await axiosInstance.post("/api/logout");
+      }
+    } catch {
+      // Ignorar error al cerrar sesión si el token ya expiró o es inválido
     } finally {
       await SecureStore.deleteItemAsync("token");
       set({ isAuthenticated: false, userLogged: null });

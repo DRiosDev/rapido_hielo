@@ -18,7 +18,7 @@ export const useAuthUser = create<AuthState>((set, get) => ({
 
   login: async (email, password) => {
     try {
-      const { data } = await axiosInstance.post("/api/auth/login", {
+      const { data } = await axiosInstance.post("/api/auth/staff-login", {
         email,
         password,
       });

@@ -3,15 +3,29 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Order\CreateOrderRequest;
 use App\Models\Cart\Cart;
 use App\Models\Order\Order;
 use App\Models\Order\OrderItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
-    public function store(Request $request, $cart_id)
+    public function index(Request $request)
+    {
+        $client_id = $request->get('id_user') ?? Auth::id();
+
+        $orders = Order::with('items')
+            ->where('fk_client_id', $client_id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json($orders, 200);
+    }
+
+    public function store(CreateOrderRequest $request, $cart_id)
     {
         $date_delivery = $request->input('date_delivery');
 

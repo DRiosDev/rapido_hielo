@@ -18,26 +18,43 @@ class UserActiveMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         $payload = JWTAuth::parseToken()->getPayload();
+        $id_user = $payload->get('id') ?? $payload->get('sub');
+        $type = $payload->get('type');
 
-        $id_user =  $payload->get('id');
+        $role = 'client';
+        $user_model = null;
 
-        $user = User::where('id', $id_user)
-            ->where('status', '=', 'active')
-            ->select('role')
-            ->first();
+        if ($type === 'client') {
+            $user_model = \App\Models\Client::where('id', $id_user)
+                ->where('status', '=', 'active')
+                ->first();
+            $role = 'client';
+        } else {
+            $user_model = User::where('id', $id_user)
+                ->where('status', '=', 'active')
+                ->first();
+            if ($user_model) {
+                $role = $user_model->role;
+            } else {
+                $user_model = \App\Models\Client::where('id', $id_user)
+                    ->where('status', '=', 'active')
+                    ->first();
+                $role = 'client';
+            }
+        }
 
-        if (!$user) {
+        if (!$user_model) {
             return response()->json(['msg_middleware' => 'Usuario desactivado'], 401);
         }
 
-        //añadir que el id_user sea el del payload
+        // añadir que el id_user sea el del payload
         $request->merge([
             'id_user' => $id_user,
-            'role_user_request' => $user->role,
+            'role_user_request' => $role,
         ]);
 
-        //Guardar ultima peticion del usuario
-        User::where('id', $user->id)->update([
+        // Guardar última petición del usuario/cliente
+        $user_model->update([
             'last_request_at' => now()
         ]);
 

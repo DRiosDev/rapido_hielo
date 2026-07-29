@@ -1,7 +1,6 @@
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { Alert, Linking } from "react-native";
-import { useAuthUser } from "../store/useAuthUser";
 
 //LOCAL
 export const baseURL = "https://uncordial-apologal-carlene.ngrok-free.dev";
@@ -76,7 +75,7 @@ axiosInstance.interceptors.response.use(
           { cancelable: true },
         );
 
-        useAuthUser.getState().logout();
+        require("../store/useAuthUser").useAuthUser.getState().logout();
         return Promise.reject(refreshError);
       }
     } else if (

@@ -20,6 +20,7 @@ Route::get('/version', function () {
 Route::prefix('auth')->controller(AuthController::class)->group(function () {
     Route::post('/register', 'register');
     Route::post('/login', 'login');
+    Route::post('/staff-login', 'loginStaff');
     Route::post('/refresh', 'refresh');
 });
 

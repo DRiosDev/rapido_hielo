@@ -15,6 +15,17 @@ class OrderController extends Controller
 
     public function index(Request $request)
     {
+        if ($request->get('role_user_request') === 'client') {
+            $client_id = $request->get('id_user') ?? \Illuminate\Support\Facades\Auth::id();
+
+            $orders = Order::with('items')
+                ->where('fk_client_id', $client_id)
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            return response()->json($orders, 200);
+        }
+
         $request->validate([
             'current' => 'nullable|integer|min:1',
             'field' => 'nullable|in:created_at_show,number_order', //Campos sorter

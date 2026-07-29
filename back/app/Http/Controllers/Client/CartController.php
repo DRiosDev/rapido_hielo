@@ -7,12 +7,13 @@ use App\Models\Cart\Cart;
 use App\Models\Cart\CartItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
     public function addToCart(Request $request, $product_id)
     {
-        $client_id = $request->get('client_id');
+        $client_id = $request->get('id_user') ?? $request->get('client_id') ?? Auth::id();
         $quantity = $request->get('quantity', 1); // por defecto 1 si no envía
 
         if ($quantity <= 0) {
@@ -61,7 +62,7 @@ class CartController extends Controller
 
     public function getCart(Request $request)
     {
-        $client_id = $request->get('client_id');
+        $client_id = $request->get('id_user') ?? $request->get('client_id') ?? Auth::id();
 
         // 🔹 Buscar el carrito activo del cliente
         $cart = Cart::where('fk_client_id', $client_id)

@@ -28,12 +28,10 @@ Route::prefix('clients')->controller(ClientController::class)->group(function ()
 Route::prefix('products')->controller(ProductController::class)->group(function () {
     Route::post('/', 'createProduct');
     Route::put('/{id_product}', 'updateClient')->whereUuid('id_product');
-    Route::get('/', 'getProducts');
     Route::patch('/{id_product}', 'changeStatusProduct')->whereUuid('id_product');
 });
 
 Route::prefix('orders')->controller(OrderController::class)->group(function () {
-    Route::get('/', 'index');
     Route::get('/items/{order_id}', 'showOrderItems');
     Route::get('/vaucher/{order_id}', 'showVaucher');
     Route::put('/confirm-payment/{order_id}', 'confirmPayment');

@@ -34,6 +34,33 @@ Route::middleware(['jwt.verify', 'user.active'])->group(function () {
         Route::patch('/password', 'updatePassword');
     });
 
+    /*
+    |--------------------------------------------------------------------------
+    | Rutas de Cliente (App Móvil)
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('products')->controller(\App\Http\Controllers\Client\ProductController::class)->group(function () {
+        Route::get('/', 'index');
+    });
+
+    Route::prefix('carts')->controller(\App\Http\Controllers\Client\CartController::class)->group(function () {
+        Route::get('/', 'getCart');
+        Route::post('/{product_id}', 'addToCart');
+        Route::delete('/{cart_id}', 'deleteAllItems');
+    });
+
+    Route::prefix('carts/items')->controller(\App\Http\Controllers\Client\CartItemController::class)->group(function () {
+        Route::put('/{id}', 'update');
+        Route::delete('/{id}', 'destroy');
+    });
+
+    Route::get('/orders', [\App\Http\Controllers\Staff\OrderController::class, 'index']);
+
+    Route::prefix('orders')->controller(\App\Http\Controllers\Client\OrderController::class)->group(function () {
+        Route::post('/{cart_id}', 'store');
+        Route::post('/{order_id}/payment-proof', 'submitPaymentProof');
+    });
+
     /**
      * --------------------------------------------------------
      * Admin-Only Routes (requires admin role)
@@ -43,3 +70,4 @@ Route::middleware(['jwt.verify', 'user.active'])->group(function () {
         require __DIR__ . '/api/staff.php';
     });
 });
+

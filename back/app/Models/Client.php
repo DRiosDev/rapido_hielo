@@ -2,26 +2,31 @@
 
 namespace App\Models;
 
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 use Ramsey\Uuid\Uuid as RamseyUuid;
 
-
-class Client extends Model
+class Client extends Authenticatable implements JWTSubject
 {
-    use HasFactory;
+    use HasFactory, Notifiable;
 
     protected $primaryKey = 'id';
 
     protected $fillable = [
         'id',
-        'rut',        // <-- FALTABA
+        'rut',
         'name',
         'lastname',
         'address',
         'phone',
         'email',
-        'password'    // <-- también lo estás usando
+        'password',
+        'status',
+        'reset_password_token',
+        'reset_password_token_expiration',
+        'last_request_at',
     ];
 
     /**
@@ -52,6 +57,7 @@ class Client extends Model
     {
         return [
             'id' => $this->id,
+            'type' => 'client',
         ];
     }
 
@@ -63,7 +69,10 @@ class Client extends Model
     {
         parent::boot();
         static::creating(function ($obj) {
-            $obj->id = RamseyUuid::uuid4()->toString();
+            if (empty($obj->id)) {
+                $obj->id = RamseyUuid::uuid4()->toString();
+            }
         });
     }
 }
+

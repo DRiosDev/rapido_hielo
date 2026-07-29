@@ -21,13 +21,33 @@ class JwtMiddleware
     public function handle($request, Closure $next)
     {
         try {
-            $payload = JWTAuth::parseToken()->getPayload();  // Obtener el payload sin cargar el usuario completo
+            $payload = JWTAuth::parseToken()->getPayload();
             $id = $payload->get('id') ?? $payload->get('sub');
+            $type = $payload->get('type');
 
-            // intentar encontrar primero en users
-            $user = User::select('id', 'status', 'role')->find($id);
+            $user = null;
+            if ($type === 'client') {
+                $user = \App\Models\Client::select('id', 'status', 'name', 'lastname', 'email')->find($id);
+                if ($user) {
+                    $user->role = 'client';
+                }
+            } else {
+                $user = User::select('id', 'status', 'role', 'name', 'lastname', 'email')->find($id);
+                if (!$user) {
+                    $user = \App\Models\Client::select('id', 'status', 'name', 'lastname', 'email')->find($id);
+                    if ($user) {
+                        $user->role = 'client';
+                    }
+                }
+            }
 
-            // Autenticar al usuario sin cargar todos los datos
+            if (!$user) {
+                return response()->json([
+                    'error' => 'unauthorized',
+                    'message' => 'Usuario no encontrado'
+                ], 401);
+            }
+
             Auth::setUser($user);
         } catch (TokenExpiredException $e) {
             return response()->json([
