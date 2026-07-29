@@ -15,8 +15,17 @@ class OrderController extends Controller
 
     public function index(Request $request)
     {
-        if ($request->get('role_user_request') === 'client') {
-            $client_id = $request->get('id_user') ?? \Illuminate\Support\Facades\Auth::id();
+        $user = \Illuminate\Support\Facades\Auth::user();
+        $role = $request->get('role_user_request');
+
+        if (
+            $user instanceof \App\Models\Client ||
+            $role === 'client' ||
+            !$user ||
+            !isset($user->role) ||
+            !in_array($user->role, ['admin', 'owner', 'staff'])
+        ) {
+            $client_id = $user ? $user->id : ($request->get('id_user') ?? \Illuminate\Support\Facades\Auth::id());
 
             $orders = Order::with('items')
                 ->where('fk_client_id', $client_id)

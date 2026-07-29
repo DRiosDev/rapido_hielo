@@ -2,7 +2,7 @@
 
 namespace App\Models\Cart;
 
-use App\Models\User;
+use App\Models\Client;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Ramsey\Uuid\Uuid as RamseyUuid;
@@ -34,7 +34,7 @@ class Cart extends Model
 
     public function client()
     {
-        return $this->belongsTo(User::class, 'fk_client_id', 'id');
+        return $this->belongsTo(Client::class, 'fk_client_id', 'id');
     }
 
 
