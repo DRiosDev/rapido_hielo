@@ -30,5 +30,5 @@ RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 # Puerto expuesto por Render (por defecto 10000 o $PORT)
 EXPOSE 10000
 
-# Comando de inicio
-CMD sh -c "php artisan config:cache && php artisan route:cache && php artisan serve --host=0.0.0.0 --port=${PORT:-10000}"
+# Comando de inicio (ejecuta migraciones, semillas de datos iniciales y arranca el servidor)
+CMD sh -c "php artisan migrate --force --seed && php artisan config:cache && php artisan route:cache && php artisan serve --host=0.0.0.0 --port=${PORT:-10000}"

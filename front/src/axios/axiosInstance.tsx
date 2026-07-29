@@ -10,17 +10,11 @@ interface ShowModal {
   onOk?: () => void;
 }
 
+//RENDER ONLINE / PROD
+export const baseURL = import.meta.env.VITE_API_BASE_URL || "https://rapido-hielo-back.onrender.com";
+
 //LOCAL
-export const baseURL = "http://127.0.0.1:8000";
-
-//DEV
-/* export const baseURL = "https://apidevpos.vortexpos.com";  */
-
-//DEMO
-/* export const baseURL = "https://apidemopos.vortexpos.com"; */
-
-//PRODUCCION
-/* export const baseURL = "https://api.vortexpos.com"; */
+// export const baseURL = "http://127.0.0.1:8000";
 
 async function getAccessToken() {
   return localStorage.getItem("token");
