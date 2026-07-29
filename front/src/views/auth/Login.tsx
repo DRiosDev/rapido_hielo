@@ -105,7 +105,7 @@ export default function Login() {
         {/*Text */}
         <div className="mt-4 mb-8 text-center">
           <h2 className="text-2xl font-bold text-center sora-font md:text-3xl">
-            Ingresa a tu POS
+            Iniciar sesión
           </h2>
         </div>
 
