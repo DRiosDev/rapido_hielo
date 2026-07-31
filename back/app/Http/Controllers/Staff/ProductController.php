@@ -19,6 +19,7 @@ class ProductController extends Controller
             'description' =>  $request->get('description'),
             'weight' => $request->get('weight'),
             'price' => $request->get('price'),
+            'quantity' => $request->get('quantity') ?? 1
         ]);
 
         $Product->key = $Product->id;
@@ -30,7 +31,7 @@ class ProductController extends Controller
         ], 201);
     }
 
-    public function updateClient(CreateProductRequest $request, $id)
+    public function updateClient(CreateProductRequest $request, string $id)
     {
         $item_exist = Product::where('id', $id)->exists();
 
@@ -102,7 +103,45 @@ class ProductController extends Controller
         return response()->json($response, 200);
     }
 
-    public function changeStatusProduct($id)
+    public function updateQuantity(Request $request, string $id)
+    {
+        $request->validate([
+            'action' => 'required|in:add,subtract',
+            'quantity' => 'required|integer|min:0',
+        ]);
+
+        $product = Product::find($id);
+
+        if (!$product) {
+            return response()->json([
+                'message' => 'Producto no encontrado'
+            ], 404);
+        }
+
+        $action = $request->get('action');
+        $quantity = $request->get('quantity');
+
+        if ($action === 'add') {
+            $product->quantity += $quantity;
+        } else {
+            if ($product->quantity - $quantity < 0) {
+                return response()->json([
+                    'message' => 'No se puede dejar el stock por debajo de 0.'
+                ], 422);
+            }
+
+            $product->quantity -= $quantity;
+        }
+
+        $product->save();
+
+        return response()->json([
+            'message' => 'Cantidad de producto actualizada con éxito',
+            'register' => $product,
+        ], 200);
+    }
+
+    public function changeStatusProduct(string $id)
     {
         $client = Product::select('id', 'status')->where('id', $id)->first();
 
