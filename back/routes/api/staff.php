@@ -26,9 +26,10 @@ Route::prefix('clients')->controller(ClientController::class)->group(function ()
 });
 
 Route::prefix('products')->controller(ProductController::class)->group(function () {
-    Route::post('/', 'createProduct');
-    Route::put('/{id_product}', 'updateClient')->whereUuid('id_product');
+    Route::post('/', 'create');
+    Route::put('/{id_product}', 'update')->whereUuid('id_product');
     Route::get('/', 'getProducts');
+    Route::patch('/quantity/{id_product}', 'updateQuantity')->whereUuid('id_product');
     Route::patch('/{id_product}', 'changeStatusProduct')->whereUuid('id_product');
 });
 

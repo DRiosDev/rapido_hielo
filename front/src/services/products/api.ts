@@ -33,3 +33,19 @@ export async function deleteProduct(id: Product["id"]) {
   const { data } = await axiosInstance.patch(`/api/products/${id}`);
   return data;
 }
+
+export type UpdateQuantityPayload = {
+  id: string;
+  action: "add" | "subtract";
+  quantity: number;
+};
+
+//update quantity
+export async function updateProductQuantity(payload: UpdateQuantityPayload) {
+  const { id, action, quantity } = payload;
+  const { data } = await axiosInstance.patch(`/api/products/quantity/${id}`, {
+    action,
+    quantity,
+  });
+  return data;
+}

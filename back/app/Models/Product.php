@@ -18,6 +18,7 @@ class Product extends Model
         'weight',
         'unit',
         'price',
+        'quantity',
         'status'
     ];
 

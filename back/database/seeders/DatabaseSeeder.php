@@ -2,8 +2,10 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Product;
+use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -12,18 +14,44 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        if (\App\Models\User::count() === 0) {
-            \App\Models\User::create([
-                'id' => (string) \Illuminate\Support\Str::uuid(),
-                'name' => 'David',
-                'lastname' => 'Rios',
-                'email' => 'david.alberto2212@gmail.com',
-                'rut' => '20.368.565-3',
-                'phone' => '988863598',
+        // Owner User
+        User::firstOrCreate(
+            ['email' => 'owner@gmail.com'],
+            [
+                'rut' => '11.111.111-1',
+                'name' => 'Owner',
+                'lastname' => 'User',
+                'phone' => '911111111',
                 'role' => 'owner',
                 'status' => 'active',
-                'password' => \Illuminate\Support\Facades\Hash::make('12345678'),
-            ]);
-        }
+                'password' => Hash::make('12345678'),
+            ]
+        );
+
+        // Employee User
+        User::firstOrCreate(
+            ['email' => 'employed@gmail.com'],
+            [
+                'rut' => '22.222.222-2',
+                'name' => 'Employed',
+                'lastname' => 'User',
+                'phone' => '922222222',
+                'role' => 'admin',
+                'status' => 'active',
+                'password' => Hash::make('12345678'),
+            ]
+        );
+
+        // Default Product
+        Product::firstOrCreate(
+            ['name' => 'hielo'],
+            [
+                'description' => 'Bolsa de hielo',
+                'weight' => 1,
+                'price' => 450,
+                'quantity' => 10,
+                'status' => 'active',
+            ]
+        );
     }
 }
