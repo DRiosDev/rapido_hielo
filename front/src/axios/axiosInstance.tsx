@@ -11,10 +11,10 @@ interface ShowModal {
 }
 
 //RENDER ONLINE / PROD
-/* export const baseURL = import.meta.env.VITE_API_BASE_URL || "https://rapido-hielo-back.onrender.com"; */
+export const baseURL = import.meta.env.VITE_API_BASE_URL || "https://rapido-hielo-back.onrender.com";
 
 //LOCAL
-export const baseURL = "http://127.0.0.1:8000";
+/* export const baseURL = "http://127.0.0.1:8000"; */
 
 async function getAccessToken() {
   return localStorage.getItem("token");
