@@ -139,7 +139,7 @@ class ProductController extends Controller
             'message' => 'Cantidad de producto actualizada con éxito',
             'register' => $product,
         ], 200);
-    }
+    }            
 
     public function changeStatusProduct(string $id)
     {
