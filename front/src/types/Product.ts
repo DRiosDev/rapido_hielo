@@ -5,6 +5,7 @@ export interface Product {
   description: string;
   weight: number;
   price: string;
+  quantity: number;
   status: "active" | "desactive";
   created_at_show?: string;
 }

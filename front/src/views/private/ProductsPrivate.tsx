@@ -2,6 +2,8 @@ import { message, Popconfirm, Space, Table, Tooltip } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { useRef } from "react";
 import { SectionPrivateHeader } from "../../components/ui/SectionPrivateHeader";
+import { SinDatoBadget } from "../../components/ui/SinDatoBadget";
+import { BoxIcon } from "../../components/ui/icons/BoxIcon";
 import { CheckIcon } from "../../components/ui/icons/CheckIcon";
 import { ClearFiltersIcon } from "../../components/ui/icons/ClearFiltersIcon";
 import { DeleteIcon } from "../../components/ui/icons/DeleteIcon";
@@ -10,17 +12,21 @@ import {
   ModalCUProduct,
   ModalCUProductRef,
 } from "../../components/ui/modals/ModalCUProduct";
+import {
+  ModalUQuantity,
+  ModalUQuantityRef,
+} from "../../components/ui/modals/ModalUQuantity";
 import { Colors } from "../../constants/Colors";
+import { formatPrice } from "../../helpers/formatPrice";
 import useTableFilters from "../../hooks/table/useTableFiltersV2";
 import useColumnSearch from "../../hooks/useColumnSearch";
+import { useDeleteProduct } from "../../services/products/mutation";
 import { useProducts } from "../../services/products/queries";
 import { Product } from "../../types/Product";
-import { SinDatoBadget } from "../../components/ui/SinDatoBadget";
-import { formatPrice } from "../../helpers/formatPrice";
-import { useDeleteProduct } from "../../services/products/mutation";
 
 export default function ProductsPrivate() {
   const modalCURef = useRef<ModalCUProductRef>(null);
+  const modalUQWuantityRef = useRef<ModalUQuantityRef>(null);
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -67,6 +73,13 @@ export default function ProductsPrivate() {
       sorter: true,
     },
     {
+      title: "Stock",
+      dataIndex: "quantity",
+      key: "quantity",
+      render: (text: number) => <p>{text}</p>,
+      sorter: true,
+    },
+    {
       title: "Estado",
       dataIndex: "status",
       key: "status",
@@ -108,7 +121,6 @@ export default function ProductsPrivate() {
       title: "Acciones",
       dataIndex: "id",
       key: "id",
-
       width: 100,
       render: (id: Product["id"], record: Product) => (
         <Space size="middle">
@@ -123,6 +135,22 @@ export default function ProductsPrivate() {
             </button>
           </Tooltip>
 
+          {/* UPDATE STOCK */}
+          <Tooltip
+            placement="top"
+            className="cursor-pointer"
+            title="Actualizar stock"
+          >
+            <button
+              onClick={() => {
+                modalUQWuantityRef.current?.childFunction(id);
+              }}
+            >
+              <BoxIcon className="text-blue-500 size-6" />
+            </button>
+          </Tooltip>
+
+          {/* DELETE */}
           {record.status === "active" ? (
             <Tooltip
               placement="top"
@@ -194,7 +222,7 @@ export default function ProductsPrivate() {
       onSuccess: () => {
         refetch();
         messageApi.success(
-          `El estado del producto se ha cambiado correctamente.`
+          `El estado del producto se ha cambiado correctamente.`,
         );
       },
       // Si salio mal, añades ese item a la cache
@@ -238,6 +266,7 @@ export default function ProductsPrivate() {
       />
 
       <ModalCUProduct ref={modalCURef} />
+      <ModalUQuantity ref={modalUQWuantityRef} refetch={refetch} />
     </>
   );
 }

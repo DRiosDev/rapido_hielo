@@ -4,7 +4,13 @@ import {
   updateCacheAfterUpdate,
 } from "../../helpers/updateCacheMutation";
 import { Product } from "../../types/Product";
-import { createProduct, deleteProduct, updateProduct } from "./api";
+import {
+  createProduct,
+  deleteProduct,
+  updateProduct,
+  updateProductQuantity,
+  UpdateQuantityPayload,
+} from "./api";
 
 export function useCreateProduct() {
   const queryClient = useQueryClient();
@@ -37,6 +43,17 @@ export function useDeleteProduct() {
   return useMutation({
     mutationFn: (id: Product["id"]) => deleteProduct(id),
     onSuccess: (_response) => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
+  });
+}
+
+export function useUpdateProductQuantity() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: UpdateQuantityPayload) => updateProductQuantity(payload),
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
     },
   });

@@ -183,7 +183,7 @@ export const ModalCUProduct = forwardRef<
 
         <div className="grid grid-cols-1 sm:gap-4 sm:grid-cols-2">
           {/* Peso */}
-          <Form.Item name="weight" validateTrigger="onBlur" label="Peso">
+          <Form.Item name="weight" validateTrigger="onBlur" label="Peso (Kg)">
             <InputNumber
               type="text"
               maxLength={8}

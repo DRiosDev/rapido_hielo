@@ -27,6 +27,13 @@ class JwtMiddleware
             // intentar encontrar primero en users
             $user = User::select('id', 'status', 'role')->find($id);
 
+            if (!$user) {
+                return response()->json([
+                    'error' => 'user_not_found',
+                    'message' => 'Usuario no encontrado'
+                ], 401);
+            }
+
             // Autenticar al usuario sin cargar todos los datos
             Auth::setUser($user);
         } catch (TokenExpiredException $e) {

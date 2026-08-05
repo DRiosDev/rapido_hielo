@@ -11,10 +11,10 @@ interface ShowModal {
 }
 
 //RENDER ONLINE / PROD
-export const baseURL = import.meta.env.VITE_API_BASE_URL || "https://rapido-hielo-back.onrender.com";
+/* export const baseURL = import.meta.env.VITE_API_BASE_URL || "https://rapido-hielo-back.onrender.com"; */
 
 //LOCAL
-// export const baseURL = "http://127.0.0.1:8000";
+export const baseURL = "http://127.0.0.1:8000";
 
 async function getAccessToken() {
   return localStorage.getItem("token");
@@ -115,6 +115,14 @@ axiosInstance.interceptors.response.use(
       showModal({
         title: "Tu cuenta está desactivada. Acceso denegado.",
         content: "Serás redirigido al login.",
+        onOk: () => {
+          useAuthUser.getState().logout();
+        },
+      });
+    } else if (error_message === "user_not_found") {
+      showModal({
+        title: "Usuario no encontrado",
+        content: "Tu sesión o usuario ya no existen en el sistema. Por favor, vuelve a iniciar sesión.",
         onOk: () => {
           useAuthUser.getState().logout();
         },

@@ -12,7 +12,7 @@ class ProductController extends Controller
 {
     use Filterable;
 
-    public function createProduct(CreateProductRequest $request)
+    public function create(CreateProductRequest $request)
     {
         $Product = Product::create([
             'name' =>  $request->get('name'),
@@ -31,7 +31,7 @@ class ProductController extends Controller
         ], 201);
     }
 
-    public function updateClient(CreateProductRequest $request, string $id)
+    public function update(CreateProductRequest $request, string $id)
     {
         $item_exist = Product::where('id', $id)->exists();
 
@@ -85,6 +85,7 @@ class ProductController extends Controller
                 'description',
                 'weight',
                 'price',
+                'quantity',
                 'status',
                 'created_at as created_at_show'
             ]);
@@ -107,7 +108,7 @@ class ProductController extends Controller
     {
         $request->validate([
             'action' => 'required|in:add,subtract',
-            'quantity' => 'required|integer|min:0',
+            'quantity' => 'required|integer|min:1',
         ]);
 
         $product = Product::find($id);
@@ -119,7 +120,7 @@ class ProductController extends Controller
         }
 
         $action = $request->get('action');
-        $quantity = $request->get('quantity');
+        $quantity = (int) $request->get('quantity');
 
         if ($action === 'add') {
             $product->quantity += $quantity;
