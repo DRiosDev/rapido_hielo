@@ -44,7 +44,12 @@ class InventoryMovementController extends Controller
         ]);
 
         if ($request->filled('product_id')) {
-            $query->where('fk_product_id', $request->get('product_id'));
+            $productId = (string) $request->get('product_id');
+            if (\Ramsey\Uuid\Uuid::isValid($productId)) {
+                $query->where('fk_product_id', $productId);
+            } else {
+                $query->whereRaw('1 = 0');
+            }
         }
 
         if ($request->filled('action')) {
@@ -68,6 +73,13 @@ class InventoryMovementController extends Controller
             'current' => 'nullable|integer|min:1',
             'pageSize' => 'nullable|integer|min:1|max:100',
         ]);
+
+        if (!\Ramsey\Uuid\Uuid::isValid($product_id)) {
+            return response()->json([
+                'data' => [],
+                'total' => 0,
+            ], 200);
+        }
 
         $current = $request->get('current', 1);
         $page_size = $request->get('pageSize', 10);
