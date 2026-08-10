@@ -68,6 +68,7 @@ export const ModalCUProduct = forwardRef<
         description: data.description,
         weight: data.weight ? parseFloat(String(data.weight)) : undefined,
         price: data.price,
+        min_stock: data.min_stock ?? 0,
       });
     }
   };
@@ -237,6 +238,22 @@ export const ModalCUProduct = forwardRef<
             />
           </Form.Item>
         </div>
+
+        {/* Stock Mínimo */}
+        <Form.Item
+          name="min_stock"
+          validateTrigger="onBlur"
+          label="Stock Mínimo (Alerta Bajo Stock)"
+          tooltip="Define la cantidad mínima en inventario para disparar la alerta de bajo stock. (0 desactiva la alerta)"
+        >
+          <InputNumber
+            type="number"
+            min={0}
+            max={999999}
+            className="w-full"
+            placeholder="Ej: 50 (0 para desactivar alerta)"
+          />
+        </Form.Item>
 
         <Form.Item
           name="description"

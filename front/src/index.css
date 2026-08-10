@@ -147,6 +147,10 @@ label {
   color: var(--primary-color);
 }
 
+.color_icon_logout {
+  color: red;
+}
+
 
 
 

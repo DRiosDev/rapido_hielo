@@ -49,3 +49,17 @@ export async function updateProductQuantity(payload: UpdateQuantityPayload) {
   });
   return data;
 }
+
+export type ConvertStockPayload = {
+  origin_product_id: string;
+  destination_product_id: string;
+  conversion_factor: number;
+  quantity_to_create: number;
+  reason?: string;
+};
+
+// convert stock (Bolsas -> Sacos)
+export async function convertStock(payload: ConvertStockPayload) {
+  const { data } = await axiosInstance.post("/api/products/convert-stock", payload);
+  return data;
+}

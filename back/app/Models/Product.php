@@ -19,6 +19,7 @@ class Product extends Model
         'unit',
         'price',
         'quantity',
+        'min_stock',
         'status'
     ];
 

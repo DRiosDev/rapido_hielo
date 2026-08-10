@@ -10,11 +10,12 @@ export const RESETPASSWORD = "/cambiar-clave/:token";
 
 //privadas
 export const PRIVATEUSERS = "/priv";
-
+export const DASHBOARDPRIVATE = "/priv/panel-administrativo";
 export const ORDERSPRIVATE = "/priv/ordenes";
 export const DISPATCHPRIVATE = "/priv/despachos";
 export const USERSPRIVATE = "/priv/usuarios";
 export const CLIENTSPRIVATE = "/priv/clientes";
 export const PRODUCTSPRIVATE = "/priv/productos";
+export const INVENTORYMOVEMENTS = "/priv/movimientos-inventario";
 export const MYACCOUNTPRIVATE = "/priv/mi-cuenta";
 export const LOGOUT = "/priv/logout";

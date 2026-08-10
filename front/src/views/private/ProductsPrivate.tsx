@@ -1,17 +1,26 @@
-import { message, Popconfirm, Space, Table, Tooltip } from "antd";
+import { Button, message, Popconfirm, Space, Table, Tooltip } from "antd";
 import { ColumnsType } from "antd/es/table";
+import { History, Package } from "lucide-react";
 import { useRef } from "react";
 import { SectionPrivateHeader } from "../../components/ui/SectionPrivateHeader";
 import { SinDatoBadget } from "../../components/ui/SinDatoBadget";
-import { BoxIcon } from "../../components/ui/icons/BoxIcon";
+import { ArrowUpDownIcon } from "../../components/ui/icons/ArrowUpDownIcon";
 import { CheckIcon } from "../../components/ui/icons/CheckIcon";
 import { ClearFiltersIcon } from "../../components/ui/icons/ClearFiltersIcon";
 import { DeleteIcon } from "../../components/ui/icons/DeleteIcon";
 import { EditIcon } from "../../components/ui/icons/EditIcon";
 import {
+  DrawerProductMovements,
+  DrawerProductMovementsRef,
+} from "../../components/ui/modals/DrawerProductMovements";
+import {
   ModalCUProduct,
   ModalCUProductRef,
 } from "../../components/ui/modals/ModalCUProduct";
+import {
+  ModalConvertStock,
+  ModalConvertStockRef,
+} from "../../components/ui/modals/ModalConvertStock";
 import {
   ModalUQuantity,
   ModalUQuantityRef,
@@ -27,6 +36,8 @@ import { Product } from "../../types/Product";
 export default function ProductsPrivate() {
   const modalCURef = useRef<ModalCUProductRef>(null);
   const modalUQWuantityRef = useRef<ModalUQuantityRef>(null);
+  const drawerMovementsRef = useRef<DrawerProductMovementsRef>(null);
+  const modalConvertStockRef = useRef<ModalConvertStockRef>(null);
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -80,6 +91,12 @@ export default function ProductsPrivate() {
       sorter: true,
     },
     {
+      title: "Stock Mínimo",
+      dataIndex: "min_stock",
+      key: "min_stock",
+      render: (val: number) => (val && val > 0 ? val : "-"),
+    },
+    {
       title: "Estado",
       dataIndex: "status",
       key: "status",
@@ -121,7 +138,7 @@ export default function ProductsPrivate() {
       title: "Acciones",
       dataIndex: "id",
       key: "id",
-      width: 100,
+      width: 140,
       render: (id: Product["id"], record: Product) => (
         <Space size="middle">
           {/* EDIT */}
@@ -146,7 +163,22 @@ export default function ProductsPrivate() {
                 modalUQWuantityRef.current?.childFunction(id);
               }}
             >
-              <BoxIcon className="text-blue-500 size-6" />
+              <ArrowUpDownIcon className="text-blue-500 size-6" />
+            </button>
+          </Tooltip>
+
+          {/* HISTORIAL STOCK */}
+          <Tooltip
+            placement="top"
+            className="cursor-pointer"
+            title="Ver historial de stock"
+          >
+            <button
+              onClick={() => {
+                drawerMovementsRef.current?.childFunction(id, record.name);
+              }}
+            >
+              <History className="text-slate-600 hover:text-slate-900 size-5" />
             </button>
           </Tooltip>
 
@@ -240,9 +272,18 @@ export default function ProductsPrivate() {
         onButtonClick={() => modalCURef.current?.childFunction()}
       />
 
-      <div className="flex flex-col items-end gap-2 mb-3">
+      <div className="flex items-center justify-between gap-2 mb-3">
+        <Button
+          type="default"
+          icon={<Package className="size-4 text-blue-600" />}
+          className="flex items-center gap-1.5 rounded-lg border-blue-200 text-blue-700 hover:bg-blue-50 font-medium"
+          onClick={() => modalConvertStockRef.current?.openModal()}
+        >
+          Convertir / Empacar
+        </Button>
+
         <button
-          className="flex justify-center gap-2 text-text-secondary"
+          className="flex justify-center gap-2 text-text-secondary text-sm"
           onClick={() => resetFilters()}
         >
           <ClearFiltersIcon className="flex size-5" />
@@ -267,6 +308,12 @@ export default function ProductsPrivate() {
 
       <ModalCUProduct ref={modalCURef} />
       <ModalUQuantity ref={modalUQWuantityRef} refetch={refetch} />
+      <DrawerProductMovements ref={drawerMovementsRef} />
+      <ModalConvertStock
+        ref={modalConvertStockRef}
+        products={data?.data || []}
+        refetch={refetch}
+      />
     </>
   );
 }

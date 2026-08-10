@@ -3,7 +3,9 @@ import { Route } from "react-router-dom";
 
 import {
   CLIENTSPRIVATE,
+  DASHBOARDPRIVATE,
   DISPATCHPRIVATE,
+  INVENTORYMOVEMENTS,
   LOGOUT,
   MYACCOUNTPRIVATE,
   ORDERSPRIVATE,
@@ -13,27 +15,36 @@ import {
 } from "./Paths";
 import { ProtectedRouteUsers } from "./ProtectedRouteUsers";
 const ProductsPrivate = lazy(() => import("../views/private/ProductsPrivate"));
+const InventoryMovementsPrivate = lazy(
+  () => import("../views/private/InventoryMovementsPrivate")
+);
 const UsersPrivate = lazy(() => import("../views/private/UsersPrivate"));
 const ClientsPrivate = lazy(() => import("../views/private/ClientsPrivate"));
 const MyAccountPrivate = lazy(
-  () => import("../views/private/configuration-user/MyAccountPrivate")
+  () => import("../views/private/configuration-user/MyAccountPrivate"),
 );
 import Logout from "../views/private/Logout";
 import PrivateUsers from "../views/private/PrivateUsers";
 import OrdersPrivate from "../views/private/OrdersPrivate";
 import DispatchPrivate from "../views/private/DispatchPrivate";
+import Dashboard from "../views/private/Dashboard";
 
 export const PrivateRoutes = () => {
   return (
     <>
       <Route path={PRIVATEUSERS} element={<ProtectedRouteUsers />}>
         <Route index element={<PrivateUsers />} />
+        <Route path={DASHBOARDPRIVATE} element={<Dashboard />} />
         <Route path={MYACCOUNTPRIVATE} element={<MyAccountPrivate />} />
         <Route path={ORDERSPRIVATE} element={<OrdersPrivate />} />
         <Route path={DISPATCHPRIVATE} element={<DispatchPrivate />} />
         <Route path={USERSPRIVATE} element={<UsersPrivate />} />
         <Route path={CLIENTSPRIVATE} element={<ClientsPrivate />} />
         <Route path={PRODUCTSPRIVATE} element={<ProductsPrivate />} />
+        <Route
+          path={INVENTORYMOVEMENTS}
+          element={<InventoryMovementsPrivate />}
+        />
         <Route path={LOGOUT} element={<Logout />} />
       </Route>
     </>
