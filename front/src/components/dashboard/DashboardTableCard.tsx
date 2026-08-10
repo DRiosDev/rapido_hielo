@@ -30,7 +30,8 @@ export function DashboardTableCard<T extends object>({
     <Card
       bordered={false}
       loading={loading}
-      className={`shadow-sm rounded-xl h-full flex flex-col justify-between ${className}`}
+      className={`shadow-sm rounded-xl h-full ${className}`}
+      styles={{ body: { paddingTop: 12, paddingBottom: 16 } }}
       title={
         <div className="flex items-center justify-between py-1">
           <div className="flex items-center gap-2.5">

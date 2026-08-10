@@ -10,6 +10,7 @@ import {
   updateProduct,
   updateProductQuantity,
   UpdateQuantityPayload,
+  convertStock,
 } from "./api";
 
 export function useCreateProduct() {
@@ -55,6 +56,19 @@ export function useUpdateProductQuantity() {
     mutationFn: (payload: UpdateQuantityPayload) => updateProductQuantity(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
+  });
+}
+
+export function useConvertStock() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: convertStock,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboardData"] });
+      queryClient.invalidateQueries({ queryKey: ["inventoryMovements"] });
     },
   });
 }

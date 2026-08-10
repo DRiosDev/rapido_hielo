@@ -6,6 +6,7 @@ export interface Product {
   weight: number;
   price: string;
   quantity: number;
+  min_stock?: number;
   status: "active" | "desactive";
   created_at_show?: string;
 }

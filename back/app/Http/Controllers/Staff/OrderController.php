@@ -7,11 +7,131 @@ use App\Models\Order\Order;
 use App\Models\Order\OrderItem;
 use App\Traits\Filterable;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 
 class OrderController extends Controller
 {
     use Filterable;
+
+    /**
+     * Obtener los datos brutos del KPI de Ingresos Totales del Mes (solo órdenes pagadas)
+     */
+    public function getMonthlyRevenueData()
+    {
+        $now = Carbon::now();
+        $startOfMonth = $now->copy()->startOfMonth();
+        $endOfMonth = $now->copy()->endOfMonth();
+
+        $startOfLastMonth = $now->copy()->subMonth()->startOfMonth();
+        $endOfLastMonth = $now->copy()->subMonth()->endOfMonth();
+
+        // Ingresos del mes actual (solo status = 'paid')
+        $currentMonthRevenue = (float) (Order::where('orders.status', 'paid')
+            ->whereBetween('orders.created_at', [$startOfMonth, $endOfMonth])
+            ->join('order_items', 'orders.id', '=', 'order_items.fk_order_id')
+            ->selectRaw('SUM(order_items.price_product * order_items.quantity) as total')
+            ->value('total') ?? 0);
+
+        // Cantidad de órdenes pagadas del mes actual
+        $currentMonthPaidOrdersCount = Order::where('status', 'paid')
+            ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
+            ->count();
+
+        // Ingresos del mes anterior para calcular la tendencia (%)
+        $lastMonthRevenue = (float) (Order::where('orders.status', 'paid')
+            ->whereBetween('orders.created_at', [$startOfLastMonth, $endOfLastMonth])
+            ->join('order_items', 'orders.id', '=', 'order_items.fk_order_id')
+            ->selectRaw('SUM(order_items.price_product * order_items.quantity) as total')
+            ->value('total') ?? 0);
+
+        // Cálculo de porcentaje de crecimiento vs mes anterior
+        $trend = 0;
+        if ($lastMonthRevenue > 0) {
+            $trend = round((($currentMonthRevenue - $lastMonthRevenue) / $lastMonthRevenue) * 100, 2);
+        } else if ($currentMonthRevenue > 0) {
+            $trend = 100;
+        }
+
+        return [
+            'id' => 'revenue',
+            'title' => 'Ventas Totales',
+            'value' => $currentMonthRevenue,
+            'paid_orders_count' => $currentMonthPaidOrdersCount,
+            'trend' => $trend,
+            'trendText' => 'vs mes anterior',
+            'prefix' => '$',
+        ];
+    }
+
+    /**
+     * Endpoint GET /api/staff/orders/kpi-revenue
+     */
+    public function getMonthlyRevenueKpi()
+    {
+        return response()->json([
+            'data' => $this->getMonthlyRevenueData()
+        ], 200);
+    }
+
+    /**
+     * Obtener las ventas diarias de los últimos 7 días (para el gráfico de barras verticales)
+     */
+    public function getWeeklySalesData()
+    {
+        $dayNames = [
+            1 => 'Lun',
+            2 => 'Mar',
+            3 => 'Mié',
+            4 => 'Jue',
+            5 => 'Vie',
+            6 => 'Sáb',
+            7 => 'Dom',
+        ];
+
+        $weeklyData = [];
+        $now = Carbon::now();
+
+        // Iterar desde hace 6 días hasta hoy (7 días en total)
+        for ($i = 6; $i >= 0; $i--) {
+            $targetDate = $now->copy()->subDays($i);
+            $dayOfWeekNumber = $targetDate->dayOfWeekIso; // 1 (Lun) a 7 (Dom)
+            $dateString = $targetDate->format('Y-m-d');
+
+            // Ventas del día (órdenes pagadas)
+            $dailySales = (float) (Order::where('orders.status', 'paid')
+                ->whereDate('orders.created_at', $dateString)
+                ->join('order_items', 'orders.id', '=', 'order_items.fk_order_id')
+                ->selectRaw('SUM(order_items.price_product * order_items.quantity) as total')
+                ->value('total') ?? 0);
+
+            // Cantidad de pedidos pagados del día
+            $dailyOrdersCount = Order::where('status', 'paid')
+                ->whereDate('created_at', $dateString)
+                ->count();
+
+            $weeklyData[] = [
+                'day' => $dayNames[$dayOfWeekNumber] ?? $targetDate->format('D'),
+                'date' => $dateString,
+                'sales' => $dailySales,
+                'orders' => $dailyOrdersCount,
+            ];
+        }
+
+        return $weeklyData;
+    }
+
+    /**
+     * Endpoint GET /api/staff/orders/chart-weekly-sales
+     */
+    public function getWeeklySalesChart()
+    {
+        return response()->json([
+            'data' => $this->getWeeklySalesData()
+        ], 200);
+    }
+
+
 
     public function index(Request $request)
     {

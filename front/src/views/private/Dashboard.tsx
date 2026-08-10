@@ -4,12 +4,12 @@ import {
   CardFirstDataDashboard,
   KpiData,
 } from "../../components/ui/CardFirstDataDashboard";
-import { AddIcon } from "../../components/ui/icons/AddIcon";
 import { IceIcon } from "../../components/ui/icons/IceIcon";
 import { WeeklySalesChart } from "../../components/dashboard/WeeklySalesChart";
 import { DispatchStatusChart } from "../../components/dashboard/DispatchStatusChart";
 import { DashboardTableCard } from "../../components/dashboard/DashboardTableCard";
-import { ShoppingBag, AlertTriangle, Trophy } from "lucide-react";
+import { ShoppingBag, AlertTriangle, Trophy, Truck, DollarSign } from "lucide-react";
+import { useDashboardData } from "../../services/dashboard/queries";
 
 // Tipos para las tablas
 interface TopProduct {
@@ -34,38 +34,30 @@ interface TopClient {
   totalSpent: number;
 }
 
+const KPI_ICONS: Record<string, React.ReactNode> = {
+  revenue: <DollarSign className="size-5 text-emerald-600" />,
+  products_sold: <IceIcon className="size-5 text-blue-500" />,
+  stock_value: <IceIcon className="size-5 text-cyan-600" />,
+  active_dispatches: <Truck className="size-5 text-amber-500" />,
+};
+
 export default function Dashboard() {
   const [messageApi, contextHolder] = message.useMessage();
 
-  const kpiCards: KpiData[] = [
-    {
-      id: "revenue",
-      title: "Ventas Totales",
-      value: 12450,
-      prefix: "$",
-      precision: 2,
-      trend: 12.5,
-      trendText: "vs mes anterior",
-      icon: <AddIcon className="size-5" />,
-    },
-    {
-      id: "users",
-      title: "Nuevos Usuarios",
-      value: 1200,
-      trend: 8.2,
-      trendText: "vs mes anterior",
-      icon: <AddIcon className="size-5" />,
-    },
-    {
-      id: "stock",
-      title: "Stock de Hielo",
-      value: 450,
-      suffix: " sacos",
-      trend: -2.4,
-      trendText: "vs semana pasada",
-      icon: <IceIcon className="size-5" />,
-    },
-  ];
+  const { data: dashboardData, isLoading } = useDashboardData();
+
+  // Enriquecer los KPIs con sus íconos correspondientes
+  const kpiCards: KpiData[] =
+    dashboardData?.kpis?.map((kpi) => ({
+      ...kpi,
+      icon: KPI_ICONS[kpi.id] || <DollarSign className="size-5 text-gray-500" />,
+      loading: isLoading,
+    })) || [
+      { id: "revenue", title: "Ventas Totales", value: 0, prefix: "$", loading: true },
+      { id: "products_sold", title: "Productos Vendidos", value: 0, loading: true },
+      { id: "stock_value", title: "Valor del Inventario", value: 0, prefix: "$", loading: true },
+      { id: "active_dispatches", title: "Despachos Activos", value: 0, loading: true },
+    ];
 
   // Configuración de Columnas para Tabla 1: Productos Más Vendidos
   const topProductsColumns: TableProps<TopProduct>["columns"] = [
@@ -80,7 +72,7 @@ export default function Dashboard() {
       dataIndex: "salesCount",
       key: "salesCount",
       align: "right",
-      render: (val) => `${val.toLocaleString("es-CL")} sacos`,
+      render: (val) => `${val?.toLocaleString("es-CL") || 0} sacos`,
     },
     {
       title: "Total",
@@ -89,17 +81,10 @@ export default function Dashboard() {
       align: "right",
       render: (val) => (
         <span className="font-semibold text-emerald-600">
-          ${val.toLocaleString("es-CL")}
+          ${val?.toLocaleString("es-CL") || 0}
         </span>
       ),
     },
-  ];
-
-  const topProductsData: TopProduct[] = [
-    { id: "1", name: "Hielo Cubo 5kg", salesCount: 1450, totalRevenue: 4350000 },
-    { id: "2", name: "Hielo Cubo 2.5kg", salesCount: 980, totalRevenue: 1960000 },
-    { id: "3", name: "Hielo Barra 20kg", salesCount: 320, totalRevenue: 2560000 },
-    { id: "4", name: "Hielo Picado 10kg", salesCount: 210, totalRevenue: 1260000 },
   ];
 
   // Configuración de Columnas para Tabla 2: Productos con Bajo Stock
@@ -139,13 +124,6 @@ export default function Dashboard() {
     },
   ];
 
-  const lowStockData: LowStockProduct[] = [
-    { id: "1", name: "Hielo Picado 10kg", currentStock: 12, minStock: 50, status: "critical" },
-    { id: "2", name: "Hielo Cilindro 5kg", currentStock: 38, minStock: 100, status: "warning" },
-    { id: "3", name: "Hielo Escamas 15kg", currentStock: 18, minStock: 60, status: "critical" },
-    { id: "4", name: "Hielo Gourmet 2kg", currentStock: 45, minStock: 80, status: "warning" },
-  ];
-
   // Configuración de Columnas para Tabla 3: Top Clientes
   const topClientsColumns: TableProps<TopClient>["columns"] = [
     {
@@ -168,17 +146,10 @@ export default function Dashboard() {
       align: "right",
       render: (val) => (
         <span className="font-semibold text-blue-600">
-          ${val.toLocaleString("es-CL")}
+          ${val?.toLocaleString("es-CL") || 0}
         </span>
       ),
     },
-  ];
-
-  const topClientsData: TopClient[] = [
-    { id: "1", name: "Distribuidora Santa Rosa", totalOrders: 42, totalSpent: 5420000 },
-    { id: "2", name: "Supermercados El Sol", totalOrders: 31, totalSpent: 4150000 },
-    { id: "3", name: "Restobar Costa Marina", totalOrders: 24, totalSpent: 2890000 },
-    { id: "4", name: "Eventos VIP Santiago", totalOrders: 18, totalSpent: 2340000 },
   ];
 
   return (
@@ -186,7 +157,7 @@ export default function Dashboard() {
       {contextHolder}
       <SectionPrivateHeader
         title="Panel administrativo"
-        subtitle="Resumen general de ventas, inventario, despachos y clientes"
+        subtitle="Resumen general de ventas, inventario, despachos y clientes en tiempo real"
         existsButton={false}
       />
 
@@ -200,10 +171,16 @@ export default function Dashboard() {
       {/* Grid de Gráficos */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
         <div className="lg:col-span-7">
-          <WeeklySalesChart />
+          <WeeklySalesChart
+            data={dashboardData?.charts?.weekly_sales}
+            loading={isLoading}
+          />
         </div>
         <div className="lg:col-span-5">
-          <DispatchStatusChart />
+          <DispatchStatusChart
+            data={dashboardData?.charts?.dispatch_status}
+            loading={isLoading}
+          />
         </div>
       </div>
 
@@ -211,10 +188,11 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <DashboardTableCard<TopProduct>
           title="Productos más vendidos"
-          subtitle="Top ventas de este mes"
+          subtitle="Top ventas reales de este mes"
           icon={<ShoppingBag className="size-5 text-emerald-600" />}
           columns={topProductsColumns}
-          dataSource={topProductsData}
+          dataSource={dashboardData?.tables?.top_products || []}
+          loading={isLoading}
         />
 
         <DashboardTableCard<LowStockProduct>
@@ -222,7 +200,8 @@ export default function Dashboard() {
           subtitle="Productos que requieren reabastecimiento"
           icon={<AlertTriangle className="size-5 text-amber-600" />}
           columns={lowStockColumns}
-          dataSource={lowStockData}
+          dataSource={dashboardData?.tables?.low_stock || []}
+          loading={isLoading}
         />
 
         <DashboardTableCard<TopClient>
@@ -230,12 +209,14 @@ export default function Dashboard() {
           subtitle="Clientes con mayor volumen de compra"
           icon={<Trophy className="size-5 text-blue-600" />}
           columns={topClientsColumns}
-          dataSource={topClientsData}
+          dataSource={dashboardData?.tables?.top_clients || []}
+          loading={isLoading}
         />
       </div>
     </>
   );
 }
+
 
 
 

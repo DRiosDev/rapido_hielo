@@ -18,6 +18,47 @@ class ClientController extends Controller
 {
     use Filterable;
 
+    /**
+     * Obtener los clientes con mayor volumen de compra (para la tabla del dashboard)
+     */
+    public function getTopClientsData($limit = 5)
+    {
+        $results = DB::table('clients')
+            ->join('orders', 'clients.id', '=', 'orders.fk_client_id')
+            ->join('order_items', 'orders.id', '=', 'order_items.fk_order_id')
+            ->where('orders.status', 'paid')
+            ->selectRaw('
+                clients.id as id,
+                CONCAT(clients.name, " ", COALESCE(clients.lastname, "")) as name,
+                COUNT(DISTINCT orders.id) as totalOrders,
+                SUM(order_items.price_product * order_items.quantity) as totalSpent
+            ')
+            ->groupBy('clients.id', 'clients.name', 'clients.lastname')
+            ->orderByDesc('totalSpent')
+            ->limit($limit)
+            ->get();
+
+        return $results->map(function ($c) {
+            return [
+                'id' => (string) $c->id,
+                'name' => trim((string) $c->name),
+                'totalOrders' => (int) $c->totalOrders,
+                'totalSpent' => (float) $c->totalSpent,
+            ];
+        });
+    }
+
+    /**
+     * Endpoint GET /api/staff/clients/table-top
+     */
+    public function getTopClientsTable()
+    {
+        return response()->json([
+            'data' => $this->getTopClientsData()
+        ], 200);
+    }
+
+
     public function createClient(CreateClientRequest $request)
     {
         DB::beginTransaction();

@@ -1,8 +1,9 @@
 import { Role } from "../types/roles";
 import {
   CLIENTSPRIVATE,
-  DASHBOARD,
+  DASHBOARDPRIVATE,
   DISPATCHPRIVATE,
+  INVENTORYMOVEMENTS,
   LOGOUT,
   MYACCOUNTPRIVATE,
   ORDERSPRIVATE,
@@ -14,8 +15,8 @@ import {
 //funcion que nos sirve para usarla en private routes
 //cuando el usuario inicia sesion, de acuerdo a su rol, se le asigna una ruta por defecto
 export const defaultRoutesByRole: Record<Role, string> = {
-  [Role.OWNER]: DASHBOARD,
-  [Role.ADMIN]: DASHBOARD,
+  [Role.OWNER]: DASHBOARDPRIVATE,
+  [Role.ADMIN]: DASHBOARDPRIVATE,
   [Role.NORMAL]: PRODUCTSPRIVATE,
 };
 
@@ -23,12 +24,13 @@ export const defaultRoutesByRole: Record<Role, string> = {
 export const routePermissions: Record<Role, string[]> = {
   //rutas dueño
   [Role.OWNER]: [
-    DASHBOARD,
+    DASHBOARDPRIVATE,
     ORDERSPRIVATE,
     DISPATCHPRIVATE,
     USERSPRIVATE,
     CLIENTSPRIVATE,
     PRODUCTSPRIVATE,
+    INVENTORYMOVEMENTS,
     MYACCOUNTPRIVATE,
     PRIVATEUSERS,
     LOGOUT,
@@ -36,12 +38,13 @@ export const routePermissions: Record<Role, string[]> = {
 
   //rutas admin
   [Role.ADMIN]: [
-    DASHBOARD,
+    DASHBOARDPRIVATE,
     ORDERSPRIVATE,
     DISPATCHPRIVATE,
     USERSPRIVATE,
     CLIENTSPRIVATE,
     PRODUCTSPRIVATE,
+    INVENTORYMOVEMENTS,
     MYACCOUNTPRIVATE,
     PRIVATEUSERS,
     LOGOUT,
