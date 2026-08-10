@@ -1,30 +1,30 @@
 import { Button, message, Popconfirm, Space, Table, Tooltip } from "antd";
 import { ColumnsType } from "antd/es/table";
+import { History, Package } from "lucide-react";
 import { useRef } from "react";
 import { SectionPrivateHeader } from "../../components/ui/SectionPrivateHeader";
 import { SinDatoBadget } from "../../components/ui/SinDatoBadget";
-import { BoxIcon } from "../../components/ui/icons/BoxIcon";
+import { ArrowUpDownIcon } from "../../components/ui/icons/ArrowUpDownIcon";
 import { CheckIcon } from "../../components/ui/icons/CheckIcon";
 import { ClearFiltersIcon } from "../../components/ui/icons/ClearFiltersIcon";
 import { DeleteIcon } from "../../components/ui/icons/DeleteIcon";
 import { EditIcon } from "../../components/ui/icons/EditIcon";
-import { History, Package } from "lucide-react";
-import {
-  ModalCUProduct,
-  ModalCUProductRef,
-} from "../../components/ui/modals/ModalCUProduct";
-import {
-  ModalUQuantity,
-  ModalUQuantityRef,
-} from "../../components/ui/modals/ModalUQuantity";
 import {
   DrawerProductMovements,
   DrawerProductMovementsRef,
 } from "../../components/ui/modals/DrawerProductMovements";
 import {
+  ModalCUProduct,
+  ModalCUProductRef,
+} from "../../components/ui/modals/ModalCUProduct";
+import {
   ModalConvertStock,
   ModalConvertStockRef,
 } from "../../components/ui/modals/ModalConvertStock";
+import {
+  ModalUQuantity,
+  ModalUQuantityRef,
+} from "../../components/ui/modals/ModalUQuantity";
 import { Colors } from "../../constants/Colors";
 import { formatPrice } from "../../helpers/formatPrice";
 import useTableFilters from "../../hooks/table/useTableFiltersV2";
@@ -163,7 +163,7 @@ export default function ProductsPrivate() {
                 modalUQWuantityRef.current?.childFunction(id);
               }}
             >
-              <BoxIcon className="text-blue-500 size-6" />
+              <ArrowUpDownIcon className="text-blue-500 size-6" />
             </button>
           </Tooltip>
 
@@ -317,4 +317,3 @@ export default function ProductsPrivate() {
     </>
   );
 }
-
