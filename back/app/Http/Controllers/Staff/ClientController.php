@@ -27,14 +27,14 @@ class ClientController extends Controller
             ->join('orders', 'clients.id', '=', 'orders.fk_client_id')
             ->join('order_items', 'orders.id', '=', 'order_items.fk_order_id')
             ->where('orders.status', 'paid')
-            ->selectRaw('
+            ->selectRaw("
                 clients.id as id,
-                CONCAT(clients.name, " ", COALESCE(clients.lastname, "")) as name,
-                COUNT(DISTINCT orders.id) as totalOrders,
-                SUM(order_items.price_product * order_items.quantity) as totalSpent
-            ')
+                CONCAT(clients.name, ' ', COALESCE(clients.lastname, '')) as name,
+                COUNT(DISTINCT orders.id) as \"totalOrders\",
+                SUM(order_items.price_product * order_items.quantity) as \"totalSpent\"
+            ")
             ->groupBy('clients.id', 'clients.name', 'clients.lastname')
-            ->orderByDesc('totalSpent')
+            ->orderByRaw('SUM(order_items.price_product * order_items.quantity) DESC')
             ->limit($limit)
             ->get();
 
@@ -42,8 +42,8 @@ class ClientController extends Controller
             return [
                 'id' => (string) $c->id,
                 'name' => trim((string) $c->name),
-                'totalOrders' => (int) $c->totalOrders,
-                'totalSpent' => (float) $c->totalSpent,
+                'totalOrders' => (int) ($c->totalOrders ?? $c->totalorders ?? 0),
+                'totalSpent' => (float) ($c->totalSpent ?? $c->totalspent ?? 0),
             ];
         });
     }

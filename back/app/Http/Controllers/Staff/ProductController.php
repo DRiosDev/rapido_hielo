@@ -107,11 +107,11 @@ class ProductController extends Controller
             ->selectRaw('
                 order_items.fk_product_id as id,
                 order_items.name_product as name,
-                SUM(order_items.quantity) as salesCount,
-                SUM(order_items.price_product * order_items.quantity) as totalRevenue
+                SUM(order_items.quantity) as "salesCount",
+                SUM(order_items.price_product * order_items.quantity) as "totalRevenue"
             ')
             ->groupBy('order_items.fk_product_id', 'order_items.name_product')
-            ->orderByDesc('salesCount')
+            ->orderByRaw('SUM(order_items.quantity) DESC')
             ->limit($limit)
             ->get();
 
@@ -119,8 +119,8 @@ class ProductController extends Controller
             return [
                 'id' => (string) $item->id,
                 'name' => (string) $item->name,
-                'salesCount' => (int) $item->salesCount,
-                'totalRevenue' => (float) $item->totalRevenue,
+                'salesCount' => (int) ($item->salesCount ?? $item->salescount ?? 0),
+                'totalRevenue' => (float) ($item->totalRevenue ?? $item->totalrevenue ?? 0),
             ];
         });
     }
