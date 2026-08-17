@@ -36,10 +36,36 @@ Route::middleware(['jwt.verify', 'user.active'])->group(function () {
 
     /**
      * --------------------------------------------------------
-     * Admin-Only Routes (requires admin role)
+     * Rutas de Clientes / App Móvil
      * --------------------------------------------------------
      */
-    Route::group(['middleware' => ['user.role:admin,owner']], function () {
+    Route::get('/products', [\App\Http\Controllers\Client\ProductController::class, 'index']);
+
+    Route::prefix('carts')->controller(\App\Http\Controllers\Client\CartController::class)->group(function () {
+        Route::get('/', 'getCart');
+        Route::post('/{product_id}', 'addToCart');
+        Route::delete('/{cart_id}', 'deleteAllItems');
+    });
+
+    Route::prefix('carts/items')->controller(\App\Http\Controllers\Client\CartItemController::class)->group(function () {
+        Route::put('/{id}', 'update');
+        Route::delete('/{id}', 'destroy');
+    });
+
+    Route::prefix('orders')->controller(\App\Http\Controllers\Client\OrderController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/{cart_id}', 'store');
+        Route::post('/{order_id}/payment-proof', 'submitPaymentProof');
+    });
+
+    Route::get('/delivery-slots', [\App\Http\Controllers\Staff\DeliverySlotController::class, 'getActiveSlots']);
+
+    /**
+     * --------------------------------------------------------
+     * Staff Routes (requires admin, owner or normal role)
+     * --------------------------------------------------------
+     */
+    Route::group(['middleware' => ['user.role:admin,owner,normal']], function () {
         require __DIR__ . '/api/staff.php';
     });
 });

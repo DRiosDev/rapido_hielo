@@ -168,4 +168,31 @@ class DispatchController extends Controller
 
         return response()->json($response, 200);
     }
+
+    public function changeStatusDispatch(Request $request, string $id)
+    {
+        $request->validate([
+            'status_dispatch' => 'required|in:pending,prepared,in_route,delivered',
+        ]);
+
+        $order = Order::find($id);
+
+        if (!$order) {
+            return response()->json(['message' => 'Despacho no encontrado'], 404);
+        }
+
+        $order->status_dispatch = $request->input('status_dispatch');
+
+        // Si se marca como entregado y el estado del pago era pendiente (ej. pago en tienda/presencial), marcar como pagado
+        if ($order->status_dispatch === 'delivered' && $order->status === 'pending_payment') {
+            $order->status = 'paid';
+        }
+
+        $order->save();
+
+        return response()->json([
+            'message' => 'Estado de despacho actualizado con éxito',
+            'order' => $order,
+        ], 200);
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
+use App\Models\Client;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Hash;
@@ -15,7 +16,7 @@ class AuthController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
-        // 🔹 Buscar manualmente el usuario
+        // 🔹 1. Buscar primero en la tabla de usuarios (Staff / Admin / Owner)
         $user = User::select(
             'id',
             'name',
@@ -27,27 +28,63 @@ class AuthController extends Controller
             'status'
         )->where('email', $credentials['email'])->first();
 
-        if (!$user) {
-            return response()->json(['message' => 'Credenciales inválidas'], 401);
+        if ($user) {
+            // Verificar si el usuario staff está activo
+            if ($user->status !== 'active') {
+                return response()->json(['message' => 'Tu cuenta está desactivada. Contacta al administrador.'], 403);
+            }
+
+            // Verificar la contraseña
+            if (!Hash::check($credentials['password'], $user->password)) {
+                return response()->json(['message' => 'Credenciales inválidas'], 401);
+            }
+
+            // Generar el token JWT
+            $token = JWTAuth::fromUser($user);
+
+            return response()->json([
+                'token' => $token,
+                'user' => $user,
+            ]);
         }
 
-        // 🔹 Verificar si está activo
-        if ($user->status !== 'active') {
-            return response()->json(['message' => 'Tu cuenta está desactivada. Contacta al administrador.'], 403);
+        // 🔹 2. Si no es un usuario staff, buscar en la tabla de Clientes
+        $client = Client::select(
+            'id',
+            'rut',
+            'name',
+            'lastname',
+            'address',
+            'phone',
+            'email',
+            'password',
+            'status'
+        )->where('email', $credentials['email'])->first();
+
+        if ($client) {
+            // Verificar si el cliente está activo
+            if (isset($client->status) && $client->status !== 'active') {
+                return response()->json(['message' => 'Tu cuenta está desactivada. Contacta al administrador.'], 403);
+            }
+
+            // Verificar la contraseña
+            if (!Hash::check($credentials['password'], $client->password)) {
+                return response()->json(['message' => 'Credenciales inválidas'], 401);
+            }
+
+            $clientData = $client->toArray();
+            $clientData['role'] = 'client';
+
+            // Generar el token JWT para el cliente
+            $token = JWTAuth::fromUser($client);
+
+            return response()->json([
+                'token' => $token,
+                'user' => $clientData,
+            ]);
         }
 
-        // 🔹 Verificar la contraseña
-        if (!Hash::check($credentials['password'], $user->password)) {
-            return response()->json(['message' => 'Credenciales inválidas'], 401);
-        }
-
-        // 🔹 Generar el token manualmente
-        $token = JWTAuth::fromUser($user);
-
-        return response()->json([
-            'token' => $token,
-            'user' => $user,
-        ]);
+        return response()->json(['message' => 'Credenciales inválidas'], 401);
     }
 
     public function logout()

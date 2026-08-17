@@ -52,6 +52,9 @@ export default function ModalCart() {
   const totalPrice = useCartStore((state) => state.getTotalPrice());
 
   const handleOrder = async ({ date, time, payment }) => {
+    if (!cartUsed) {
+      return;
+    }
     setIsLoading(true);
 
     try {
@@ -68,14 +71,18 @@ export default function ModalCart() {
 
       const orderId = response.data.order.id;
 
+      if (userLogged?.id) {
+        useCartStore.getState().fetchCartItemCount(userLogged.id);
+      }
+
       // Redirección según método de pago
       if (payment === 2) {
         router.push(`/modal-confirm-payment?order_id=${orderId}`);
       } else {
         router.push("/"); // home
       }
-    } catch (error) {
-      console.error("Error al crear orden", error.response.data);
+    } catch (error: any) {
+      console.error("Error al crear orden", error?.response?.data || error);
     } finally {
       setIsLoading(false);
     }
@@ -100,7 +107,7 @@ export default function ModalCart() {
         <View style={{ flex: 1 }}>
           <View className="flex-row gap-3 bg-white dark:bg-slate-800 p-5 rounded-lg shadow shadow-black justify-center mb-5">
             <Ionicons name="location-outline" size={28} className="text-black dark:text-white" />
-            <Text className="text-xl font-semibold text-black dark:text-white">{userLogged.address}</Text>
+            <Text className="text-xl font-semibold text-black dark:text-white">{userLogged?.address || "Sin dirección registrada"}</Text>
           </View>
 
           {/* <View className="bg-white p-5 rounded-lg shadow shadow-black mb-5">

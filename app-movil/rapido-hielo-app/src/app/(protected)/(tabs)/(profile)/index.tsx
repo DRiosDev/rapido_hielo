@@ -42,6 +42,11 @@ export default function Profile() {
     },
   ];
 
+  const firstName = userLogged?.name || "";
+  const lastName = userLogged?.lastname || "";
+  const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase() || "U";
+  const fullName = [firstName, lastName].filter(Boolean).join(" ") || "Usuario";
+
   return (
     <>
       {isLoading && <LoadingOverlay />}
@@ -50,14 +55,14 @@ export default function Profile() {
         <View className="items-center gap-5">
           <Avatar.Text
             size={110}
-            label={userLogged?.name[0] + userLogged?.lastname[0]}
+            label={initials}
           />
           <View className="items-center gap-1">
             <Text className="text-2xl font-semibold dark:text-white">
-              {userLogged?.name + " " + userLogged?.lastname}
+              {fullName}
             </Text>
             <Text className="text-base font-medium text-center text-text-secondary dark:text-gray-400">
-              {userLogged?.email}
+              {userLogged?.email || ""}
             </Text>
           </View>
 

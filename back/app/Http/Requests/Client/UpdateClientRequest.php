@@ -6,6 +6,8 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
+use Illuminate\Validation\Rule;
+
 class UpdateClientRequest extends FormRequest
 {
     /**
@@ -23,12 +25,26 @@ class UpdateClientRequest extends FormRequest
      */
     public function rules(): array
     {
+        $clientId = $this->route('id_client') ?? $this->route('client_id') ?? $this->route('client') ?? $this->id;
+
         return [
-            'rut' => 'required|string|min:12|max:13|unique:clients,rut',
+            'rut' => [
+                'required',
+                'string',
+                'min:9',
+                'max:13',
+                Rule::unique('clients', 'rut')->ignore($clientId),
+            ],
             'name' => 'required|string|min:2|max:25',
             'lastname' => 'required|string|min:2|max:25',
-            'email' => 'required|string|max:' . config('limits.email_max_length') . '|unique:clients,email',
+            'email' => [
+                'required',
+                'string',
+                'max:' . config('limits.email_max_length', 255),
+                Rule::unique('clients', 'email')->ignore($clientId),
+            ],
             'address' => 'required|string|min:4|max:100',
+            'phone' => 'nullable|string|max:20',
         ];
     }
 

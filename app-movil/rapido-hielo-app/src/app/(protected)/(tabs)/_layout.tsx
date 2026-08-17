@@ -2,14 +2,13 @@ import { useAuthUser } from "@/store/useAuthUser";
 import { useCartStore } from "@/store/useCarts";
 import { Ionicons } from "@expo/vector-icons";
 import { router, Tabs } from "expo-router";
-import { useColorScheme } from "nativewind";
 import React, { useEffect } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, Text, useColorScheme, View } from "react-native";
 
 export default function _layout() {
   const { userLogged } = useAuthUser();
   const { itemCount, fetchCartItemCount } = useCartStore();
-  const { colorScheme } = useColorScheme();
+  const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
   useEffect(() => {

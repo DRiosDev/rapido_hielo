@@ -100,12 +100,22 @@ class ClientController extends Controller
             return response()->json(['message' => 'Cliente no encontrado'], 404);
         }
 
-        Client::where('id', $id)->update([
+        $updateData = [
             'rut' => $request->input('rut'),
             'name' => $request->input('name'),
             'lastname' => $request->input('lastname'),
             'address' => $request->input('address'),
-        ]);
+        ];
+
+        if ($request->filled('email')) {
+            $updateData['email'] = $request->input('email');
+        }
+
+        if ($request->filled('phone')) {
+            $updateData['phone'] = $request->input('phone');
+        }
+
+        Client::where('id', $id)->update($updateData);
 
         return response()->json([
             'message' => "Cliente editado con éxito",

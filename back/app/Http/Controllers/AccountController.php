@@ -28,18 +28,36 @@ class AccountController extends Controller
     {
         $user = Auth::user();
 
-        $user = User::select('id', 'email', 'role', 'status', 'name', 'lastname')
-            ->where('id', $user->id)
-            ->firstOrFail();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthenticated'], 401);
+        }
 
-        return response()->json([
-            'id' => $user->id,
-            'email' => $user->email,
-            'role' => $user->role,
-            'status' => $user->status,
-            'name' => $user->name,
-            'lastname' => $user->lastname,
-        ]);
+        if ($user instanceof \App\Models\User) {
+            return response()->json([
+                'id' => $user->id,
+                'email' => $user->email,
+                'role' => $user->role,
+                'status' => $user->status,
+                'name' => $user->name,
+                'lastname' => $user->lastname,
+            ]);
+        }
+
+        if ($user instanceof \App\Models\Client) {
+            return response()->json([
+                'id' => $user->id,
+                'email' => $user->email,
+                'role' => 'client',
+                'status' => $user->status ?? 'active',
+                'name' => $user->name,
+                'lastname' => $user->lastname,
+                'rut' => $user->rut ?? null,
+                'phone' => $user->phone ?? null,
+                'address' => $user->address ?? null,
+            ]);
+        }
+
+        return response()->json($user);
     }
 
 

@@ -46,6 +46,8 @@ class ProductController extends Controller
                 'description',
                 'weight',
                 'price',
+                'quantity',
+                'min_stock',
                 'is_limited',
                 'is_sack',
                 'status',

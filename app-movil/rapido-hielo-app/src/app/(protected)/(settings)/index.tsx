@@ -11,6 +11,7 @@ import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 
 export default function SettingsScreen() {
   const { colorScheme, setColorScheme } = useColorScheme();
+  const [selectedTheme, setSelectedTheme] = useState<"light" | "dark" | "system">("system");
   const [isThemeModalOpen, setIsThemeModalOpen] = useState(false);
   const bottomSheetRef = React.useRef<BottomSheet>(null);
 
@@ -20,14 +21,18 @@ export default function SettingsScreen() {
   };
 
   const changeTheme = (theme: "light" | "dark" | "system") => {
-    setColorScheme(theme);
+    setSelectedTheme(theme);
     setIsThemeModalOpen(false);
     bottomSheetRef.current?.close();
+    setTimeout(() => {
+      setColorScheme(theme);
+    }, 100);
   };
 
   const getThemeLabel = () => {
-    if (colorScheme === "light") return "Claro";
-    if (colorScheme === "dark") return "Oscuro";
+    if (selectedTheme === "system") return "Automático (Sistema)";
+    if (selectedTheme === "light") return "Claro";
+    if (selectedTheme === "dark") return "Oscuro";
     return "Automático (Sistema)";
   };
 
@@ -103,7 +108,7 @@ export default function SettingsScreen() {
           
           <RadioButton.Group
             onValueChange={(value) => changeTheme(value as any)}
-            value={colorScheme ?? "system"}
+            value={selectedTheme}
           >
             <RadioButton.Item label="Automático (Sistema)" value="system" labelStyle={{ color: colorScheme === 'dark' ? 'white' : 'black' }} />
             <RadioButton.Item label="Modo Claro" value="light" labelStyle={{ color: colorScheme === 'dark' ? 'white' : 'black' }} />

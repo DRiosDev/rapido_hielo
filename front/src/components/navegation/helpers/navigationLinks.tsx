@@ -109,14 +109,20 @@ export const linksRoleAdmin = [
 /* RUTAS NORMAL */
 /* RUTAS NORMAL */
 export const linksRoleNormal = [
-  /*   getItem(
+  getItem(
     <p className="title_menu_item">Productos</p>,
     PRODUCTSPRIVATE,
-    //Icons
     <div className="contenedor_icon_menu_item">
-      <UserIcon styles={"color_icon_menu_item tamaño_icon_menu_item"} />
-    </div>
-  ), */
+      <IceIcon className={"color_icon_menu_item tamaño_icon_menu_item"} />
+    </div>,
+  ),
+  getItem(
+    <p className="title_menu_item">Despachos</p>,
+    DISPATCHPRIVATE,
+    <div className="contenedor_icon_menu_item">
+      <TruckIcon className={"color_icon_menu_item tamaño_icon_menu_item"} />
+    </div>,
+  ),
 ];
 
 export const linkLogout = [

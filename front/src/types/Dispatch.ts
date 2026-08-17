@@ -8,6 +8,6 @@ export interface Dispatch {
   date_dispatch: Date;
   time_dispatch: string;
   method_payment: number;
-  status_dispatch: "pending_dispatch" | "in_route" | "delivered";
+  status_dispatch: "pending" | "prepared" | "pending_dispatch" | "in_route" | "delivered";
   created_at_show?: string;
 }

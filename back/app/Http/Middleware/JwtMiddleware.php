@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\User;
+use App\Models\Client;
 use Closure;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -21,11 +22,16 @@ class JwtMiddleware
     public function handle($request, Closure $next)
     {
         try {
-            $payload = JWTAuth::parseToken()->getPayload();  // Obtener el payload sin cargar el usuario completo
+            $payload = JWTAuth::parseToken()->getPayload();
             $id = $payload->get('id') ?? $payload->get('sub');
 
             // intentar encontrar primero en users
             $user = User::select('id', 'status', 'role')->find($id);
+
+            // si no está en users, buscar en clients
+            if (!$user) {
+                $user = Client::select('id', 'status')->find($id);
+            }
 
             if (!$user) {
                 return response()->json([
@@ -34,8 +40,13 @@ class JwtMiddleware
                 ], 401);
             }
 
-            // Autenticar al usuario sin cargar todos los datos
+            // Autenticar al usuario / cliente
             Auth::setUser($user);
+
+            $request->merge([
+                'id_user' => $user->id,
+                'role_user_request' => $user->role ?? 'client',
+            ]);
         } catch (TokenExpiredException $e) {
             return response()->json([
                 'error' => 'token_expired',

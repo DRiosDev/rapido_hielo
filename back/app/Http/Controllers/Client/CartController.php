@@ -12,8 +12,12 @@ class CartController extends Controller
 {
     public function addToCart(Request $request, $product_id)
     {
-        $client_id = $request->get('client_id');
+        $client_id = $request->get('client_id') ?? $request->get('id_user');
         $quantity = $request->get('quantity', 1); // por defecto 1 si no envía
+
+        if (!$client_id) {
+            return response()->json(['error' => 'Identificador de cliente no proporcionado.'], 400);
+        }
 
         if ($quantity <= 0) {
             return response()->json(['error' => 'La cantidad debe ser mayor a 0.'], 400);
@@ -61,7 +65,11 @@ class CartController extends Controller
 
     public function getCart(Request $request)
     {
-        $client_id = $request->get('client_id');
+        $client_id = $request->get('client_id') ?? $request->get('id_user');
+
+        if (!$client_id) {
+            return response()->json(['cart' => null, 'cart_items' => [], 'total_items' => 0], 200);
+        }
 
         // 🔹 Buscar el carrito activo del cliente
         $cart = Cart::where('fk_client_id', $client_id)

@@ -11,6 +11,28 @@ use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
+    public function index(Request $request)
+    {
+        $role = $request->get('role_user_request');
+
+        if (in_array($role, ['admin', 'owner'])) {
+            return (new \App\Http\Controllers\Staff\OrderController())->index($request);
+        }
+
+        $clientId = $request->get('client_id') ?? $request->get('id_user') ?? (auth()->user() ? auth()->user()->id : null);
+
+        if (!$clientId) {
+            return response()->json([], 200);
+        }
+
+        $orders = Order::with('items')
+            ->where('fk_client_id', $clientId)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json($orders, 200);
+    }
+
     public function store(Request $request, $cart_id)
     {
         $date_delivery = $request->input('date_delivery');
@@ -45,8 +67,18 @@ class OrderController extends Controller
         $next_number = $last_order ? $last_order->number_order + 1 : 1;
 
         $address_dispatch = $request->input('address_dispatch')
-            ? $request->input('address_dispatch')
-            : $cart->client->address;
+            ?? ($cart->client ? $cart->client->address : null)
+            ?? 'Sin dirección especificada';
+
+        $dateInput = $request->input('date_delivery');
+        $date_dispatch = null;
+        if ($dateInput) {
+            $cleanDate = str_replace('/', '-', $dateInput);
+            $timestamp = strtotime($cleanDate);
+            if ($timestamp) {
+                $date_dispatch = date('Y-m-d', $timestamp);
+            }
+        }
 
         DB::beginTransaction();
 
@@ -55,7 +87,7 @@ class OrderController extends Controller
             $order = Order::create([
                 'fk_client_id' => $cart->fk_client_id,
                 'number_order' => $next_number,
-                'date_dispatch' => $date_delivery ? date('Y-m-d', strtotime($date_delivery)) : null,
+                'date_dispatch' => $date_dispatch,
                 'time_dispatch' => $request->input('hour_delivery'),
                 'method_payment' => $request->input('method_payment'),
                 'address_dispatch' => $address_dispatch,
@@ -74,8 +106,10 @@ class OrderController extends Controller
                 ]);
             }
 
-            // Eliminar los items del carrito
+            // Eliminar los items del carrito y marcar carrito como completado
             $cart->items()->delete();
+            $cart->status = 'completed';
+            $cart->save();
 
             DB::commit();
 

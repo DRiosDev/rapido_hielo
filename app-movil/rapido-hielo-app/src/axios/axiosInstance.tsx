@@ -3,7 +3,10 @@ import * as SecureStore from "expo-secure-store";
 import { Alert, Linking } from "react-native";
 import { useAuthUser } from "../store/useAuthUser";
 
-//LOCAL
+// local
+/* export const baseURL = "http://127.0.0.1:8000"; */
+
+//DEV
 export const baseURL = "https://uncordial-apologal-carlene.ngrok-free.dev";
 
 //DEV

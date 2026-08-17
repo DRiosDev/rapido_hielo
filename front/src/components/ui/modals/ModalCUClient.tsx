@@ -64,9 +64,12 @@ export const ModalCUClient = forwardRef<ModalCUClientRef, ModalCUClientProps>(
         setIsEdit(true);
 
         form.setFieldsValue({
+          rut: data.rut,
           name: data.name,
           lastname: data.lastname,
           email: data.email,
+          phone: data.phone,
+          address: data.address,
         });
       }
     };

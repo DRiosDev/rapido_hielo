@@ -94,9 +94,9 @@ export default function ModalUAccount() {
           <Formik
             innerRef={formikRef}
             initialValues={{
-              name: userLogged.name,
-              lastname: userLogged.lastname,
-              email: userLogged.email,
+              name: userLogged?.name || "",
+              lastname: userLogged?.lastname || "",
+              email: userLogged?.email || "",
             }}
             validationSchema={ModalUAccountSchema}
             onSubmit={update}

@@ -38,7 +38,6 @@ Route::prefix('products')->controller(ProductController::class)->group(function 
     Route::post('/convert-stock', 'convertStock');
     Route::post('/', 'create');
     Route::put('/{id_product}', 'update')->whereUuid('id_product');
-    Route::get('/', 'getProducts');
     Route::patch('/quantity/{id_product}', 'updateQuantity')->whereUuid('id_product');
     Route::patch('/{id_product}', 'changeStatusProduct')->whereUuid('id_product');
     Route::get('/{id_product}/movements', [InventoryMovementController::class, 'getByProduct'])->whereUuid('id_product');
@@ -51,7 +50,6 @@ Route::prefix('inventory-movements')->controller(InventoryMovementController::cl
 Route::prefix('orders')->controller(OrderController::class)->group(function () {
     Route::get('/kpi-revenue', 'getMonthlyRevenueKpi');
     Route::get('/chart-weekly-sales', 'getWeeklySalesChart');
-    Route::get('/', 'index');
     Route::get('/items/{order_id}', 'showOrderItems');
     Route::get('/vaucher/{order_id}', 'showVaucher');
     Route::put('/confirm-payment/{order_id}', 'confirmPayment');
@@ -61,5 +59,13 @@ Route::prefix('dispatches')->controller(DispatchController::class)->group(functi
     Route::get('/kpi-active', 'getActiveDispatchesKpi');
     Route::get('/chart-status', 'getDispatchStatusChart');
     Route::get('/', 'index');
+    Route::patch('/{id_order}/status', 'changeStatusDispatch')->whereUuid('id_order');
+});
+
+Route::prefix('delivery-slots')->controller(\App\Http\Controllers\Staff\DeliverySlotController::class)->group(function () {
+    Route::get('/', 'index');
+    Route::post('/', 'store');
+    Route::put('/{id}', 'update')->whereUuid('id');
+    Route::delete('/{id}', 'destroy')->whereUuid('id');
 });
 

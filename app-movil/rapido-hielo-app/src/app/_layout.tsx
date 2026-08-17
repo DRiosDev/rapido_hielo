@@ -8,9 +8,8 @@ import { useAuthUser } from "@/store/useAuthUser";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useColorScheme } from "nativewind";
 import { useEffect } from "react";
-import { View } from "react-native";
+import { useColorScheme, View } from "react-native";
 import FlashMessage from "react-native-flash-message";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
@@ -26,7 +25,7 @@ export default function Layout() {
   const { fontsLoaded } = useLoadFonts();
   useInitialData(); // Carga datos de usuario
   const insets = useSafeAreaInsets();
-  const { colorScheme } = useColorScheme();
+  const colorScheme = useColorScheme();
 
   const paperTheme = colorScheme === 'dark' ? {
     ...MD3DarkTheme,

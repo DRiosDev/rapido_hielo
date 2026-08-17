@@ -51,5 +51,5 @@ export const routePermissions: Record<Role, string[]> = {
   ],
 
   //rutas normal
-  [Role.NORMAL]: [PRODUCTSPRIVATE, MYACCOUNTPRIVATE, PRIVATEUSERS, LOGOUT],
+  [Role.NORMAL]: [PRODUCTSPRIVATE, DISPATCHPRIVATE, MYACCOUNTPRIVATE, PRIVATEUSERS, LOGOUT],
 };

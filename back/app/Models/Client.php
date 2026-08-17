@@ -3,11 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 use Ramsey\Uuid\Uuid as RamseyUuid;
 
-
-class Client extends Model
+class Client extends Authenticatable implements JWTSubject
 {
     use HasFactory;
 
@@ -15,13 +15,14 @@ class Client extends Model
 
     protected $fillable = [
         'id',
-        'rut',        // <-- FALTABA
+        'rut',
         'name',
         'lastname',
         'address',
         'phone',
         'email',
-        'password'    // <-- también lo estás usando
+        'password',
+        'status',
     ];
 
     /**
@@ -52,6 +53,7 @@ class Client extends Model
     {
         return [
             'id' => $this->id,
+            'role' => 'client',
         ];
     }
 
@@ -63,7 +65,9 @@ class Client extends Model
     {
         parent::boot();
         static::creating(function ($obj) {
-            $obj->id = RamseyUuid::uuid4()->toString();
+            if (empty($obj->id)) {
+                $obj->id = RamseyUuid::uuid4()->toString();
+            }
         });
     }
 }

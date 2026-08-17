@@ -1,7 +1,9 @@
+import { axiosInstance } from "@/axios/axiosInstance";
 import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import React, {
   forwardRef,
   useCallback,
+  useEffect,
   useImperativeHandle,
   useMemo,
   useRef,
@@ -50,12 +52,30 @@ export const ConfirmedCartBT = forwardRef<
   const [timeMenuVisible, setTimeMenuVisible] = useState(false);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
-  const availableHours = [
-    "09:00 - 11:00",
-    "11:00 - 13:00",
-    "13:00 - 15:00",
-    "15:00 - 17:00",
-  ];
+  const [availableSlots, setAvailableSlots] = useState<string[]>([
+    "09:00 - 12:00",
+    "12:00 - 15:00",
+    "15:00 - 18:00",
+    "18:00 - 21:00",
+  ]);
+
+  const fetchDeliverySlots = async () => {
+    try {
+      const response = await axiosInstance.get("/api/delivery-slots");
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        const slotNames = response.data.map((item: any) => item.slot);
+        setAvailableSlots(slotNames);
+      }
+    } catch (error) {
+      console.log("Error al cargar rangos horarios:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchDeliverySlots();
+    }
+  }, [isOpen]);
 
   const [selectedPayment, setSelectedPayment] = useState<number | null>(null);
 
@@ -213,7 +233,7 @@ export const ConfirmedCartBT = forwardRef<
                         </Button>
                       }
                     >
-                      {availableHours.map((hour) => (
+                      {availableSlots.map((hour) => (
                         <Menu.Item
                           key={hour}
                           onPress={() => {
