@@ -7,6 +7,8 @@ export interface Product {
   price: string;
   quantity: number;
   min_stock?: number;
+  is_limited?: boolean;
+  is_sack?: boolean;
   status: "active" | "desactive";
   created_at_show?: string;
 }

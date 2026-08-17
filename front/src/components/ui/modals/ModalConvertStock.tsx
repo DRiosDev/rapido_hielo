@@ -113,10 +113,12 @@ export const ModalConvertStock = forwardRef<
         >
           <Select
             placeholder="Selecciona producto de origen"
-            options={products.map((p) => ({
-              label: `${p.name} — (Stock disponible: ${p.quantity})`,
-              value: p.id,
-            }))}
+            options={products
+              .filter((p) => !p.is_limited)
+              .map((p) => ({
+                label: `${p.name} — (Stock disponible: ${p.quantity})`,
+                value: p.id,
+              }))}
           />
         </Form.Item>
 
@@ -129,9 +131,10 @@ export const ModalConvertStock = forwardRef<
           <Select
             placeholder="Selecciona producto destino a crear"
             options={products
-              .filter((p) => p.id !== originId)
+              .filter((p) => !p.is_limited && p.id !== originId)
+              .sort((a, b) => (b.is_sack ? 1 : 0) - (a.is_sack ? 1 : 0))
               .map((p) => ({
-                label: `${p.name} — (Stock actual: ${p.quantity})`,
+                label: `${p.name}${p.is_sack ? " 📦 (Saco)" : ""} — (Stock actual: ${p.quantity})`,
                 value: p.id,
               }))}
           />

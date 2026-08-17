@@ -1,4 +1,4 @@
-import { Button, message, Popconfirm, Space, Table, Tooltip } from "antd";
+import { Button, message, Popconfirm, Space, Table, Tag, Tooltip } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { History, Package } from "lucide-react";
 import { useRef } from "react";
@@ -55,6 +55,21 @@ export default function ProductsPrivate() {
       dataIndex: "name",
       key: "name",
       ...getColumnSearchProps("name"),
+      render: (text: string, record: Product) => (
+        <div className="flex items-center gap-x-2 flex-wrap">
+          <span>{text}</span>
+          {record.is_sack && (
+            <Tag color="blue" className="m-0 text-[11px] font-semibold px-2 py-0.5 rounded-full">
+              Saco / Empacado
+            </Tag>
+          )}
+          {record.is_limited && (
+            <Tag color="volcano" className="m-0 text-[11px] font-semibold px-2 py-0.5 rounded-full">
+              Oferta Limitada
+            </Tag>
+          )}
+        </div>
+      ),
     },
     {
       title: "Descripción",
@@ -160,7 +175,7 @@ export default function ProductsPrivate() {
           >
             <button
               onClick={() => {
-                modalUQWuantityRef.current?.childFunction(id);
+                modalUQWuantityRef.current?.childFunction(id, record);
               }}
             >
               <ArrowUpDownIcon className="text-blue-500 size-6" />

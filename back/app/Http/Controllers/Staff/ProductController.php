@@ -47,7 +47,7 @@ class ProductController extends Controller
             'id' => 'products_sold',
             'title' => 'Productos Vendidos',
             'value' => $currentPeriodSold,
-            'suffix' => ' sacos',
+            'suffix' => ' productos',
             'trend' => $trend,
             'trendText' => 'vs 30 días anteriores',
         ];
@@ -83,7 +83,7 @@ class ProductController extends Controller
             'value' => $totalStockValue,
             'prefix' => '$',
             'precision' => 0,
-            'trendText' => $totalStockUnits . ' sacos en stock',
+            'trendText' => $totalStockUnits . ' productos en stock',
         ];
     }
 
@@ -175,13 +175,17 @@ class ProductController extends Controller
 
     public function create(CreateProductRequest $request)
     {
+        $isSack = $request->boolean('is_sack');
+
         $Product = Product::create([
             'name' =>  $request->get('name'),
             'description' =>  $request->get('description'),
             'weight' => $request->get('weight'),
             'price' => $request->get('price'),
-            'quantity' => $request->get('quantity') ?? 1,
+            'quantity' => $isSack ? 0 : ($request->has('quantity') && $request->get('quantity') !== null ? (int) $request->get('quantity') : 0),
             'min_stock' => $request->get('min_stock') ?? 0,
+            'is_limited' => $request->boolean('is_limited'),
+            'is_sack' => $isSack,
         ]);
 
         $Product->key = $Product->id;
@@ -207,6 +211,8 @@ class ProductController extends Controller
             'weight' => $request->get('weight'),
             'price' => $request->get('price'),
             'min_stock' => $request->get('min_stock') ?? 0,
+            'is_limited' => $request->boolean('is_limited'),
+            'is_sack' => $request->boolean('is_sack'),
         ]);
 
         return response()->json([
@@ -250,6 +256,8 @@ class ProductController extends Controller
                 'price',
                 'quantity',
                 'min_stock',
+                'is_limited',
+                'is_sack',
                 'status',
                 'created_at as created_at_show'
             ]);
@@ -285,6 +293,13 @@ class ProductController extends Controller
         }
 
         $action = $request->get('action');
+
+        if ($action === 'add' && $product->is_sack) {
+            return response()->json([
+                'message' => 'No se puede agregar stock manualmente a un Saco. Para incrementar el stock de sacos debes empacar/convertir formato base.'
+            ], 422);
+        }
+
         $quantity = (int) $request->get('quantity');
         $reason = $request->get('reason');
 
@@ -356,6 +371,12 @@ class ProductController extends Controller
 
         $originProduct = Product::find($request->get('origin_product_id'));
         $destinationProduct = Product::find($request->get('destination_product_id'));
+
+        if ($originProduct->is_limited || $destinationProduct->is_limited) {
+            return response()->json([
+                'message' => 'No se permite empacar ni convertir stock utilizando productos de oferta limitada.'
+            ], 422);
+        }
 
         $conversionFactor = (int) $request->get('conversion_factor');
         $quantityToCreate = (int) $request->get('quantity_to_create');

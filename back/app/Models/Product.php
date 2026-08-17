@@ -20,6 +20,8 @@ class Product extends Model
         'price',
         'quantity',
         'min_stock',
+        'is_limited',
+        'is_sack',
         'status'
     ];
 
@@ -30,6 +32,8 @@ class Product extends Model
      */
     protected $casts = [
         'id' => 'string',
+        'is_limited' => 'boolean',
+        'is_sack' => 'boolean',
     ];
 
     public $incrementing = false;

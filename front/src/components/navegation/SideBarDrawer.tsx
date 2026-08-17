@@ -1,6 +1,7 @@
 import { Drawer } from "antd";
 import { DataUser } from "./components/DataUser";
 import { MenuSidebar } from "./components/MenuSidebar";
+import { AppLogoVersion } from "./components/AppLogoVersion";
 
 type SideBarDrawerProps = {
   isOpen: boolean;
@@ -14,14 +15,23 @@ export const SideBarDrawer = ({ isOpen, setIsOpen }: SideBarDrawerProps) => {
 
   return (
     <Drawer
-      title="Menú"
+      title={
+        <div className="flex items-center gap-2 py-1">
+          <AppLogoVersion />
+        </div>
+      }
       placement="left"
-      width={275}
+      width={280}
       onClose={() => setIsOpen(false)}
       open={isOpen}
+      styles={{
+        body: { padding: 0, display: "flex", flexDirection: "column" },
+      }}
     >
       <div className="flex flex-col h-full">
-        <MenuSidebar closeDrawer={closeDrawer} />
+        <div className="py-2">
+          <MenuSidebar closeDrawer={closeDrawer} />
+        </div>
 
         <div className="mt-auto">
           <div className="block">

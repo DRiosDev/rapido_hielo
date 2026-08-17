@@ -29,7 +29,9 @@ class CreateProductRequest extends FormRequest
             'weight' => ['nullable', 'regex:/^\d+(\.\d{1})?$/'],
             'price' => 'required|int',
             'quantity' => 'nullable|int|min:0',
-            'min_stock' => 'nullable|int|min:0'
+            'min_stock' => 'nullable|int|min:0',
+            'is_limited' => 'nullable|boolean',
+            'is_sack' => 'nullable|boolean'
         ];
     }
 

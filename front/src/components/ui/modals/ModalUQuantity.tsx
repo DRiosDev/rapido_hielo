@@ -1,9 +1,10 @@
-import { Alert, Button, Form, InputNumber, message, Modal, Radio, Space } from "antd";
+import { Alert, Button, Form, Input, InputNumber, message, Modal, Radio, Space } from "antd";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import { useUpdateProductQuantity } from "../../../services/products/mutation";
+import { Product } from "../../../types/Product";
 
 export interface ModalUQuantityRef {
-  childFunction: (id: string) => void;
+  childFunction: (id: string, product?: Product) => void;
 }
 
 type ModalUQuantityProps = {
@@ -17,6 +18,7 @@ export const ModalUQuantity = forwardRef<
 >((props, ref) => {
   const [open, setOpen] = useState<boolean>(false);
   const [id, setId] = useState<string>("");
+  const [product, setProduct] = useState<Product | null>(null);
   const [isLoadingButton, setIsLoadingButton] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -29,16 +31,18 @@ export const ModalUQuantity = forwardRef<
 
   const updateQuantityMutation = useUpdateProductQuantity();
 
-  const childFunction = (id: string) => {
+  const childFunction = (id: string, prodData?: Product) => {
     setOpen(true);
     setAlert({ visible: false, description: "" });
     setIsLoadingButton(false);
     setId(id);
+    setProduct(prodData || null);
 
     form.resetFields();
     form.setFieldsValue({
-      action: "add",
+      action: prodData?.is_sack ? "subtract" : "add",
       quantity: 1,
+      reason: "",
     });
   };
 
@@ -72,6 +76,7 @@ export const ModalUQuantity = forwardRef<
         id,
         action: formValues.action,
         quantity: Number(formValues.quantity),
+        reason: formValues.reason,
       },
       {
         onSuccess: (data) => {
@@ -102,9 +107,19 @@ export const ModalUQuantity = forwardRef<
     >
       {contextHolder}
 
+      {product?.is_sack && (
+        <Alert
+          type="warning"
+          showIcon
+          className="my-3"
+          message="Producto Saco / Empacado"
+          description="Para incrementar el stock de un saco debes usar la opción 'Empacar / Convertir Stock' para descontar la materia prima correspondiente. Aquí solo se permiten descuentos por mermas o pérdidas."
+        />
+      )}
+
       <Form
         form={form}
-        className="pt-4"
+        className="pt-2"
         scrollToFirstError={{
           behavior: "smooth",
           block: "center",
@@ -112,7 +127,7 @@ export const ModalUQuantity = forwardRef<
         }}
         layout="vertical"
         onFinish={changeStock}
-        initialValues={{ action: "add", quantity: 1 }}
+        initialValues={{ action: product?.is_sack ? "subtract" : "add", quantity: 1, reason: "" }}
       >
         <Form.Item
           name="action"
@@ -120,7 +135,11 @@ export const ModalUQuantity = forwardRef<
           rules={[{ required: true, message: "Seleccione un tipo de operación" }]}
         >
           <Radio.Group buttonStyle="solid" className="w-full grid grid-cols-2 gap-2">
-            <Radio.Button value="add" className="text-center font-medium">
+            <Radio.Button
+              value="add"
+              disabled={Boolean(product?.is_sack)}
+              className="text-center font-medium"
+            >
               Aumento (+)
             </Radio.Button>
             <Radio.Button value="subtract" className="text-center font-medium">
@@ -144,6 +163,14 @@ export const ModalUQuantity = forwardRef<
             className="w-full"
             placeholder="Ingrese la cantidad"
           />
+        </Form.Item>
+
+        <Form.Item
+          name="reason"
+          label="Motivo / Observación (Opcional)"
+          rules={[{ max: 255, message: "El motivo no puede exceder 255 caracteres" }]}
+        >
+          <Input placeholder="Ej: Merma por bolsa rota, Ajuste de inventario, etc." />
         </Form.Item>
 
         {/* Alert*/}

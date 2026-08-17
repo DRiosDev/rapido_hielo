@@ -8,6 +8,7 @@ import {
   message,
   Modal,
   Space,
+  Switch,
 } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import {
@@ -45,6 +46,7 @@ export const ModalCUProduct = forwardRef<
   const firstInputRef = useRef<InputRef | null>(null);
 
   const [form] = Form.useForm();
+  const isSack = Form.useWatch("is_sack", form);
 
   const [alert, setAlert] = useState({
     visible: false,
@@ -68,7 +70,10 @@ export const ModalCUProduct = forwardRef<
         description: data.description,
         weight: data.weight ? parseFloat(String(data.weight)) : undefined,
         price: data.price,
+        quantity: data.quantity ?? 0,
         min_stock: data.min_stock ?? 0,
+        is_limited: Boolean(data.is_limited),
+        is_sack: Boolean(data.is_sack),
       });
     }
   };
@@ -99,16 +104,20 @@ export const ModalCUProduct = forwardRef<
     }
   };
 
-  const create = async () => {
+  const create = async (values: any) => {
     setIsLoadingButton(true);
     setAlert({
       visible: false,
       description: "",
     });
 
-    const formValues = form.getFieldsValue();
+    const payload = {
+      ...values,
+      is_limited: Boolean(values.is_limited),
+      is_sack: Boolean(values.is_sack),
+    };
 
-    createProductMutation.mutate(formValues as Product, {
+    createProductMutation.mutate(payload as Product, {
       onSuccess: (data) => {
         messageApi.success(data.message);
 
@@ -125,18 +134,22 @@ export const ModalCUProduct = forwardRef<
     });
   };
 
-  const update = async () => {
+  const update = async (values: any) => {
     setIsLoadingButton(true);
     setAlert({
       visible: false,
       description: "",
     });
-    const formValues = form.getFieldsValue();
 
-    formValues.id = id;
-    formValues.key = id;
+    const payload = {
+      ...values,
+      id,
+      key: id,
+      is_limited: Boolean(values.is_limited),
+      is_sack: Boolean(values.is_sack),
+    };
 
-    updateProductMutation.mutate(formValues as Product, {
+    updateProductMutation.mutate(payload as Product, {
       onSuccess: (data) => {
         messageApi.success(data.message);
         if (props?.refetch) {
@@ -163,6 +176,7 @@ export const ModalCUProduct = forwardRef<
 
       <Form
         form={form}
+        initialValues={{ is_limited: false, is_sack: false, quantity: 0, min_stock: 0 }}
         className="pt-4"
         scrollToFirstError={{
           behavior: "smooth",
@@ -172,6 +186,43 @@ export const ModalCUProduct = forwardRef<
         layout="vertical"
         onFinish={isEdit ? update : create}
       >
+        {/* Es Saco / Producto Empacado */}
+        <div className="bg-blue-50/70 p-3 rounded-lg border border-blue-200/80 mb-3 flex items-center justify-between gap-x-3">
+          <div className="pr-2">
+            <span className="font-semibold text-slate-800 text-sm block">
+              Es Saco / Producto Empacado
+            </span>
+            <span className="text-xs text-slate-500 block leading-tight mt-0.5">
+              Marca este producto si es un saco o pack armado desde formato base. Inicia en 0 y su stock aumenta al empacar/convertir.
+            </span>
+          </div>
+          <Form.Item name="is_sack" valuePropName="checked" noStyle>
+            <Switch
+              className="bg-slate-300"
+              onChange={(checked) => {
+                if (checked && !isEdit) {
+                  form.setFieldValue("quantity", 0);
+                }
+              }}
+            />
+          </Form.Item>
+        </div>
+
+        {/* Producto oferta y stock limitado */}
+        <div className="bg-amber-50/70 p-3 rounded-lg border border-amber-200/80 mb-4 flex items-center justify-between gap-x-3">
+          <div className="pr-2">
+            <span className="font-semibold text-slate-800 text-sm block">
+              Producto de oferta limitada / stock limitado
+            </span>
+            <span className="text-xs text-slate-500 block leading-tight mt-0.5">
+              Marca este producto si es especial u oferta temporal (ej. vinos, bebidas) con stock finito sin reposición continua.
+            </span>
+          </div>
+          <Form.Item name="is_limited" valuePropName="checked" noStyle>
+            <Switch className="bg-slate-300" />
+          </Form.Item>
+        </div>
+
         {/* Name*/}
         <Form.Item
           name="name"
@@ -239,21 +290,47 @@ export const ModalCUProduct = forwardRef<
           </Form.Item>
         </div>
 
-        {/* Stock Mínimo */}
-        <Form.Item
-          name="min_stock"
-          validateTrigger="onBlur"
-          label="Stock Mínimo (Alerta Bajo Stock)"
-          tooltip="Define la cantidad mínima en inventario para disparar la alerta de bajo stock. (0 desactiva la alerta)"
-        >
-          <InputNumber
-            type="number"
-            min={0}
-            max={999999}
-            className="w-full"
-            placeholder="Ej: 50 (0 para desactivar alerta)"
-          />
-        </Form.Item>
+        <div className="grid grid-cols-1 sm:gap-4 sm:grid-cols-2">
+          {/* Stock Inicial */}
+          <Form.Item
+            name="quantity"
+            validateTrigger="onBlur"
+            label="Stock Inicial"
+            tooltip={
+              isSack
+                ? "Los sacos inician con stock 0 y su inventario se incrementa al empacar o convertir producto base."
+                : isEdit
+                ? "El stock no se puede modificar al editar el producto. Utiliza la opción de actualizar stock o empacar."
+                : "Define la cantidad de unidades iniciales al crear el producto (0 a X)."
+            }
+            rules={[{ required: !isEdit && !isSack, message: "Ingresa el stock inicial" }]}
+          >
+            <InputNumber
+              type="number"
+              min={0}
+              max={999999}
+              disabled={isEdit || isSack}
+              className="w-full"
+              placeholder={isSack ? "0 (Se incrementa al empacar)" : "Ej: 10"}
+            />
+          </Form.Item>
+
+          {/* Stock Mínimo */}
+          <Form.Item
+            name="min_stock"
+            validateTrigger="onBlur"
+            label="Stock Mínimo (Alerta)"
+            tooltip="Define la cantidad mínima en inventario para disparar la alerta de bajo stock. (0 desactiva la alerta)"
+          >
+            <InputNumber
+              type="number"
+              min={0}
+              max={999999}
+              className="w-full"
+              placeholder="Ej: 50 (0 para desactivar)"
+            />
+          </Form.Item>
+        </div>
 
         <Form.Item
           name="description"

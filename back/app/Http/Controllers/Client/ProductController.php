@@ -46,6 +46,8 @@ class ProductController extends Controller
                 'description',
                 'weight',
                 'price',
+                'is_limited',
+                'is_sack',
                 'status',
                 'created_at as created_at_show'
             ]);

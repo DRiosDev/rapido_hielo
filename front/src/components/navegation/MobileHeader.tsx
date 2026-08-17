@@ -8,24 +8,37 @@ export const MobileHeader = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    // @ts-ignore
-    <Header className="flex max-h-[64px] justify-between p-4 bg-white border-b md:hidden">
-      {/* Logo */}
-      <div className="flex items-center gap-1">
-        <AppLogoVersion />
-      </div>
+    <div className="block md:hidden sticky top-0 z-30">
+      {/* @ts-ignore */}
+      <Header
+        style={{
+          background: "#ffffff",
+          padding: "0 16px",
+          height: "60px",
+          lineHeight: "60px",
+          borderBottom: "1px solid #e5e7eb",
+        }}
+        className="flex items-center justify-between"
+      >
+        {/* Logo */}
+        <div className="flex items-center gap-1">
+          <AppLogoVersion />
+        </div>
 
-      {/* Button hamburger */}
-      <div className="flex gap-2 md:hidden">
-        <button
-          className="items-center gap-x-2"
-          onClick={() => setIsOpen(true)}
-        >
-          <MenuHamburgerIcon />
-        </button>
-      </div>
+        {/* Button hamburger */}
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            aria-label="Abrir menú"
+            className="flex items-center justify-center p-2 rounded-lg text-slate-700 hover:bg-slate-100 active:bg-slate-200 transition-colors cursor-pointer"
+            onClick={() => setIsOpen(true)}
+          >
+            <MenuHamburgerIcon className="w-6 h-6 text-slate-800" />
+          </button>
+        </div>
 
-      <SideBarDrawer isOpen={isOpen} setIsOpen={setIsOpen} />
-    </Header>
+        <SideBarDrawer isOpen={isOpen} setIsOpen={setIsOpen} />
+      </Header>
+    </div>
   );
 };

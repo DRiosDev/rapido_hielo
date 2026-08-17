@@ -72,7 +72,7 @@ export default function Dashboard() {
       dataIndex: "salesCount",
       key: "salesCount",
       align: "right",
-      render: (val) => `${val?.toLocaleString("es-CL") || 0} sacos`,
+      render: (val) => `${val?.toLocaleString("es-CL") || 0} productos`,
     },
     {
       title: "Total",

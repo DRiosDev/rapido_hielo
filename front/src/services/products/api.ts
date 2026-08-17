@@ -38,14 +38,16 @@ export type UpdateQuantityPayload = {
   id: string;
   action: "add" | "subtract";
   quantity: number;
+  reason?: string;
 };
 
 //update quantity
 export async function updateProductQuantity(payload: UpdateQuantityPayload) {
-  const { id, action, quantity } = payload;
+  const { id, action, quantity, reason } = payload;
   const { data } = await axiosInstance.patch(`/api/products/quantity/${id}`, {
     action,
     quantity,
+    reason,
   });
   return data;
 }
