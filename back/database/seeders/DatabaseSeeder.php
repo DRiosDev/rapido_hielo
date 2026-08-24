@@ -42,16 +42,12 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // Default Product
-        Product::firstOrCreate(
-            ['name' => 'hielo'],
-            [
-                'description' => 'Bolsa de hielo',
-                'weight' => 1,
-                'price' => 450,
-                'quantity' => 10,
-                'status' => 'active',
-            ]
-        );
+        // Ejecutar los seeders en orden
+        $this->call([
+            ClientSeeder::class,
+            ProductSeeder::class,
+            InventoryMovementSeeder::class,
+            OrderSeeder::class,
+        ]);
     }
 }
