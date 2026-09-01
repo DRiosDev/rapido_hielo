@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: rapido-hielo-backend
+    env: docker
+    dockerfilePath: ./back/Dockerfile
+    dockerContext: ./back
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        fromDatabase:
+          name: rapido-hielo-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: rapido-hielo-db
+          property: port
+      - key: DB_DATABASE
+        fromDatabase:
+          name: rapido-hielo-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: rapido-hielo-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: rapido-hielo-db
+          property: password
+
+databases:
+  - name: rapido-hielo-db
+    databaseName: rapido_hielo_db
+    user: rapido_hielo_user
