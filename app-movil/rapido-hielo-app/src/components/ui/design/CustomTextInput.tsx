@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import * as React from "react";
 import { Text, View } from "react-native";
@@ -23,11 +24,14 @@ export default function CustomTextInput({
     <View style={{ marginBottom: 16 }}>
       <TextInput
         mode="outlined"
-        outlineColor="#EEEFF0"
-        outlineStyle={{ borderWidth: 1 }}
+        outlineColor={Colors.borderInputs}
+        activeOutlineColor={Colors.primary}
+        outlineStyle={{ borderRadius: 14, borderWidth: 1.5 }}
         secureTextEntry={isPassword ? secureTextEntry : false}
-        theme={{ roundness: 15 }}
-        style={{ backgroundColor: backgroundColor }}
+        textColor={Colors.textPrimary}
+        placeholderTextColor={Colors.textPlaceholder}
+        theme={{ roundness: 14 }}
+        style={{ backgroundColor: backgroundColor, fontSize: 15 }}
         contentStyle={{ height: 52 }}
         {...props}
         right={
@@ -37,6 +41,7 @@ export default function CustomTextInput({
                 <Ionicons
                   name={secureTextEntry ? "eye-off-outline" : "eye-outline"}
                   size={20}
+                  color={Colors.textSecondary}
                   {...iconProps}
                 />
               )}
@@ -50,7 +55,7 @@ export default function CustomTextInput({
       />
 
       {props?.error && !!errorMessage && (
-        <Text className="mt-1 text-red-500">{errorMessage}</Text>
+        <Text className="mt-1 text-xs text-red-500 font-medium px-1">{errorMessage}</Text>
       )}
     </View>
   );

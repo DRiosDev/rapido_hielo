@@ -1,6 +1,7 @@
 import { axiosInstance } from "@/axios/axiosInstance";
 import CustomButton from "@/components/ui/design/CustomButton";
 import CustomTextInput from "@/components/ui/design/CustomTextInput";
+import { Colors } from "@/constants/Colors";
 import { formatRut, validateRut } from "@/utils/rut";
 import { router } from "expo-router";
 import { Formik } from "formik";
@@ -85,147 +86,157 @@ export default function SignUp() {
 
   return (
     <SafeAreaView
-      className="flex-1 px-6 bg-white"
+      className="flex-1 px-6 bg-slate-50 dark:bg-slate-900"
       style={{ paddingBottom: insets.bottom }}
     >
       <KeyboardAwareScrollView
         keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+        contentContainerStyle={{ flexGrow: 1, justifyContent: "center", paddingVertical: 16 }}
         showsVerticalScrollIndicator={false}
       >
-        <Text className="mb-6 text-3xl font-bold text-center">Crear cuenta</Text>
-
-        <Formik
-          initialValues={{
-            rut: "",
-            name: "",
-            lastname: "",
-            address: "",
-            phone: "",
-            email: "",
-            password: "",
-            password_confirmation: "",
-          }}
-          validationSchema={LoginSchema}
-          onSubmit={onSubmit}
-        >
-          {({
-            handleChange,
-            handleBlur,
-            handleSubmit,
-            values,
-            errors,
-            touched,
-            setFieldValue,
-          }) => (
-            <View>
-              {/* RUT */}
-              <CustomTextInput
-                label="Run"
-                value={values.rut}
-                onChangeText={(text) => setFieldValue("rut", formatRut(text))}
-                onBlur={handleBlur("rut")}
-                error={touched.rut && !!errors.rut}
-                errorMessage={errors.rut}
-              />
-
-              {/* NAME */}
-              <CustomTextInput
-                label="Nombre"
-                value={values.name}
-                onChangeText={handleChange("name")}
-                onBlur={handleBlur("name")}
-                error={touched.name && !!errors.name}
-                errorMessage={errors.name}
-              />
-
-              {/* LASTNAME */}
-              <CustomTextInput
-                label="Apellido"
-                value={values.lastname}
-                onChangeText={handleChange("lastname")}
-                onBlur={handleBlur("lastname")}
-                error={touched.lastname && !!errors.lastname}
-                errorMessage={errors.lastname}
-              />
-
-              {/* ADDRESS */}
-              <CustomTextInput
-                label="Dirección"
-                value={values.address}
-                onChangeText={handleChange("address")}
-                onBlur={handleBlur("address")}
-                error={touched.address && !!errors.address}
-                errorMessage={errors.address}
-              />
-
-              {/* PHONE */}
-              <CustomTextInput
-                label="Teléfono"
-                value={values.phone}
-                onChangeText={handleChange("phone")}
-                onBlur={handleBlur("phone")}
-                keyboardType="numeric"
-                error={touched.phone && !!errors.phone}
-                errorMessage={errors.phone}
-              />
-
-              {/* EMAIL */}
-              <CustomTextInput
-                label="Correo"
-                value={values.email}
-                ref={emailRef}
-                onChangeText={handleChange("email")}
-                onBlur={handleBlur("email")}
-                keyboardType="email-address"
-                error={touched.email && !!errors.email}
-                errorMessage={errors.email}
-              />
-
-              {/* PASSWORD */}
-              <CustomTextInput
-                label="Contraseña"
-                value={values.password}
-                ref={passwordRef}
-                onChangeText={handleChange("password")}
-                onBlur={handleBlur("password")}
-                isPassword
-                error={touched.password && !!errors.password}
-                errorMessage={errors.password}
-              />
-
-              {/* CONFIRM PASSWORD */}
-              <CustomTextInput
-                label="Confirmar contraseña"
-                value={values.password_confirmation}
-                ref={confirmPasswordRef}
-                onChangeText={handleChange("password_confirmation")}
-                onBlur={handleBlur("password_confirmation")}
-                isPassword
-                error={
-                  touched.password_confirmation && !!errors.password_confirmation
-                }
-                errorMessage={errors.password_confirmation}
-              />
-
-              <View className="mt-6">
-                <CustomButton
-                  loading={loading}
-                  disabled={loading}
-                  onPress={() => handleSubmit()}
-                >
-                  Crear cuenta
-                </CustomButton>
-              </View>
-            </View>
-          )}
-        </Formik>
-
-        <TouchableOpacity onPress={() => router.replace("/sing-in")}>
-          <Text className="mt-6 text-center text-primary pb-4">
-            ¿Ya tienes cuenta? Inicia sesión
+        <View className="bg-white dark:bg-slate-800 p-6 rounded-2xl elevation-3 shadow-md shadow-slate-200 dark:shadow-none">
+          <Text
+            className="mb-1 text-3xl font-bold text-center"
+            style={{ color: Colors.textPrimary }}
+          >
+            Crear cuenta
           </Text>
-        </TouchableOpacity>
+          <Text className="text-center mb-6 text-sm" style={{ color: Colors.textSecondary }}>
+            Completa tus datos para registrarte
+          </Text>
+
+          <Formik
+            initialValues={{
+              rut: "",
+              name: "",
+              lastname: "",
+              address: "",
+              phone: "",
+              email: "",
+              password: "",
+              password_confirmation: "",
+            }}
+            validationSchema={LoginSchema}
+            onSubmit={onSubmit}
+          >
+            {({
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              values,
+              errors,
+              touched,
+              setFieldValue,
+            }) => (
+              <View>
+                {/* RUT */}
+                <CustomTextInput
+                  label="Run"
+                  value={values.rut}
+                  onChangeText={(text) => setFieldValue("rut", formatRut(text))}
+                  onBlur={handleBlur("rut")}
+                  error={touched.rut && !!errors.rut}
+                  errorMessage={errors.rut}
+                />
+
+                {/* NAME */}
+                <CustomTextInput
+                  label="Nombre"
+                  value={values.name}
+                  onChangeText={handleChange("name")}
+                  onBlur={handleBlur("name")}
+                  error={touched.name && !!errors.name}
+                  errorMessage={errors.name}
+                />
+
+                {/* LASTNAME */}
+                <CustomTextInput
+                  label="Apellido"
+                  value={values.lastname}
+                  onChangeText={handleChange("lastname")}
+                  onBlur={handleBlur("lastname")}
+                  error={touched.lastname && !!errors.lastname}
+                  errorMessage={errors.lastname}
+                />
+
+                {/* ADDRESS */}
+                <CustomTextInput
+                  label="Dirección"
+                  value={values.address}
+                  onChangeText={handleChange("address")}
+                  onBlur={handleBlur("address")}
+                  error={touched.address && !!errors.address}
+                  errorMessage={errors.address}
+                />
+
+                {/* PHONE */}
+                <CustomTextInput
+                  label="Teléfono"
+                  value={values.phone}
+                  onChangeText={handleChange("phone")}
+                  onBlur={handleBlur("phone")}
+                  keyboardType="numeric"
+                  error={touched.phone && !!errors.phone}
+                  errorMessage={errors.phone}
+                />
+
+                {/* EMAIL */}
+                <CustomTextInput
+                  label="Correo"
+                  value={values.email}
+                  ref={emailRef}
+                  onChangeText={handleChange("email")}
+                  onBlur={handleBlur("email")}
+                  keyboardType="email-address"
+                  error={touched.email && !!errors.email}
+                  errorMessage={errors.email}
+                />
+
+                {/* PASSWORD */}
+                <CustomTextInput
+                  label="Contraseña"
+                  value={values.password}
+                  ref={passwordRef}
+                  onChangeText={handleChange("password")}
+                  onBlur={handleBlur("password")}
+                  isPassword
+                  error={touched.password && !!errors.password}
+                  errorMessage={errors.password}
+                />
+
+                {/* CONFIRM PASSWORD */}
+                <CustomTextInput
+                  label="Confirmar contraseña"
+                  value={values.password_confirmation}
+                  ref={confirmPasswordRef}
+                  onChangeText={handleChange("password_confirmation")}
+                  onBlur={handleBlur("password_confirmation")}
+                  isPassword
+                  error={
+                    touched.password_confirmation && !!errors.password_confirmation
+                  }
+                  errorMessage={errors.password_confirmation}
+                />
+
+                <View className="mt-4">
+                  <CustomButton
+                    loading={loading}
+                    disabled={loading}
+                    onPress={() => handleSubmit()}
+                  >
+                    Crear cuenta
+                  </CustomButton>
+                </View>
+              </View>
+            )}
+          </Formik>
+
+          <TouchableOpacity onPress={() => router.replace("/sing-in")}>
+            <Text className="mt-5 text-center font-medium" style={{ color: Colors.primary }}>
+              ¿Ya tienes cuenta? Inicia sesión
+            </Text>
+          </TouchableOpacity>
+        </View>
       </KeyboardAwareScrollView>
     </SafeAreaView>
   );

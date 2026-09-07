@@ -7,12 +7,11 @@ import { useAuthUser } from "@/store/useAuthUser";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { Avatar, List } from "react-native-paper";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Avatar } from "react-native-paper";
 
 export default function Profile() {
   const { userLogged, logout } = useAuthUser();
-
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleLogout = async () => {
@@ -21,23 +20,22 @@ export default function Profile() {
     setIsLoading(false);
   };
 
-  // Configuración de las acciones
-  // Configuración de acciones
   const actions = [
     {
       title: "Mis compras",
-      icon: <Ionicons name="bag-handle-outline" size={19} color="black" />,
+      icon: <Ionicons name="bag-handle-outline" size={20} color={Colors.primary} />,
       onPress: () => router.push("/(protected)/(orders)"),
     },
     {
       title: "Configuración",
-      icon: <Ionicons name="settings-outline" size={19} color="black" />,
+      icon: <Ionicons name="settings-outline" size={20} color={Colors.primary} />,
       onPress: () => router.push("/(protected)/(settings)"),
     },
     {
       title: "Cerrar sesión",
-      titleClass: "text-red-500",
-      icon: <Ionicons name="log-out-outline" size={19} color="red" />,
+      titleClass: "text-red-500 font-semibold",
+      icon: <Ionicons name="log-out-outline" size={20} color={Colors.redError} />,
+      bgIcon: "bg-red-50 dark:bg-red-900/30",
       onPress: handleLogout,
     },
   ];
@@ -51,74 +49,65 @@ export default function Profile() {
     <>
       {isLoading && <LoadingOverlay />}
 
-      <View className="flex-1 p-6 bg-white dark:bg-slate-900">
-        <View className="items-center gap-5">
+      <View className="flex-1 p-6 bg-slate-50 dark:bg-slate-900">
+        <View className="items-center p-6 bg-white dark:bg-slate-800 rounded-3xl mb-6 shadow-sm border border-slate-100 dark:border-slate-700">
           <Avatar.Text
-            size={110}
+            size={90}
             label={initials}
+            style={{ backgroundColor: Colors.primary, marginBottom: 16 }}
+            labelStyle={{ fontSize: 32, fontWeight: "bold", color: "white" }}
           />
-          <View className="items-center gap-1">
-            <Text className="text-2xl font-semibold dark:text-white">
-              {fullName}
-            </Text>
-            <Text className="text-base font-medium text-center text-text-secondary dark:text-gray-400">
-              {userLogged?.email || ""}
-            </Text>
-          </View>
+          <Text className="text-2xl font-bold text-center" style={{ color: Colors.textPrimary }}>
+            {fullName}
+          </Text>
+          <Text className="text-sm font-medium text-center mt-0.5 mb-5" style={{ color: Colors.textSecondary }}>
+            {userLogged?.email || ""}
+          </Text>
 
           <CustomButton
-            style={{ marginBottom: 20 }}
             onPress={() => router.push("../(modals)/(account)/modal-u-account")}
+            style={{ backgroundColor: Colors.primary }}
           >
             Editar perfil
           </CustomButton>
         </View>
 
-        <View className="items-center justify-between flex-1 w-full pt-5">
-          <View className="w-full">
+        <View className="flex-1 justify-between">
+          <View className="bg-white dark:bg-slate-800 rounded-3xl p-3 border border-slate-100 dark:border-slate-700 shadow-sm">
             {actions.map((action, index) => (
-              <List.Item
+              <TouchableOpacity
                 key={index}
-                title={
-                  <Text className={`font-semibold ${action.titleClass ?? ""} dark:text-white`}>
-                    {action.title}
-                  </Text>
-                }
-                style={[styles.list_item, { borderBottomColor: '#F2F4F6' }]}
-                rippleColor="transparent"
-                left={() => (
-                  <View className="p-3 rounded-full bg-badge-gray dark:bg-slate-800">
+                onPress={action.onPress}
+                className="flex-row items-center justify-between p-3 rounded-2xl active:bg-slate-50 dark:active:bg-slate-700/50"
+                style={{
+                  borderBottomWidth: index < actions.length - 1 ? 1 : 0,
+                  borderBottomColor: "#F1F5F9",
+                }}
+              >
+                <View className="flex-row items-center gap-3">
+                  <View
+                    className={`p-2.5 rounded-xl ${action.bgIcon || ""}`}
+                    style={{ backgroundColor: action.bgIcon ? undefined : Colors.primarySoft }}
+                  >
                     {action.icon}
                   </View>
-                )}
-                right={() => (
-                  <View className="pt-3">
-                    <Ionicons
-                      name="chevron-forward"
-                      size={20}
-                      color="gray"
-                    />
-                  </View>
-                )}
-                onPress={action.onPress}
-              />
+                  <Text
+                    className={`text-base font-bold ${action.titleClass || ""}`}
+                    style={{ color: action.titleClass ? undefined : Colors.textPrimary }}
+                  >
+                    {action.title}
+                  </Text>
+                </View>
+                <Ionicons name="chevron-forward" size={18} color={Colors.textSecondary} />
+              </TouchableOpacity>
             ))}
           </View>
 
-          <Text className="text-base font-regular text-text-secondary">
-            Version: {VERSION}
+          <Text className="text-xs font-semibold text-center py-4" style={{ color: Colors.textSecondary }}>
+            Versión {VERSION}
           </Text>
         </View>
       </View>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  list_item: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#F2F4F6",
-    width: "100%",
-    paddingVertical: 12,
-  },
-});

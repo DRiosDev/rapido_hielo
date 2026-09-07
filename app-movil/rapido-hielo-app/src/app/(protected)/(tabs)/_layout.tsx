@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/Colors";
 import { useAuthUser } from "@/store/useAuthUser";
 import { useCartStore } from "@/store/useCarts";
 import { Ionicons } from "@expo/vector-icons";
@@ -21,44 +22,71 @@ export default function _layout() {
     <Tabs
       screenOptions={{
         tabBarStyle: {
-          backgroundColor: isDark ? "#0f172a" : "#ffffff", // slate-900 o blanco
-          borderTopColor: isDark ? "#1e293b" : "#e2e8f0",
+          backgroundColor: isDark ? "#0f172a" : "#ffffff",
+          borderTopColor: isDark ? "#1e293b" : "#f1f5f9",
+          height: 64,
+          paddingBottom: 8,
+          paddingTop: 8,
+          elevation: 8,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.05,
+          shadowRadius: 10,
         },
-        tabBarActiveTintColor: isDark ? "#3b82f6" : "#2563eb",
-        tabBarInactiveTintColor: isDark ? "#64748b" : "#64748b",
+        tabBarActiveTintColor: Colors.primary,
+        tabBarInactiveTintColor: isDark ? "#64748b" : "#94a3b8",
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: "600",
+        },
         headerStyle: {
           backgroundColor: isDark ? "#0f172a" : "#ffffff",
+          elevation: 0,
+          shadowOpacity: 0,
         },
-        headerTintColor: isDark ? "#ffffff" : "#000000",
+        headerTintColor: isDark ? "#ffffff" : Colors.textPrimary,
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: "Home",
+          title: "Productos",
           headerTitleAlign: "left",
           headerShadowVisible: false,
-          headerTitle: (props) => (
-            <Text className="text-3xl font-bold text-black dark:text-white">Productos</Text>
+          headerTitle: () => (
+            <Text
+              className="text-2xl font-extrabold tracking-tight"
+              style={{ color: isDark ? "#ffffff" : Colors.textPrimary }}
+            >
+              Productos
+            </Text>
           ),
           headerRight: () => (
             <Pressable
               onPress={() => router.push("../(modals)/(cart)/modal-cart")}
+              className="mr-5 p-2 rounded-full active:bg-slate-100 dark:active:bg-slate-800"
             >
-              <View className="mr-4">
-                <Ionicons name="cart-outline" size={28} color={isDark ? "white" : "black"} />
+              <View className="relative">
+                <Ionicons
+                  name="cart-outline"
+                  size={26}
+                  color={isDark ? "white" : Colors.textPrimary}
+                />
                 {itemCount > 0 && (
                   <View
                     style={{
                       position: "absolute",
-                      right: -6,
-                      top: -4,
-                      backgroundColor: "red",
-                      borderRadius: 8,
-                      width: 16,
-                      height: 16,
+                      right: -8,
+                      top: -6,
+                      backgroundColor: Colors.primary,
+                      borderRadius: 10,
+                      minWidth: 18,
+                      height: 18,
+                      paddingHorizontal: 4,
                       justifyContent: "center",
                       alignItems: "center",
+                      borderWidth: 1.5,
+                      borderColor: isDark ? "#0f172a" : "#ffffff",
                     }}
                   >
                     <Text
@@ -75,8 +103,14 @@ export default function _layout() {
               </View>
             </Pressable>
           ),
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home-outline" color={color} size={size} />
+          tabBarIcon: ({ color, focused, size }) => (
+            <View className={`p-1 rounded-xl ${focused ? "bg-indigo-50 dark:bg-slate-800" : ""}`}>
+              <Ionicons
+                name={focused ? "cube" : "cube-outline"}
+                color={color}
+                size={size}
+              />
+            </View>
           ),
         }}
       />
@@ -87,10 +121,21 @@ export default function _layout() {
           headerTitleAlign: "left",
           headerShadowVisible: false,
           headerTitle: (props) => (
-            <Text className="text-3xl font-bold text-black dark:text-white">{props.children}</Text>
+            <Text
+              className="text-2xl font-extrabold tracking-tight"
+              style={{ color: isDark ? "#ffffff" : Colors.textPrimary }}
+            >
+              Perfil
+            </Text>
           ),
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person-outline" color={color} size={size} />
+          tabBarIcon: ({ color, focused, size }) => (
+            <View className={`p-1 rounded-xl ${focused ? "bg-indigo-50 dark:bg-slate-800" : ""}`}>
+              <Ionicons
+                name={focused ? "person" : "person-outline"}
+                color={color}
+                size={size}
+              />
+            </View>
           ),
         }}
       />

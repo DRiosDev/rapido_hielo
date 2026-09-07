@@ -1,5 +1,6 @@
 import CustomButton from "@/components/ui/design/CustomButton";
 import CustomTextInput from "@/components/ui/design/CustomTextInput";
+import { Colors } from "@/constants/Colors";
 import { useAuthUser } from "@/store/useAuthUser";
 import { router } from "expo-router";
 import { Formik } from "formik";
@@ -59,85 +60,94 @@ export default function SingIn() {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <SafeAreaView
-        className="flex-1 px-6 bg-white"
+        className="flex-1 px-6 bg-slate-50 dark:bg-slate-900 justify-center"
         style={{ paddingBottom: insets.bottom + 10 }}
       >
-        <Text className="w-full mb-10 text-3xl font-bold text-center">
-          Inicio de sesión
-        </Text>
+        <View className="bg-white dark:bg-slate-800 p-6 rounded-2xl elevation-3 shadow-md shadow-slate-200 dark:shadow-none">
+          <Text
+            className="w-full mb-2 text-3xl font-bold text-center"
+            style={{ color: Colors.textPrimary }}
+          >
+            Inicio de sesión
+          </Text>
+          <Text className="text-center mb-8 text-sm" style={{ color: Colors.textSecondary }}>
+            Ingresa a tu cuenta para continuar
+          </Text>
 
-        <Formik
-          initialValues={{
-            email: "david@yopmail.com",
-            password: "12345678",
-          }}
-          validationSchema={LoginSchema}
-          onSubmit={onSubmit}
-        >
-          {({
-            handleChange,
-            handleBlur,
-            handleSubmit,
-            values,
-            errors,
-            touched,
-          }) => (
-            <View className="flex-1 justify-between">
-              {/* PARTE SUPERIOR */}
+          <Formik
+            initialValues={{
+              email: "david@yopmail.com",
+              password: "12345678",
+            }}
+            validationSchema={LoginSchema}
+            onSubmit={onSubmit}
+          >
+            {({
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              values,
+              errors,
+              touched,
+            }) => (
               <View>
-                <CustomTextInput
-                  label="Correo electrónico"
-                  value={values.email}
-                  ref={emailRef}
-                  onChangeText={handleChange("email")}
-                  onBlur={handleBlur("email")}
-                  keyboardType="email-address"
-                  returnKeyType="next"
-                  onSubmitEditing={() => passwordRef.current?.focus()}
-                  error={touched.email && !!errors.email}
-                  errorMessage={errors.email}
-                />
+                {/* PARTE SUPERIOR */}
+                <View>
+                  <CustomTextInput
+                    label="Correo electrónico"
+                    value={values.email}
+                    ref={emailRef}
+                    onChangeText={handleChange("email")}
+                    onBlur={handleBlur("email")}
+                    keyboardType="email-address"
+                    returnKeyType="next"
+                    onSubmitEditing={() => passwordRef.current?.focus()}
+                    error={touched.email && !!errors.email}
+                    errorMessage={errors.email}
+                  />
 
-                <CustomTextInput
-                  ref={passwordRef}
-                  label="Contraseña"
-                  value={values.password}
-                  onChangeText={handleChange("password")}
-                  onBlur={handleBlur("password")}
-                  isPassword
-                  returnKeyType="done"
-                  onSubmitEditing={() => Keyboard.dismiss} // envía formulario
-                  errorMessage={errors.password}
-                />
+                  <CustomTextInput
+                    ref={passwordRef}
+                    label="Contraseña"
+                    value={values.password}
+                    onChangeText={handleChange("password")}
+                    onBlur={handleBlur("password")}
+                    isPassword
+                    returnKeyType="done"
+                    onSubmitEditing={() => Keyboard.dismiss()} // envía formulario
+                    errorMessage={errors.password}
+                  />
 
-                <TouchableOpacity
-                  onPress={() => router.navigate("/recovery-password")}
-                >
-                  <Text className="w-full text-lg text-right text-primary">
-                    ¿Olvidaste la contraseña?
-                  </Text>
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => router.navigate("/recovery-password")}
+                    className="self-end"
+                  >
+                    <Text className="text-sm font-semibold" style={{ color: Colors.primary }}>
+                      ¿Olvidaste la contraseña?
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+
+                {/* PARTE INFERIOR (BOTONES) */}
+                <View className="mt-8">
+                  <CustomButton
+                    loading={loadingButton}
+                    disabled={loadingButton}
+                    onPress={() => handleSubmit()}
+                  >
+                    Iniciar sesión
+                  </CustomButton>
+
+                  <TouchableOpacity onPress={() => router.replace("/sing-up")}>
+                    <Text className="mt-5 text-center font-medium" style={{ color: Colors.primary }}>
+                      ¿No tienes cuenta? Regístrate
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-
-              {/* PARTE INFERIOR (BOTONES) */}
-              <View className="mt-10">
-                <CustomButton
-                  loading={loadingButton}
-                  disabled={loadingButton}
-                  onPress={() => handleSubmit()}
-                >
-                  Iniciar sesión
-                </CustomButton>
-
-                <TouchableOpacity onPress={() => router.replace("/sing-up")}>
-                  <Text className="mt-6 text-center text-primary">
-                    ¿No tienes cuenta? Registrate
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          )}
-        </Formik>
+            )}
+          </Formik>
+        </View>
       </SafeAreaView>
     </TouchableWithoutFeedback>
   );

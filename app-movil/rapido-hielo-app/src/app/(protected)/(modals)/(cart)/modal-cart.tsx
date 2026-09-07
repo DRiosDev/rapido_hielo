@@ -7,11 +7,9 @@ import { useAuthUser } from "@/store/useAuthUser";
 import { useCartStore } from "@/store/useCarts";
 import { Ionicons } from "@expo/vector-icons";
 import { router, Stack } from "expo-router";
-import React, { use, useEffect, useRef, useState } from "react";
-import { ScrollView, Text, View } from "react-native";
-import { Button, Card, IconButton, Menu } from "react-native-paper";
-import DateTimePickerModal from "react-native-modal-datetime-picker";
-
+import React, { useEffect, useRef, useState } from "react";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { IconButton } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   ConfirmedCartBT,
@@ -32,12 +30,10 @@ export default function ModalCart() {
   } = useCartStore();
 
   const BottomSheetRef = useRef<ConfirmedCartBTRef>(null);
-
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (userLogged?.id) fetchCartItemCount(userLogged.id);
-    console.log(userLogged);
   }, [userLogged, fetchCartItemCount]);
 
   const handleQuantityChange = (id: string, value: string | number) => {
@@ -75,11 +71,10 @@ export default function ModalCart() {
         useCartStore.getState().fetchCartItemCount(userLogged.id);
       }
 
-      // Redirección según método de pago
       if (payment === 2) {
         router.push(`/modal-confirm-payment?order_id=${orderId}`);
       } else {
-        router.push("/"); // home
+        router.push("/");
       }
     } catch (error: any) {
       console.error("Error al crear orden", error?.response?.data || error);
@@ -92,8 +87,9 @@ export default function ModalCart() {
     <>
       <Stack.Screen
         options={{
-          title: "Carro",
+          title: "Mi Carrito",
           headerShadowVisible: false,
+          headerTitleStyle: { color: Colors.textPrimary, fontWeight: "bold" },
           headerLeft: () => <BackButtonNavegation />,
         }}
       />
@@ -101,178 +97,145 @@ export default function ModalCart() {
       {isLoading && <LoadingOverlay />}
 
       <SafeAreaView
-        style={{ flex: 1, padding: 16 }}
+        className="flex-1 bg-slate-50 dark:bg-slate-900"
+        style={{ padding: 16 }}
         edges={["left", "right", "bottom"]}
       >
-        <View style={{ flex: 1 }}>
-          <View className="flex-row gap-3 bg-white dark:bg-slate-800 p-5 rounded-lg shadow shadow-black justify-center mb-5">
-            <Ionicons name="location-outline" size={28} className="text-black dark:text-white" />
-            <Text className="text-xl font-semibold text-black dark:text-white">{userLogged?.address || "Sin dirección registrada"}</Text>
+        <View className="flex-1">
+          {/* Banner Dirección */}
+          <View
+            className="flex-row items-center gap-3 p-4 rounded-2xl mb-4 border border-indigo-100 dark:border-slate-700"
+            style={{ backgroundColor: Colors.primarySoft }}
+          >
+            <View className="p-2 rounded-xl bg-white dark:bg-slate-800">
+              <Ionicons name="location" size={22} color={Colors.primary} />
+            </View>
+            <View className="flex-1">
+              <Text className="text-xs font-semibold uppercase tracking-wide" style={{ color: Colors.textSecondary }}>
+                Dirección de entrega
+              </Text>
+              <Text className="text-base font-bold" style={{ color: Colors.textPrimary }} numberOfLines={1}>
+                {userLogged?.address || "Sin dirección registrada"}
+              </Text>
+            </View>
           </View>
 
-          {/* <View className="bg-white p-5 rounded-lg shadow shadow-black mb-5">
-            <Text className="text-xl font-semibold mb-4">
-              Programa tu despacho
-            </Text>
-
-            
-            <Text className="text-base font-semibold mb-1">Día de entrega</Text>
-
-            <Button
-              mode="outlined"
-              onPress={showDatePicker}
-              contentStyle={{ justifyContent: "space-between" }}
-              style={{ borderRadius: 8 }}
-              icon="calendar"
-            >
-              {selectedDate
-                ? selectedDate.toLocaleDateString("es-CL", {
-                    weekday: "long",
-                    day: "numeric",
-                    month: "long",
-                  })
-                : "Selecciona un día"}
-            </Button>
-
-            <DateTimePickerModal
-              isVisible={isDatePickerVisible}
-              mode="date"
-              locale="es-CL"
-              onConfirm={handleConfirmDate}
-              onCancel={hideDatePicker}
-            />
-
-            
-            <Text className="text-base font-semibold mt-5 mb-1">
-              Horario de entrega
-            </Text>
-
-            <Menu
-              visible={timeMenuVisible}
-              onDismiss={() => setTimeMenuVisible(false)}
-              anchor={
-                <Button
-                  mode="outlined"
-                  onPress={() => setTimeMenuVisible(true)}
-                  contentStyle={{ justifyContent: "space-between" }}
-                  style={{ borderRadius: 8 }}
-                  icon="clock-outline"
-                >
-                  {selectedTime ?? "Selecciona un horario"}
-                </Button>
-              }
-            >
-              {availableHours.map((hour) => (
-                <Menu.Item
-                  key={hour}
-                  onPress={() => {
-                    setSelectedTime(hour);
-                    setTimeMenuVisible(false);
-                  }}
-                  title={hour}
-                />
-              ))}
-            </Menu>
-          </View> */}
-
-          <ScrollView showsVerticalScrollIndicator={false}>
+          {/* Lista de productos */}
+          <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
             {items.length === 0 ? (
-              <Text
-                style={{
-                  textAlign: "center",
-                  marginTop: 40,
-                  fontSize: 18,
-                  color: "gray",
-                }}
-              >
-                No hay productos en el carrito
-              </Text>
+              <View className="items-center justify-center py-20">
+                <Ionicons name="cart-outline" size={70} color={Colors.textSecondary} style={{ opacity: 0.4 }} />
+                <Text
+                  className="text-lg font-bold mt-4"
+                  style={{ color: Colors.textPrimary }}
+                >
+                  Tu carrito está vacío
+                </Text>
+                <Text className="text-sm mt-1 text-center" style={{ color: Colors.textSecondary }}>
+                  Agrega algunos sacos de hielo para continuar
+                </Text>
+              </View>
             ) : (
               items.map((item) => (
-                <Card
+                <View
                   key={item.id}
+                  className="bg-white dark:bg-slate-800 p-4 rounded-2xl mb-3 border border-slate-100 dark:border-slate-700 shadow-sm"
                   style={{
-                    marginBottom: 16,
-                    borderRadius: 12,
-                    elevation: 3,
-                    shadowColor: "#000",
-                    shadowOpacity: 0.3,
-                    shadowRadius: 4,
-                    shadowOffset: { width: 0, height: 2 },
+                    elevation: 2,
+                    shadowColor: Colors.textPrimary,
+                    shadowOffset: { width: 0, height: 3 },
+                    shadowOpacity: 0.04,
+                    shadowRadius: 8,
                   }}
-                  className="bg-white dark:bg-slate-800"
                 >
-                  <Card.Title
-                    title={item.name_product}
-                    subtitle={`$${item.price_product}`}
-                    right={() => (
-                      <IconButton
-                        icon="delete-outline"
-                        onPress={() => removeItem(item.id)}
-                      />
-                    )}
-                  />
-                  <Card.Content>
-                    <View className="flex-row items-center justify-center">
-                      <Button
-                        mode="contained"
-                        compact
-                        onPress={() =>
-                          handleQuantityChange(item.id, item.quantity_item - 1)
-                        }
-                      >
-                        -
-                      </Button>
-
-                      <CustomTextInput
-                        value={(item.quantity_item ?? 1).toString()}
-                        onChangeText={(text) =>
-                          handleQuantityChange(item.id, text)
-                        }
-                        keyboardType="numeric"
-                        maxLength={2}
-                        style={{ textAlign: "center", width: 60 }}
-                      />
-
-                      <Button
-                        mode="contained"
-                        compact
-                        onPress={() =>
-                          handleQuantityChange(item.id, item.quantity_item + 1)
-                        }
-                      >
-                        +
-                      </Button>
+                  <View className="flex-row justify-between items-start mb-3">
+                    <View className="flex-1 mr-2">
+                      <Text className="text-base font-bold" style={{ color: Colors.textPrimary }}>
+                        {item.name_product}
+                      </Text>
+                      <Text className="text-sm font-semibold mt-0.5" style={{ color: Colors.primary }}>
+                        ${item.price_product} c/u
+                      </Text>
                     </View>
-                  </Card.Content>
-                </Card>
+                    <TouchableOpacity
+                      onPress={() => removeItem(item.id)}
+                      className="p-1.5 rounded-full bg-red-50 dark:bg-red-900/30"
+                    >
+                      <Ionicons name="trash-outline" size={18} color={Colors.redError} />
+                    </TouchableOpacity>
+                  </View>
+
+                  <View className="flex-row items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-700">
+                    <Text className="text-xs font-semibold" style={{ color: Colors.textSecondary }}>
+                      Subtotal: ${(item.price_product * (item.quantity_item ?? 1)).toLocaleString()}
+                    </Text>
+
+                    <View className="flex-row items-center gap-2 bg-slate-50 dark:bg-slate-700/50 p-1 rounded-xl">
+                      <TouchableOpacity
+                        onPress={() => handleQuantityChange(item.id, item.quantity_item - 1)}
+                        className="w-8 h-8 rounded-lg items-center justify-center bg-white dark:bg-slate-600 shadow-xs"
+                      >
+                        <Ionicons name="remove" size={16} color={Colors.textPrimary} />
+                      </TouchableOpacity>
+
+                      <Text className="w-8 text-center font-bold text-base" style={{ color: Colors.textPrimary }}>
+                        {item.quantity_item ?? 1}
+                      </Text>
+
+                      <TouchableOpacity
+                        onPress={() => handleQuantityChange(item.id, item.quantity_item + 1)}
+                        className="w-8 h-8 rounded-lg items-center justify-center bg-white dark:bg-slate-600 shadow-xs"
+                      >
+                        <Ionicons name="add" size={16} color={Colors.textPrimary} />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
               ))
             )}
           </ScrollView>
 
-          <View className="bg-white dark:bg-slate-800 p-5 rounded-lg shadow shadow-black mt-5">
-            <Text className="text-2xl font-semibold text-center mb-2 text-black dark:text-white">
-              $ {totalPrice}
-            </Text>
-
-            <Text className="text-lg text-center font-semibold mb-4 text-black dark:text-white">
-              Total ítems en carrito: {itemCount}
-            </Text>
-
-            <CustomButton
-              onPress={() => BottomSheetRef.current?.childFunction(0)}
-              mode="contained"
+          {/* Tarjeta de Resumen */}
+          {items.length > 0 && (
+            <View
+              className="bg-white dark:bg-slate-800 p-5 rounded-3xl mt-3 border border-slate-100 dark:border-slate-700"
+              style={{
+                elevation: 6,
+                shadowColor: Colors.textPrimary,
+                shadowOffset: { width: 0, height: -4 },
+                shadowOpacity: 0.08,
+                shadowRadius: 16,
+              }}
             >
-              Realizar pedido
-            </CustomButton>
-            <CustomButton
-              onPress={() => removeAllItems(cartUsed)}
-              style={{ backgroundColor: Colors.redError, marginTop: 10 }}
-              mode="contained"
-            >
-              Eliminar productos
-            </CustomButton>
-          </View>
+              <View className="flex-row justify-between items-center mb-1">
+                <Text className="text-sm font-semibold" style={{ color: Colors.textSecondary }}>
+                  Total ({itemCount} {itemCount === 1 ? "ítem" : "ítems"})
+                </Text>
+                <Text className="text-3xl font-extrabold" style={{ color: Colors.primary }}>
+                  ${totalPrice.toLocaleString()}
+                </Text>
+              </View>
+
+              <View className="mt-4 gap-2">
+                <CustomButton
+                  onPress={() => BottomSheetRef.current?.childFunction(0)}
+                  mode="contained"
+                  style={{ backgroundColor: Colors.primary }}
+                >
+                  Realizar pedido
+                </CustomButton>
+
+                <TouchableOpacity
+                  onPress={() => removeAllItems(cartUsed)}
+                  className="py-2.5 items-center justify-center"
+                >
+                  <Text className="text-sm font-semibold" style={{ color: Colors.redError }}>
+                    Vaciar carrito
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
 
           <ConfirmedCartBT
             ref={BottomSheetRef}

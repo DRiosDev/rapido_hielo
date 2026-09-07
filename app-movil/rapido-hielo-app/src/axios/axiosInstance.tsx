@@ -7,13 +7,13 @@ import { useAuthUser } from "../store/useAuthUser";
 /* export const baseURL = "http://127.0.0.1:8000"; */
 
 //DEV
-export const baseURL = "https://uncordial-apologal-carlene.ngrok-free.dev";
+/* export const baseURL = "https://uncordial-apologal-carlene.ngrok-free.dev"; */
 
 //DEV
 /* export const baseURL = "https://apidevpos.vortexpos.com";  */
 
 //DEMO
-/* export const baseURL = "https://apidemopos.vortexpos.com"; */
+export const baseURL = "https://rapido-hielo-back.onrender.com";
 
 //PRODUCCION
 /* export const baseURL = "https://api.vortexpos.com"; */

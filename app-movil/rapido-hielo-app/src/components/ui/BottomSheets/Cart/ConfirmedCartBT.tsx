@@ -1,4 +1,5 @@
 import { axiosInstance } from "@/axios/axiosInstance";
+import { Colors } from "@/constants/Colors";
 import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import React, {
   forwardRef,
@@ -9,7 +10,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import {
   GestureHandlerRootView,
   ScrollView,
@@ -18,9 +19,10 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { Button, Checkbox, Menu, Portal } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from "../../design/CustomButton";
+import { Ionicons } from "@expo/vector-icons";
 
 export interface ConfirmedCartBTRef {
-  childFunction: (index: number) => void; // Definimos el tipo con parámetros
+  childFunction: (index: number) => void;
 }
 
 interface ConfirmedCartBTProps {
@@ -31,9 +33,9 @@ interface ConfirmedCartBTProps {
     time: string | null;
     payment: number | null;
   }) => void;
-  items: any[]; // lista de items del carrito
-  totalPrice: number; // total
-  itemCount: number; // cantidad total
+  items: any[];
+  totalPrice: number;
+  itemCount: number;
 }
 
 export const ConfirmedCartBT = forwardRef<
@@ -41,14 +43,11 @@ export const ConfirmedCartBT = forwardRef<
   ConfirmedCartBTProps
 >((props, ref) => {
   const sheetRef = useRef<BottomSheet>(null);
-
-  const { title, message, onConfirm, items, totalPrice, itemCount } = props;
+  const { title = "Resumen de compra", message, onConfirm, items, totalPrice } = props;
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
-
   const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-
   const [timeMenuVisible, setTimeMenuVisible] = useState(false);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
@@ -78,7 +77,6 @@ export const ConfirmedCartBT = forwardRef<
   }, [isOpen]);
 
   const [selectedPayment, setSelectedPayment] = useState<number | null>(null);
-
   const isConfirmDisabled = !selectedDate || !selectedTime || !selectedPayment;
 
   const handleConfirmDate = (date: Date) => {
@@ -95,17 +93,12 @@ export const ConfirmedCartBT = forwardRef<
     sheetRef.current?.close();
   };
 
-  // expone funciones al padre
   useImperativeHandle(ref, () => ({
     childFunction,
     close,
   }));
 
-  const snapPoints = useMemo(() => ["70%"], []);
-
-  const handleSheetChange = useCallback((index) => {
-    console.log("handleSheetChange", index);
-  }, []);
+  const snapPoints = useMemo(() => ["75%"], []);
 
   const handleConfirm = useCallback(() => {
     onConfirm({
@@ -117,17 +110,16 @@ export const ConfirmedCartBT = forwardRef<
   }, [onConfirm, selectedDate, selectedTime, selectedPayment]);
 
   const handleSheetClose = useCallback(() => {
-    setIsOpen(false); // también al cerrar por swipe
+    setIsOpen(false);
   }, []);
 
-  // 👇 Backdrop que solo aparece en el índice 0 (25%)
   const renderBackdrop = useCallback(
-    (props) => (
+    (props: any) => (
       <BottomSheetBackdrop
         {...props}
-        appearsOnIndex={0} // aparece cuando el sheet está en snapPoint 0
-        disappearsOnIndex={-1} // desaparece cuando se cierra
-        opacity={0.5} // opacidad del fondo
+        appearsOnIndex={0}
+        disappearsOnIndex={-1}
+        opacity={0.4}
       />
     ),
     [],
@@ -143,66 +135,77 @@ export const ConfirmedCartBT = forwardRef<
             ref={sheetRef}
             snapPoints={snapPoints}
             enableDynamicSizing={false}
-            onChange={handleSheetChange}
             onClose={handleSheetClose}
             enablePanDownToClose={true}
-            backdropComponent={renderBackdrop} // 👈 usa la función personalizada
+            backdropComponent={renderBackdrop}
+            handleIndicatorStyle={{ backgroundColor: "#CBD5E1", width: 40 }}
           >
-            <SafeAreaView className="flex-1">
-              <View className="pt-5 pl-5">
-                <Text className="text-xl font-bold mb-2">{title}</Text>
-                <Text className="text-base text-text-secondary">{message}</Text>
+            <SafeAreaView className="flex-1 bg-white dark:bg-slate-800">
+              <View className="px-6 pt-3 pb-3 border-b border-slate-100 dark:border-slate-700">
+                <Text className="text-2xl font-bold" style={{ color: Colors.textPrimary }}>
+                  {title}
+                </Text>
+                {message && (
+                  <Text className="text-sm mt-0.5" style={{ color: Colors.textSecondary }}>
+                    {message}
+                  </Text>
+                )}
               </View>
-              <ScrollView showsVerticalScrollIndicator={false}>
-                <View className="flex-col justify-between gap-6">
+
+              <ScrollView showsVerticalScrollIndicator={false} className="p-6">
+                <View className="gap-6 pb-6">
                   {/* Resumen del carrito */}
-                  <View className="p-5 border-b border-gray-400">
-                    <Text className="text-xl font-bold mb-3">Productos</Text>
+                  <View className="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-700">
+                    <Text className="text-base font-bold mb-3" style={{ color: Colors.textPrimary }}>
+                      Productos a despachar
+                    </Text>
 
                     {items.map((item) => (
-                      <View
-                        key={item.id}
-                        className="flex-row justify-between mb-2"
-                      >
-                        <Text className="text-base">
-                          {item.name_product} x{item.quantity_item}
+                      <View key={item.id} className="flex-row justify-between mb-2">
+                        <Text className="text-sm" style={{ color: Colors.textSecondary }}>
+                          {item.name_product} <Text className="font-bold">x{item.quantity_item}</Text>
                         </Text>
-                        <Text className="text-base font-semibold">
-                          ${item.price_product}
+                        <Text className="text-sm font-semibold" style={{ color: Colors.textPrimary }}>
+                          ${(item.price_product * item.quantity_item).toLocaleString()}
                         </Text>
                       </View>
                     ))}
 
-                    <View className="border-t border-gray-300 mt-3 pt-3 flex-row justify-between">
-                      <Text className="text-lg font-semibold">Total</Text>
-                      <Text className="text-lg font-bold">${totalPrice}</Text>
+                    <View className="border-t border-slate-200 dark:border-slate-600 mt-3 pt-3 flex-row justify-between items-center">
+                      <Text className="text-base font-bold" style={{ color: Colors.textPrimary }}>
+                        Total Final
+                      </Text>
+                      <Text className="text-xl font-extrabold" style={{ color: Colors.primary }}>
+                        ${totalPrice.toLocaleString()}
+                      </Text>
                     </View>
                   </View>
 
                   {/* Selector día/hora de despacho */}
-                  <View className="p-5 border-b border-gray-400">
-                    <Text className="text-xl font-semibold mb-4">Entrega</Text>
-
-                    {/* Fecha */}
-                    <Text className="text-base font-semibold mb-1">
-                      Día de entrega
+                  <View>
+                    <Text className="text-base font-bold mb-3" style={{ color: Colors.textPrimary }}>
+                      Programar Entrega
                     </Text>
 
-                    <Button
-                      mode="outlined"
+                    {/* Fecha */}
+                    <Text className="text-xs font-semibold mb-1" style={{ color: Colors.textSecondary }}>
+                      Día de entrega
+                    </Text>
+                    <TouchableOpacity
                       onPress={() => setIsDatePickerVisible(true)}
-                      contentStyle={{ justifyContent: "space-between" }}
-                      style={{ borderRadius: 8 }}
-                      icon="calendar"
+                      className="flex-row justify-between items-center p-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 mb-4"
                     >
-                      {selectedDate
-                        ? selectedDate.toLocaleDateString("es-CL", {
-                            weekday: "long",
-                            day: "numeric",
-                            month: "long",
-                          })
-                        : "Selecciona un día"}
-                    </Button>
+                      <Text className="text-sm font-medium" style={{ color: selectedDate ? Colors.textPrimary : Colors.textPlaceholder }}>
+                        {selectedDate
+                          ? selectedDate.toLocaleDateString("es-CL", {
+                              weekday: "long",
+                              day: "numeric",
+                              month: "long",
+                            })
+                          : "Selecciona un día"}
+                      </Text>
+                      <Ionicons name="calendar-outline" size={20} color={Colors.primary} />
+                    </TouchableOpacity>
 
                     <DateTimePickerModal
                       isVisible={isDatePickerVisible}
@@ -214,23 +217,22 @@ export const ConfirmedCartBT = forwardRef<
                     />
 
                     {/* Horario */}
-                    <Text className="text-base font-semibold mt-5 mb-1">
+                    <Text className="text-xs font-semibold mb-1" style={{ color: Colors.textSecondary }}>
                       Horario de entrega
                     </Text>
-
                     <Menu
                       visible={timeMenuVisible}
                       onDismiss={() => setTimeMenuVisible(false)}
                       anchor={
-                        <Button
-                          mode="outlined"
+                        <TouchableOpacity
                           onPress={() => setTimeMenuVisible(true)}
-                          contentStyle={{ justifyContent: "space-between" }}
-                          style={{ borderRadius: 8 }}
-                          icon="clock-outline"
+                          className="flex-row justify-between items-center p-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700"
                         >
-                          {selectedTime ?? "Selecciona un horario"}
-                        </Button>
+                          <Text className="text-sm font-medium" style={{ color: selectedTime ? Colors.textPrimary : Colors.textPlaceholder }}>
+                            {selectedTime ?? "Selecciona un horario"}
+                          </Text>
+                          <Ionicons name="time-outline" size={20} color={Colors.primary} />
+                        </TouchableOpacity>
                       }
                     >
                       {availableSlots.map((hour) => (
@@ -246,43 +248,58 @@ export const ConfirmedCartBT = forwardRef<
                     </Menu>
                   </View>
 
-                  {/* Metodo de pago */}
-                  <View className="p-5 mb-2">
-                    {/* Método de pago */}
-                    <Text className="text-xl font-semibold mb-4">
-                      Método de pago
+                  {/* Método de pago */}
+                  <View>
+                    <Text className="text-base font-bold mb-3" style={{ color: Colors.textPrimary }}>
+                      Método de Pago
                     </Text>
 
-                    <View className="flex-row items-center justify-between mb-2">
-                      <View className="flex-row items-center">
+                    <View className="flex-row gap-3">
+                      <TouchableOpacity
+                        onPress={() => setSelectedPayment(1)}
+                        className={`flex-1 p-3.5 rounded-xl border flex-row items-center gap-2 ${
+                          selectedPayment === 1
+                            ? "border-indigo-600 bg-indigo-50/50"
+                            : "border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700"
+                        }`}
+                      >
                         <Checkbox
-                          status={
-                            selectedPayment === 1 ? "checked" : "unchecked"
-                          }
+                          status={selectedPayment === 1 ? "checked" : "unchecked"}
+                          color={Colors.primary}
                           onPress={() => setSelectedPayment(1)}
                         />
-                        <Text className="text-base">Efectivo</Text>
-                      </View>
+                        <Text className="text-sm font-semibold" style={{ color: Colors.textPrimary }}>
+                          Efectivo
+                        </Text>
+                      </TouchableOpacity>
 
-                      <View className="flex-row items-center">
+                      <TouchableOpacity
+                        onPress={() => setSelectedPayment(2)}
+                        className={`flex-1 p-3.5 rounded-xl border flex-row items-center gap-2 ${
+                          selectedPayment === 2
+                            ? "border-indigo-600 bg-indigo-50/50"
+                            : "border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700"
+                        }`}
+                      >
                         <Checkbox
-                          status={
-                            selectedPayment === 2 ? "checked" : "unchecked"
-                          }
+                          status={selectedPayment === 2 ? "checked" : "unchecked"}
+                          color={Colors.primary}
                           onPress={() => setSelectedPayment(2)}
                         />
-                        <Text className="text-base">transferencia</Text>
-                      </View>
+                        <Text className="text-sm font-semibold" style={{ color: Colors.textPrimary }}>
+                          Transferencia
+                        </Text>
+                      </TouchableOpacity>
                     </View>
                   </View>
-
-                  {/* Botón final */}
                 </View>
               </ScrollView>
-              <View className="mb-5 p-5">
+
+              <View className="p-6 border-t border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800">
                 <CustomButton
                   disabled={isConfirmDisabled}
                   onPress={handleConfirm}
+                  style={{ backgroundColor: isConfirmDisabled ? "#CBD5E1" : Colors.primary }}
                 >
                   Confirmar pedido
                 </CustomButton>
@@ -300,15 +317,5 @@ const styles = StyleSheet.create({
     flex: 1,
     inset: 0,
     zIndex: 9999,
-    position: "absolute",
-    paddingTop: 200,
-  },
-  contentContainer: {
-    backgroundColor: "white",
-  },
-  itemContainer: {
-    padding: 6,
-    margin: 6,
-    backgroundColor: "#eee",
   },
 });

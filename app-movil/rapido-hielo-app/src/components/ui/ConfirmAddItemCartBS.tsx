@@ -2,7 +2,6 @@ import { Colors } from "@/constants/Colors";
 import { useAuthUser } from "@/store/useAuthUser";
 import { useCartStore } from "@/store/useCarts";
 import { useProducts } from "@/store/useProducts";
-import { CartItem } from "@/types/Cart";
 import { Product } from "@/types/Product";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
@@ -14,9 +13,9 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { IconButton, Portal } from "react-native-paper";
+import { Portal } from "react-native-paper";
 import CustomButton from "./design/CustomButton";
 import CustomTextInput from "./design/CustomTextInput";
 import { axiosInstance } from "@/axios/axiosInstance";
@@ -40,7 +39,6 @@ export const ConfirmAddItemCartBS = forwardRef<
   const [product, setProduct] = useState<Product | null>(null);
 
   const sheetRef = useRef<BottomSheet>(null);
-
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const childFunction: ChildFunction = (id) => {
@@ -57,21 +55,19 @@ export const ConfirmAddItemCartBS = forwardRef<
     close,
   }));
 
-  // comportamiento bottomsheet
-  const snapPoints = useMemo(() => ["40%"], []);
+  const snapPoints = useMemo(() => ["42%"], []);
 
   const handleSheetClose = useCallback(() => {
-    setIsOpen(false); // también al cerrar por swipe
+    setIsOpen(false);
   }, []);
 
-  // 👇 Backdrop que solo aparece en el índice 0
   const renderBackdrop = useCallback(
-    (props) => (
+    (props: any) => (
       <BottomSheetBackdrop
         {...props}
-        appearsOnIndex={0} // aparece cuando el sheet está en snapPoint 0 (25%)
-        disappearsOnIndex={-1} // desaparece cuando se cierra
-        opacity={0.5} // opacidad del fondo
+        appearsOnIndex={0}
+        disappearsOnIndex={-1}
+        opacity={0.4}
       />
     ),
     []
@@ -80,10 +76,9 @@ export const ConfirmAddItemCartBS = forwardRef<
   const close = () => {
     sheetRef.current?.close();
     setProduct(null);
-    set_quantity(1); // ← reinicia cantidad
+    set_quantity(1);
   };
 
-  // Funciones carro
   const handleIncrease = () => {
     set_quantity((prev) => Math.min(prev + 1, 99));
   };
@@ -113,7 +108,6 @@ export const ConfirmAddItemCartBS = forwardRef<
         payload
       );
 
-      // si la respuesta es correcta, actualizar contador
       if (response.status === 200) {
         const { fetchCartItemCount } = useCartStore.getState();
         await fetchCartItemCount(userLogged.id);
@@ -139,55 +133,73 @@ export const ConfirmAddItemCartBS = forwardRef<
             enableDynamicSizing={false}
             onClose={handleSheetClose}
             enablePanDownToClose={true}
-            backdropComponent={renderBackdrop} // 👈 usa la función personalizada
+            backdropComponent={renderBackdrop}
+            handleIndicatorStyle={{ backgroundColor: "#CBD5E1", width: 40 }}
           >
-            <View className="flex-1 justify-between p-6">
-              <View className="flex flex-row justify-between">
-                <Text className="text-2xl font-bold mb-2">{product?.name}</Text>
-                {
-                  <Text className="text-xl font-semibold text-text-secondary">
-                    ${product?.price} C/U
-                  </Text>
-                }
+            <View className="flex-1 justify-between p-6 bg-white dark:bg-slate-800">
+              <View>
+                <Text
+                  className="text-2xl font-bold mb-1"
+                  style={{ color: Colors.textPrimary }}
+                >
+                  {product?.name}
+                </Text>
+                <Text
+                  className="text-base font-semibold"
+                  style={{ color: Colors.primary }}
+                >
+                  ${product?.price} por unidad
+                </Text>
               </View>
 
-              <View className="flex flex-row items-center justify-center gap-2">
-                <IconButton
-                  icon={() => (
-                    <Ionicons name="remove-circle" size={28} color="black" />
-                  )}
+              {/* Selector de Cantidad */}
+              <View className="flex-row items-center justify-center my-4 py-3 bg-slate-50 dark:bg-slate-700/50 rounded-2xl">
+                <TouchableOpacity
                   onPress={handleDecrease}
-                />
-                <CustomTextInput
-                  value={quantity.toString()}
-                  onChangeText={handleQuantityChange}
-                  keyboardType="numeric"
-                  maxLength={2}
-                  style={{ textAlign: "center", width: 60 }}
-                />
-                <IconButton
-                  icon={() => (
-                    <Ionicons name="add-circle" size={28} color="black" />
-                  )}
+                  className="w-12 h-12 rounded-xl justify-center items-center active:bg-slate-200"
+                  style={{ backgroundColor: Colors.primarySoft }}
+                >
+                  <Ionicons name="remove" size={24} color={Colors.primary} />
+                </TouchableOpacity>
+
+                <View className="mx-6 w-16">
+                  <CustomTextInput
+                    value={quantity.toString()}
+                    onChangeText={handleQuantityChange}
+                    keyboardType="numeric"
+                    maxLength={2}
+                    style={{ textAlign: "center", fontSize: 20, fontWeight: "bold" }}
+                  />
+                </View>
+
+                <TouchableOpacity
                   onPress={handleIncrease}
-                />
+                  className="w-12 h-12 rounded-xl justify-center items-center active:bg-slate-200"
+                  style={{ backgroundColor: Colors.primarySoft }}
+                >
+                  <Ionicons name="add" size={24} color={Colors.primary} />
+                </TouchableOpacity>
               </View>
 
-              <View className="flex-col justify-end gap-4">
-                <CustomButton
-                  style={{ backgroundColor: Colors.primary }}
-                  onPress={() => handleConfirm()}
-                >
-                  Agregar al carro
-                </CustomButton>
-                <CustomButton
-                  style={{
-                    backgroundColor: Colors.redError,
-                  }}
-                  onPress={close}
-                >
-                  Cancelar
-                </CustomButton>
+              <View className="flex-row gap-3">
+                <View className="flex-1">
+                  <CustomButton
+                    mode="outlined"
+                    onPress={close}
+                    style={{ borderColor: Colors.textSecondary }}
+                    labelStyle={{ color: Colors.textSecondary }}
+                  >
+                    Cancelar
+                  </CustomButton>
+                </View>
+                <View className="flex-1">
+                  <CustomButton
+                    style={{ backgroundColor: Colors.primary }}
+                    onPress={() => handleConfirm()}
+                  >
+                    Agregar
+                  </CustomButton>
+                </View>
               </View>
             </View>
           </BottomSheet>
@@ -202,13 +214,5 @@ const styles = StyleSheet.create({
     flex: 1,
     inset: 0,
     zIndex: 9999,
-  },
-  contentContainer: {
-    backgroundColor: "white",
-  },
-  itemContainer: {
-    padding: 6,
-    margin: 6,
-    backgroundColor: "#eee",
   },
 });
