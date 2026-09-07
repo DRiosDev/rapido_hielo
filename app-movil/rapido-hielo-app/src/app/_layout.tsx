@@ -5,7 +5,7 @@ import { NetworkProvider } from "@/context/NetworkContext";
 import useInitialData from "@/hooks/useInitialData";
 import { useLoadFonts } from "@/hooks/useLoadFonts";
 import { useAuthUser } from "@/store/useAuthUser";
-import { Stack } from "expo-router";
+import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
@@ -14,7 +14,6 @@ import FlashMessage from "react-native-flash-message";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { ActivityIndicator, MD3DarkTheme, MD3LightTheme, PaperProvider } from "react-native-paper";
-import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import "../global.css";
 

@@ -5,15 +5,18 @@
     "scheme": "acme",
     "userInterfaceStyle": "automatic",
     "orientation": "default",
-    "splash": {
-      "backgroundColor": "#000000",
-      "resizeMode": "contain",
-      "image": "./assets/logo.png"
-    },
     "web": {
       "output": "static"
     },
     "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/logo.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#000000"
+        }
+      ],
       [
         "expo-router",
         {
