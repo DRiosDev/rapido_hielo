@@ -13,7 +13,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, StyleSheet, Text, TouchableOpacity, useColorScheme, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Portal } from "react-native-paper";
 import CustomButton from "./design/CustomButton";
@@ -34,6 +34,8 @@ export const ConfirmAddItemCartBS = forwardRef<
 >((props, ref) => {
   const { userLogged } = useAuthUser();
   const { products } = useProducts();
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
 
   const [quantity, set_quantity] = useState<number>(1);
   const [product, setProduct] = useState<Product | null>(null);
@@ -134,14 +136,12 @@ export const ConfirmAddItemCartBS = forwardRef<
             onClose={handleSheetClose}
             enablePanDownToClose={true}
             backdropComponent={renderBackdrop}
-            handleIndicatorStyle={{ backgroundColor: "#CBD5E1", width: 40 }}
+            handleIndicatorStyle={{ backgroundColor: isDark ? "#64748B" : "#CBD5E1", width: 40 }}
+            backgroundStyle={{ backgroundColor: isDark ? "#1E293B" : "#FFFFFF" }}
           >
             <View className="flex-1 justify-between p-6 bg-white dark:bg-slate-800">
               <View>
-                <Text
-                  className="text-2xl font-bold mb-1"
-                  style={{ color: Colors.textPrimary }}
-                >
+                <Text className="text-2xl font-bold mb-1 text-slate-900 dark:text-white">
                   {product?.name}
                 </Text>
                 <Text
@@ -156,10 +156,9 @@ export const ConfirmAddItemCartBS = forwardRef<
               <View className="flex-row items-center justify-center my-4 py-3 bg-slate-50 dark:bg-slate-700/50 rounded-2xl">
                 <TouchableOpacity
                   onPress={handleDecrease}
-                  className="w-12 h-12 rounded-xl justify-center items-center active:bg-slate-200"
-                  style={{ backgroundColor: Colors.primarySoft }}
+                  className="w-12 h-12 rounded-xl justify-center items-center bg-indigo-50 dark:bg-slate-700 active:opacity-80"
                 >
-                  <Ionicons name="remove" size={24} color={Colors.primary} />
+                  <Ionicons name="remove" size={24} color={isDark ? "#818CF8" : Colors.primary} />
                 </TouchableOpacity>
 
                 <View className="mx-6 w-16">
@@ -174,10 +173,9 @@ export const ConfirmAddItemCartBS = forwardRef<
 
                 <TouchableOpacity
                   onPress={handleIncrease}
-                  className="w-12 h-12 rounded-xl justify-center items-center active:bg-slate-200"
-                  style={{ backgroundColor: Colors.primarySoft }}
+                  className="w-12 h-12 rounded-xl justify-center items-center bg-indigo-50 dark:bg-slate-700 active:opacity-80"
                 >
-                  <Ionicons name="add" size={24} color={Colors.primary} />
+                  <Ionicons name="add" size={24} color={isDark ? "#818CF8" : Colors.primary} />
                 </TouchableOpacity>
               </View>
 
@@ -186,8 +184,8 @@ export const ConfirmAddItemCartBS = forwardRef<
                   <CustomButton
                     mode="outlined"
                     onPress={close}
-                    style={{ borderColor: Colors.textSecondary }}
-                    labelStyle={{ color: Colors.textSecondary }}
+                    style={{ borderColor: isDark ? "#475569" : Colors.textSecondary }}
+                    labelStyle={{ color: isDark ? "#94A3B8" : Colors.textSecondary }}
                   >
                     Cancelar
                   </CustomButton>

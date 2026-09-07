@@ -8,7 +8,7 @@ import { useCartStore } from "@/store/useCarts";
 import { Ionicons } from "@expo/vector-icons";
 import { router, Stack } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, useColorScheme, View } from "react-native";
 import { IconButton } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
@@ -28,6 +28,9 @@ export default function ModalCart() {
     removeItem,
     removeAllItems,
   } = useCartStore();
+
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
 
   const BottomSheetRef = useRef<ConfirmedCartBTRef>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -89,7 +92,6 @@ export default function ModalCart() {
         options={{
           title: "Mi Carrito",
           headerShadowVisible: false,
-          headerTitleStyle: { color: Colors.textPrimary, fontWeight: "bold" },
           headerLeft: () => <BackButtonNavegation />,
         }}
       />
@@ -104,17 +106,16 @@ export default function ModalCart() {
         <View className="flex-1">
           {/* Banner Dirección */}
           <View
-            className="flex-row items-center gap-3 p-4 rounded-2xl mb-4 border border-indigo-100 dark:border-slate-700"
-            style={{ backgroundColor: Colors.primarySoft }}
+            className="flex-row items-center gap-3 p-4 rounded-2xl mb-4 border border-indigo-100 dark:border-slate-700 bg-indigo-50/70 dark:bg-slate-800"
           >
-            <View className="p-2 rounded-xl bg-white dark:bg-slate-800">
+            <View className="p-2 rounded-xl bg-white dark:bg-slate-700">
               <Ionicons name="location" size={22} color={Colors.primary} />
             </View>
             <View className="flex-1">
-              <Text className="text-xs font-semibold uppercase tracking-wide" style={{ color: Colors.textSecondary }}>
+              <Text className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 Dirección de entrega
               </Text>
-              <Text className="text-base font-bold" style={{ color: Colors.textPrimary }} numberOfLines={1}>
+              <Text className="text-base font-bold text-slate-900 dark:text-white" numberOfLines={1}>
                 {userLogged?.address || "Sin dirección registrada"}
               </Text>
             </View>
@@ -124,14 +125,13 @@ export default function ModalCart() {
           <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
             {items.length === 0 ? (
               <View className="items-center justify-center py-20">
-                <Ionicons name="cart-outline" size={70} color={Colors.textSecondary} style={{ opacity: 0.4 }} />
+                <Ionicons name="cart-outline" size={70} color={isDark ? "#64748B" : Colors.textSecondary} style={{ opacity: 0.5 }} />
                 <Text
-                  className="text-lg font-bold mt-4"
-                  style={{ color: Colors.textPrimary }}
+                  className="text-lg font-bold mt-4 text-slate-900 dark:text-white"
                 >
                   Tu carrito está vacío
                 </Text>
-                <Text className="text-sm mt-1 text-center" style={{ color: Colors.textSecondary }}>
+                <Text className="text-sm mt-1 text-center text-slate-500 dark:text-slate-400">
                   Agrega algunos sacos de hielo para continuar
                 </Text>
               </View>
@@ -140,17 +140,10 @@ export default function ModalCart() {
                 <View
                   key={item.id}
                   className="bg-white dark:bg-slate-800 p-4 rounded-2xl mb-3 border border-slate-100 dark:border-slate-700 shadow-sm"
-                  style={{
-                    elevation: 2,
-                    shadowColor: Colors.textPrimary,
-                    shadowOffset: { width: 0, height: 3 },
-                    shadowOpacity: 0.04,
-                    shadowRadius: 8,
-                  }}
                 >
                   <View className="flex-row justify-between items-start mb-3">
                     <View className="flex-1 mr-2">
-                      <Text className="text-base font-bold" style={{ color: Colors.textPrimary }}>
+                      <Text className="text-base font-bold text-slate-900 dark:text-white">
                         {item.name_product}
                       </Text>
                       <Text className="text-sm font-semibold mt-0.5" style={{ color: Colors.primary }}>
@@ -166,7 +159,7 @@ export default function ModalCart() {
                   </View>
 
                   <View className="flex-row items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-700">
-                    <Text className="text-xs font-semibold" style={{ color: Colors.textSecondary }}>
+                    <Text className="text-xs font-semibold text-slate-500 dark:text-slate-400">
                       Subtotal: ${(item.price_product * (item.quantity_item ?? 1)).toLocaleString()}
                     </Text>
 
@@ -175,10 +168,10 @@ export default function ModalCart() {
                         onPress={() => handleQuantityChange(item.id, item.quantity_item - 1)}
                         className="w-8 h-8 rounded-lg items-center justify-center bg-white dark:bg-slate-600 shadow-xs"
                       >
-                        <Ionicons name="remove" size={16} color={Colors.textPrimary} />
+                        <Ionicons name="remove" size={16} color={isDark ? "white" : Colors.textPrimary} />
                       </TouchableOpacity>
 
-                      <Text className="w-8 text-center font-bold text-base" style={{ color: Colors.textPrimary }}>
+                      <Text className="w-8 text-center font-bold text-base text-slate-900 dark:text-white">
                         {item.quantity_item ?? 1}
                       </Text>
 
@@ -186,7 +179,7 @@ export default function ModalCart() {
                         onPress={() => handleQuantityChange(item.id, item.quantity_item + 1)}
                         className="w-8 h-8 rounded-lg items-center justify-center bg-white dark:bg-slate-600 shadow-xs"
                       >
-                        <Ionicons name="add" size={16} color={Colors.textPrimary} />
+                        <Ionicons name="add" size={16} color={isDark ? "white" : Colors.textPrimary} />
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -199,16 +192,9 @@ export default function ModalCart() {
           {items.length > 0 && (
             <View
               className="bg-white dark:bg-slate-800 p-5 rounded-3xl mt-3 border border-slate-100 dark:border-slate-700"
-              style={{
-                elevation: 6,
-                shadowColor: Colors.textPrimary,
-                shadowOffset: { width: 0, height: -4 },
-                shadowOpacity: 0.08,
-                shadowRadius: 16,
-              }}
             >
               <View className="flex-row justify-between items-center mb-1">
-                <Text className="text-sm font-semibold" style={{ color: Colors.textSecondary }}>
+                <Text className="text-sm font-semibold text-slate-500 dark:text-slate-400">
                   Total ({itemCount} {itemCount === 1 ? "ítem" : "ítems"})
                 </Text>
                 <Text className="text-3xl font-extrabold" style={{ color: Colors.primary }}>

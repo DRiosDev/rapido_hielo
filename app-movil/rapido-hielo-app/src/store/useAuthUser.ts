@@ -1,4 +1,4 @@
-import { axiosInstance } from "@/axios/axiosInstance";
+import { axiosInstance, setOnUnauthorizedCallback } from "@/axios/axiosInstance";
 import { Client } from "@/types/Client";
 import * as SecureStore from "expo-secure-store";
 import { create } from "zustand";
@@ -51,9 +51,12 @@ export const useAuthUser = create<AuthState>((set, get) => ({
 
   logout: async () => {
     try {
-      await axiosInstance.post("/api/logout");
-    } catch (error) {
-      console.error("Error al hacer logout:", error);
+      const token = await SecureStore.getItemAsync("token");
+      if (token) {
+        await axiosInstance.post("/api/logout").catch(() => {});
+      }
+    } catch {
+      // Ignorar errores al notificar logout al servidor
     } finally {
       await SecureStore.deleteItemAsync("token");
       set({ isAuthenticated: false, userLogged: null });
@@ -68,3 +71,7 @@ export const useAuthUser = create<AuthState>((set, get) => ({
     }));
   },
 }));
+
+setOnUnauthorizedCallback(() => {
+  useAuthUser.getState().logout();
+});

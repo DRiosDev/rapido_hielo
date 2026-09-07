@@ -1,7 +1,7 @@
 import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import * as React from "react";
-import { Text, View } from "react-native";
+import { Text, useColorScheme, View } from "react-native";
 import { TextInput, TextInputProps } from "react-native-paper";
 
 interface CustomTextInputProps extends TextInputProps {
@@ -14,25 +14,40 @@ interface CustomTextInputProps extends TextInputProps {
 export default function CustomTextInput({
   isPassword,
   errorMessage,
-  backgroundColor = "white",
+  backgroundColor,
   rightIcon = undefined,
   ...props
 }: CustomTextInputProps) {
   const [secureTextEntry, setSecureTextEntry] = React.useState(true);
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
+
+  const defaultBg = isDark ? "#1e293b" : "#ffffff";
+  const defaultTextColor = isDark ? "#ffffff" : Colors.textPrimary;
+  const defaultPlaceholderColor = isDark ? "#94a3b8" : Colors.textPlaceholder;
+  const defaultOutlineColor = isDark ? "#334155" : Colors.borderInputs;
 
   return (
     <View style={{ marginBottom: 16 }}>
       <TextInput
         mode="outlined"
-        outlineColor={Colors.borderInputs}
+        outlineColor={defaultOutlineColor}
         activeOutlineColor={Colors.primary}
         outlineStyle={{ borderRadius: 14, borderWidth: 1.5 }}
         secureTextEntry={isPassword ? secureTextEntry : false}
-        textColor={Colors.textPrimary}
-        placeholderTextColor={Colors.textPlaceholder}
-        theme={{ roundness: 14 }}
-        style={{ backgroundColor: backgroundColor, fontSize: 15 }}
-        contentStyle={{ height: 52 }}
+        textColor={props.textColor || defaultTextColor}
+        placeholderTextColor={props.placeholderTextColor || defaultPlaceholderColor}
+        theme={{
+          roundness: 14,
+          colors: {
+            onSurfaceVariant: isDark ? "#94a3b8" : Colors.textSecondary,
+            text: defaultTextColor,
+            placeholder: defaultPlaceholderColor,
+            background: backgroundColor || defaultBg,
+          },
+        }}
+        style={[{ backgroundColor: backgroundColor || defaultBg, fontSize: 15 }, props.style]}
+        contentStyle={[{ height: 52 }, props.contentStyle]}
         {...props}
         right={
           isPassword ? (
@@ -41,7 +56,7 @@ export default function CustomTextInput({
                 <Ionicons
                   name={secureTextEntry ? "eye-off-outline" : "eye-outline"}
                   size={20}
-                  color={Colors.textSecondary}
+                  color={isDark ? "#94a3b8" : Colors.textSecondary}
                   {...iconProps}
                 />
               )}

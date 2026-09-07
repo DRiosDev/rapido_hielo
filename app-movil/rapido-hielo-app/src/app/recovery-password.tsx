@@ -4,7 +4,7 @@ import CustomTextInput from "@/components/ui/design/CustomTextInput";
 import { Formik } from "formik";
 import React, { useState } from "react";
 import { Text, View } from "react-native";
-import { showMessage } from "react-native-flash-message";
+import { showToast } from "@/utils/toast";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Yup from "yup";
@@ -28,7 +28,7 @@ export default function RecoveryPassword() {
     await axiosInstance
       .post("/api/password-reset", formData)
       .then(() => {
-        showMessage({
+        showToast({
           message: "Revisa tu bandeja de entrada",
           icon: "success",
           type: "success",
@@ -38,7 +38,7 @@ export default function RecoveryPassword() {
         console.log(error.response.data);
 
         if (typeof error?.response.data?.message === "string") {
-          showMessage({
+          showToast({
             message: "El correo no pudo ser enviado",
             description: error?.response.data?.message,
             icon: "danger",
@@ -52,17 +52,17 @@ export default function RecoveryPassword() {
   };
 
   return (
-    <SafeAreaView className="justify-between flex-1 px-6 bg-white">
+    <SafeAreaView className="justify-between flex-1 px-6 bg-slate-50 dark:bg-slate-900">
       <View>
         <KeyboardAwareScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{ flexGrow: 1 }}
         >
-          <Text className="w-full text-3xl font-bold text-center mb-15">
-            ¿Olvidate tu contraseña? Recuperala Aquí
+          <Text className="w-full text-3xl font-bold text-center mb-6 text-slate-900 dark:text-white">
+            ¿Olvidaste tu contraseña? Recuperala Aquí
           </Text>
-          <Text className="w-full mt-4 mb-10 text-lg text-center">
-            Ingresa tu correo electrónico, si es válido te llegara un enlace en
+          <Text className="w-full mb-8 text-base text-center text-slate-600 dark:text-slate-400">
+            Ingresa tu correo electrónico, si es válido te llegará un enlace en
             la bandeja de entrada, tienes 1 hora para utilizarlo.
           </Text>
 

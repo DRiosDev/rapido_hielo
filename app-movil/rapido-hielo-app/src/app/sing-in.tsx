@@ -12,7 +12,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import { showMessage } from "react-native-flash-message";
+import { showToast } from "@/utils/toast";
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -48,7 +48,7 @@ export default function SingIn() {
     } catch (error: any) {
       setIsLoandingButton(false);
       Keyboard.dismiss();
-      showMessage({
+      showToast({
         message: "No se pudo iniciar sesión",
         description: error.message,
         icon: "danger",

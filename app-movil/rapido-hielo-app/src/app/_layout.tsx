@@ -56,7 +56,13 @@ export default function Layout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <KeyboardProvider>
           <PaperProvider theme={paperTheme}>
-            <FlashMessage position="top" statusBarHeight={insets.top} />
+            <FlashMessage
+              position="top"
+              statusBarHeight={insets.top}
+              floating
+              titleStyle={{ color: "#FFFFFF", fontWeight: "bold", fontSize: 15 }}
+              textStyle={{ color: "#FFFFFF", fontSize: 13 }}
+            />
             <StatusBar style={colorScheme === 'dark' ? "light" : "dark"} />
             <NetworkProvider>
               <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>

@@ -7,7 +7,7 @@ import { Stack } from "expo-router";
 import { Formik } from "formik";
 import React, { useRef, useState } from "react";
 import { Keyboard, View } from "react-native";
-import { showMessage } from "react-native-flash-message";
+import { showToast } from "@/utils/toast";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import * as Yup from "yup";
 
@@ -52,7 +52,7 @@ export default function ModalUAccount() {
     await axiosInstance
       .put(`/api/account/`, payload)
       .then(() => {
-        showMessage({
+        showToast({
           message: "Usuario editado con éxito",
           icon: "success",
           type: "success",
@@ -62,7 +62,7 @@ export default function ModalUAccount() {
       })
       .catch((error) => {
         console.log(error);
-        showMessage({
+        showToast({
           message: "No se ha podido editar el usuario",
           description:
             error.response.data.errors.email &&
@@ -86,7 +86,7 @@ export default function ModalUAccount() {
         }}
       />
 
-      <View className="flex-1 p-5 bg-white">
+      <View className="flex-1 p-5 bg-slate-50 dark:bg-slate-900">
         <KeyboardAwareScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{ flexGrow: 1 }}

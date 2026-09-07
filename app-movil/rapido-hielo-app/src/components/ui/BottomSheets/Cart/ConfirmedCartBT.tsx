@@ -10,7 +10,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, useColorScheme, View } from "react-native";
 import {
   GestureHandlerRootView,
   ScrollView,
@@ -44,6 +44,8 @@ export const ConfirmedCartBT = forwardRef<
 >((props, ref) => {
   const sheetRef = useRef<BottomSheet>(null);
   const { title = "Resumen de compra", message, onConfirm, items, totalPrice } = props;
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
@@ -138,15 +140,16 @@ export const ConfirmedCartBT = forwardRef<
             onClose={handleSheetClose}
             enablePanDownToClose={true}
             backdropComponent={renderBackdrop}
-            handleIndicatorStyle={{ backgroundColor: "#CBD5E1", width: 40 }}
+            handleIndicatorStyle={{ backgroundColor: isDark ? "#64748B" : "#CBD5E1", width: 40 }}
+            backgroundStyle={{ backgroundColor: isDark ? "#1E293B" : "#FFFFFF" }}
           >
             <SafeAreaView className="flex-1 bg-white dark:bg-slate-800">
               <View className="px-6 pt-3 pb-3 border-b border-slate-100 dark:border-slate-700">
-                <Text className="text-2xl font-bold" style={{ color: Colors.textPrimary }}>
+                <Text className="text-2xl font-bold text-slate-900 dark:text-white">
                   {title}
                 </Text>
                 {message && (
-                  <Text className="text-sm mt-0.5" style={{ color: Colors.textSecondary }}>
+                  <Text className="text-sm mt-0.5 text-slate-500 dark:text-slate-400">
                     {message}
                   </Text>
                 )}
@@ -156,23 +159,23 @@ export const ConfirmedCartBT = forwardRef<
                 <View className="gap-6 pb-6">
                   {/* Resumen del carrito */}
                   <View className="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-700">
-                    <Text className="text-base font-bold mb-3" style={{ color: Colors.textPrimary }}>
+                    <Text className="text-base font-bold mb-3 text-slate-900 dark:text-white">
                       Productos a despachar
                     </Text>
 
                     {items.map((item) => (
                       <View key={item.id} className="flex-row justify-between mb-2">
-                        <Text className="text-sm" style={{ color: Colors.textSecondary }}>
+                        <Text className="text-sm text-slate-600 dark:text-slate-300">
                           {item.name_product} <Text className="font-bold">x{item.quantity_item}</Text>
                         </Text>
-                        <Text className="text-sm font-semibold" style={{ color: Colors.textPrimary }}>
+                        <Text className="text-sm font-semibold text-slate-900 dark:text-white">
                           ${(item.price_product * item.quantity_item).toLocaleString()}
                         </Text>
                       </View>
                     ))}
 
                     <View className="border-t border-slate-200 dark:border-slate-600 mt-3 pt-3 flex-row justify-between items-center">
-                      <Text className="text-base font-bold" style={{ color: Colors.textPrimary }}>
+                      <Text className="text-base font-bold text-slate-900 dark:text-white">
                         Total Final
                       </Text>
                       <Text className="text-xl font-extrabold" style={{ color: Colors.primary }}>
@@ -183,19 +186,19 @@ export const ConfirmedCartBT = forwardRef<
 
                   {/* Selector día/hora de despacho */}
                   <View>
-                    <Text className="text-base font-bold mb-3" style={{ color: Colors.textPrimary }}>
+                    <Text className="text-base font-bold mb-3 text-slate-900 dark:text-white">
                       Programar Entrega
                     </Text>
 
                     {/* Fecha */}
-                    <Text className="text-xs font-semibold mb-1" style={{ color: Colors.textSecondary }}>
+                    <Text className="text-xs font-semibold mb-1 text-slate-500 dark:text-slate-400">
                       Día de entrega
                     </Text>
                     <TouchableOpacity
                       onPress={() => setIsDatePickerVisible(true)}
                       className="flex-row justify-between items-center p-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 mb-4"
                     >
-                      <Text className="text-sm font-medium" style={{ color: selectedDate ? Colors.textPrimary : Colors.textPlaceholder }}>
+                      <Text className="text-sm font-medium" style={{ color: selectedDate ? (isDark ? "#FFFFFF" : Colors.textPrimary) : Colors.textPlaceholder }}>
                         {selectedDate
                           ? selectedDate.toLocaleDateString("es-CL", {
                               weekday: "long",
@@ -217,7 +220,7 @@ export const ConfirmedCartBT = forwardRef<
                     />
 
                     {/* Horario */}
-                    <Text className="text-xs font-semibold mb-1" style={{ color: Colors.textSecondary }}>
+                    <Text className="text-xs font-semibold mb-1 text-slate-500 dark:text-slate-400">
                       Horario de entrega
                     </Text>
                     <Menu
@@ -228,7 +231,7 @@ export const ConfirmedCartBT = forwardRef<
                           onPress={() => setTimeMenuVisible(true)}
                           className="flex-row justify-between items-center p-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700"
                         >
-                          <Text className="text-sm font-medium" style={{ color: selectedTime ? Colors.textPrimary : Colors.textPlaceholder }}>
+                          <Text className="text-sm font-medium" style={{ color: selectedTime ? (isDark ? "#FFFFFF" : Colors.textPrimary) : Colors.textPlaceholder }}>
                             {selectedTime ?? "Selecciona un horario"}
                           </Text>
                           <Ionicons name="time-outline" size={20} color={Colors.primary} />
@@ -250,7 +253,7 @@ export const ConfirmedCartBT = forwardRef<
 
                   {/* Método de pago */}
                   <View>
-                    <Text className="text-base font-bold mb-3" style={{ color: Colors.textPrimary }}>
+                    <Text className="text-base font-bold mb-3 text-slate-900 dark:text-white">
                       Método de Pago
                     </Text>
 
@@ -259,7 +262,7 @@ export const ConfirmedCartBT = forwardRef<
                         onPress={() => setSelectedPayment(1)}
                         className={`flex-1 p-3.5 rounded-xl border flex-row items-center gap-2 ${
                           selectedPayment === 1
-                            ? "border-indigo-600 bg-indigo-50/50"
+                            ? "border-indigo-600 bg-indigo-50/50 dark:bg-indigo-900/30"
                             : "border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700"
                         }`}
                       >
@@ -268,7 +271,7 @@ export const ConfirmedCartBT = forwardRef<
                           color={Colors.primary}
                           onPress={() => setSelectedPayment(1)}
                         />
-                        <Text className="text-sm font-semibold" style={{ color: Colors.textPrimary }}>
+                        <Text className="text-sm font-semibold text-slate-900 dark:text-white">
                           Efectivo
                         </Text>
                       </TouchableOpacity>
@@ -277,7 +280,7 @@ export const ConfirmedCartBT = forwardRef<
                         onPress={() => setSelectedPayment(2)}
                         className={`flex-1 p-3.5 rounded-xl border flex-row items-center gap-2 ${
                           selectedPayment === 2
-                            ? "border-indigo-600 bg-indigo-50/50"
+                            ? "border-indigo-600 bg-indigo-50/50 dark:bg-indigo-900/30"
                             : "border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700"
                         }`}
                       >
@@ -286,7 +289,7 @@ export const ConfirmedCartBT = forwardRef<
                           color={Colors.primary}
                           onPress={() => setSelectedPayment(2)}
                         />
-                        <Text className="text-sm font-semibold" style={{ color: Colors.textPrimary }}>
+                        <Text className="text-sm font-semibold text-slate-900 dark:text-white">
                           Transferencia
                         </Text>
                       </TouchableOpacity>

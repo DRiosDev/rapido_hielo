@@ -69,7 +69,7 @@ const AnimatedCard = ({ product, index, addItem }: { product: Product; index: nu
             style={{ backgroundColor: "rgba(255, 255, 255, 0.92)" }}
           >
             <Ionicons name="sparkles" size={14} color={Colors.primary} />
-            <Text className="text-xs font-bold" style={{ color: Colors.textPrimary }}>
+            <Text className="text-xs font-bold text-slate-800">
               Despacho Rápido
             </Text>
           </View>
@@ -78,15 +78,13 @@ const AnimatedCard = ({ product, index, addItem }: { product: Product; index: nu
         {/* Contenido de la Tarjeta */}
         <View className="p-5">
           <Text
-            className="text-xl font-bold mb-1"
-            style={{ color: Colors.textPrimary }}
+            className="text-xl font-bold mb-1 text-slate-900 dark:text-white"
           >
             {product.name}
           </Text>
 
           <Text
-            className="text-sm mb-4 leading-relaxed"
-            style={{ color: Colors.textSecondary }}
+            className="text-sm mb-4 leading-relaxed text-slate-500 dark:text-slate-400"
             numberOfLines={2}
           >
             {product.description || "Producto de alta calidad y entrega asegurada."}
@@ -94,7 +92,7 @@ const AnimatedCard = ({ product, index, addItem }: { product: Product; index: nu
 
           <View className="flex-row items-center justify-between mt-2 pt-3 border-t border-slate-100 dark:border-slate-700">
             <View>
-              <Text className="text-xs font-medium uppercase tracking-wider" style={{ color: Colors.textSecondary }}>
+              <Text className="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-400">
                 Precio
               </Text>
               <Text className="text-2xl font-extrabold" style={{ color: Colors.primary }}>
@@ -125,11 +123,11 @@ export default function CardProductList({ data, addItem }: Props) {
   if (!data || data.length === 0) {
     return (
       <View className="flex-1 items-center justify-center p-6">
-        <Ionicons name="cube-outline" size={60} color={Colors.textSecondary} style={{ opacity: 0.5 }} />
-        <Text className="text-lg font-bold mt-4" style={{ color: Colors.textPrimary }}>
+        <Ionicons name="cube-outline" size={60} color="#94A3B8" style={{ opacity: 0.5 }} />
+        <Text className="text-lg font-bold mt-4 text-slate-900 dark:text-white">
           No hay productos disponibles
         </Text>
-        <Text className="text-sm mt-1 text-center" style={{ color: Colors.textSecondary }}>
+        <Text className="text-sm mt-1 text-center text-slate-500 dark:text-slate-400">
           Intenta nuevamente más tarde
         </Text>
       </View>

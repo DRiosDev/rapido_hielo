@@ -7,7 +7,7 @@ import { router } from "expo-router";
 import { Formik } from "formik";
 import React, { useRef, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import { showMessage } from "react-native-flash-message";
+import { showToast } from "@/utils/toast";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import {
   SafeAreaView,
@@ -58,7 +58,7 @@ export default function SignUp() {
 
       const { data } = await axiosInstance.post("/api/auth/register", values);
 
-      showMessage({
+      showToast({
         message: "Usuario creado correctamente",
         type: "success",
       });
@@ -74,7 +74,7 @@ export default function SignUp() {
         description = error.response.data.message;
       }
 
-      showMessage({
+      showToast({
         message: "Error al registrar",
         description: description,
         type: "danger",

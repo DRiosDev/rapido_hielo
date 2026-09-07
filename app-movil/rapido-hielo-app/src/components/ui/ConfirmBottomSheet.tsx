@@ -8,7 +8,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, useColorScheme, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Portal } from "react-native-paper";
 import CustomButton from "./design/CustomButton";
@@ -30,6 +30,8 @@ export const ConfirmBottomSheet = forwardRef<
   const sheetRef = useRef<BottomSheet>(null);
 
   const { title, message, onConfirm } = props;
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -88,12 +90,14 @@ export const ConfirmBottomSheet = forwardRef<
             onChange={handleSheetChange}
             onClose={handleSheetClose}
             enablePanDownToClose={true}
-            backdropComponent={renderBackdrop} // 👈 usa la función personalizada
+            backdropComponent={renderBackdrop}
+            handleIndicatorStyle={{ backgroundColor: isDark ? "#64748B" : "#CBD5E1", width: 40 }}
+            backgroundStyle={{ backgroundColor: isDark ? "#1E293B" : "#FFFFFF" }}
           >
-            <View className="flex-1 justify-between p-6">
+            <View className="flex-1 justify-between p-6 bg-white dark:bg-slate-800">
               <View>
-                <Text className="text-xl font-bold mb-2">{title}</Text>
-                <Text className="text-base text-text-secondary">{message}</Text>
+                <Text className="text-xl font-bold mb-2 text-slate-900 dark:text-white">{title}</Text>
+                <Text className="text-base text-slate-600 dark:text-slate-300">{message}</Text>
               </View>
 
               <View className="flex-col justify-end gap-4">
@@ -108,9 +112,9 @@ export const ConfirmBottomSheet = forwardRef<
                   mode="outlined"
                   style={{
                     borderWidth: 2,
-                    borderColor: Colors.textSecondary,
+                    borderColor: isDark ? "#475569" : Colors.textSecondary,
                   }}
-                  labelStyle={{ color: Colors.textSecondary }}
+                  labelStyle={{ color: isDark ? "#94A3B8" : Colors.textSecondary }}
                   onPress={close}
                 >
                   Cancelar

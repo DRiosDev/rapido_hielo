@@ -6,7 +6,7 @@ import { Stack } from "expo-router";
 import { Formik } from "formik";
 import React, { useRef, useState } from "react";
 import { Keyboard, View } from "react-native";
-import { showMessage } from "react-native-flash-message";
+import { showToast } from "@/utils/toast";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import * as Yup from "yup";
 
@@ -49,13 +49,13 @@ export default function ModalUPassword() {
       );
 
       await axiosInstance.patch("/api/account/password", formData);
-      showMessage({
+      showToast({
         message: "Contraseña cambiada con éxito",
         icon: "success",
         type: "success",
       });
     } catch (error: any) {
-      showMessage({
+      showToast({
         message: "No se ha podido cambiar la contraseña",
         description:
           typeof error?.response?.data?.message === "string" &&
@@ -78,7 +78,7 @@ export default function ModalUPassword() {
         }}
       />
 
-      <View className="flex-1 p-5 bg-white">
+      <View className="flex-1 p-5 bg-slate-50 dark:bg-slate-900">
         <KeyboardAwareScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{ flexGrow: 1 }}

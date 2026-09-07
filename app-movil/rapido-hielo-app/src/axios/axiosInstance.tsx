@@ -1,7 +1,13 @@
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { Alert, Linking } from "react-native";
-import { useAuthUser } from "../store/useAuthUser";
+
+type AuthErrorCallback = () => void;
+let onUnauthorizedCallback: AuthErrorCallback | null = null;
+
+export const setOnUnauthorizedCallback = (cb: AuthErrorCallback) => {
+  onUnauthorizedCallback = cb;
+};
 
 // local
 /* export const baseURL = "http://127.0.0.1:8000"; */
@@ -79,7 +85,9 @@ axiosInstance.interceptors.response.use(
           { cancelable: true },
         );
 
-        useAuthUser.getState().logout();
+        if (onUnauthorizedCallback) {
+          onUnauthorizedCallback();
+        }
         return Promise.reject(refreshError);
       }
     } else if (
